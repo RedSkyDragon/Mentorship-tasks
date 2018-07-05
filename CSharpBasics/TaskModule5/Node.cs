@@ -77,5 +77,22 @@ namespace TaskModule5
             return result;
         }
 
+        public List<KeyValue> Find(string key, int level)
+        {
+            var result = new List<KeyValue>();
+            if (Item.Value != null)
+            {
+                result.Add(Item);
+            }
+            if (Item.Key == key)
+            {
+                return result;
+            }
+            var next = _nextNodes.Find(item => item.Item.Key == key.Substring(0, level));
+            if (next != null)
+            result.AddRange(next.Find(key, level + 1));
+            return result;
+        }
+
     }
 }

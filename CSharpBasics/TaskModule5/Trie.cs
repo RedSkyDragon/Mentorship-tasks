@@ -55,5 +55,10 @@ namespace TaskModule5
             }
             return result;
         }
+
+        public List<KeyValue> Find(string key)
+        {
+            return _roots.Find(item => item.Item.Key == key.Substring(0, 1)).Find(key, 2);
+        }
     }
 }

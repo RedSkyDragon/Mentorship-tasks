@@ -28,10 +28,18 @@ namespace TaskModule5
             trie.Add(new KeyValue("1", "qwqe"));
             trie.Add(new KeyValue("2", "qwqrdsfge"));
             trie.Add(new KeyValue("111", "qwfdgdfhhhdfghqe"));
-            trie.Add(new KeyValue("556438", "qwfdgdfhhhdfghqe"));
+            trie.Add(new KeyValue("556438", "123d-00="));
             trie.AddRange(array);
 
             var list = trie.ShowAll();
+            foreach (var elem in list.OrderBy(elem => elem.Key))
+            {
+                Console.WriteLine($"{elem.Key} : {elem.Value}");
+            }
+
+            Console.WriteLine();
+
+            list = trie.Find("1");
             foreach (var elem in list.OrderBy(elem => elem.Key))
             {
                 Console.WriteLine($"{elem.Key} : {elem.Value}");
