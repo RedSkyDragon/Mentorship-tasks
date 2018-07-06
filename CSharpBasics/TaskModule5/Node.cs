@@ -85,10 +85,23 @@ namespace TaskModule5
         /// <summary>
         /// Finds elements of subtree, whose key is substring of requested key
         /// </summary>
-        /// <param name="key">Requested tree</param>
+        /// <param name="key">Requested key</param>
+        /// <param name="level">Current reqursive level (number of letters in current key)</param>
+        /// <returns>List of KeyValue elements</returns>
+        public List<KeyValue> Find(string key, int level)
+        {
+            var result = new List<KeyValue>();
+            Find(key, level, result);
+            return result;
+        }
+
+        /// <summary>
+        /// Finds elements of subtree, whose key is substring of requested key
+        /// </summary>
+        /// <param name="key">Requested key</param>
         /// <param name="level">Current reqursive level (number of letters in current key)</param>
         /// <param name="result">Result list of KeyValue elements</param>
-        public void Find(string key, int level, List<KeyValue> result)
+        private void Find(string key, int level, List<KeyValue> result)
         {
             if (Item.Value != null)
             {

@@ -96,9 +96,7 @@ namespace TaskModule5
         /// <returns>IEnumerable collection of KeyValue elements</returns>
         public IEnumerable<KeyValue> Find(string key)
         {
-            var result = new List<KeyValue>();
-            FindRoot(key).Find(key, 2, result);
-            return result;
+            return FindRoot(key).Find(key, 2);
         }
 
         /// <summary>
