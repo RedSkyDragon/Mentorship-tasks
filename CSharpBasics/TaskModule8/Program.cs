@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*Please create a console application to work with files.
+  Add several options:
+  Renaming a single file
+  Renaming all files in a selected folder (recursion into sub folders must be an optional param)
+  Deletion of files/folders by name (recursion into sub folders must be an optional param)
+  The application should be compiled as an .EXE file, which the user calls with parameters. 
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +15,6 @@ namespace TaskModule8
 {
     class Program
     {
-        public enum FunctionType { Rename, RenameAll, Delete }
         static void Main(string[] args)
         {
             bool isRecursive = false;
@@ -17,33 +23,51 @@ namespace TaskModule8
             {
                 Console.WriteLine
                     ("Must be args: \n" +
-                    "For Rename: Rename filePath newName\n" +
+                    "For Rename: Rename filePath newName(with extention)\n" +
                     "For RenameAll (added number to template): RenameAll folderPath nameTemplate [recurs]\n" +
                     "For Delete: Delete path [recurs]\n");
                 return;
-            } 
-            
-            switch (args[0])
+            }
+
+            try
             {
-                case "Rename":
-                    FileUtils.Rename(args[1], args[2]);
-                    break;
-                case "RenameAll":
-                    if (args.Count() > 3)
-                    {
-                        isRecursive = args[3] == "recurs";
-                    }
-                    FileUtils.RenameAll(args[1], args[2], isRecursive);
-                    break;
-                case "Delete":
-                    if (args.Count() > 2)
-                    {
-                        isRecursive = args[2] == "recurs";
-                    }
-                    FileUtils.Delete(args[1], isRecursive);
-                    break;
-                default:
-                    break;
+                switch (args[0])
+                {
+                    case "Rename":
+                        FileUtils.Rename(args[1], args[2]);
+                        Console.WriteLine("File was renamed");
+                        break;
+                    case "RenameAll":
+                        if (args.Count() > 3)
+                        {
+                            if (args[3] != "recurs")
+                            {
+                                throw new ArgumentException("Invalid last argument. It must be \"recurs\".");
+                            }
+                            isRecursive = true;
+                        }
+                        FileUtils.RenameAll(args[1], args[2], isRecursive);
+                        Console.WriteLine("All files were renamed");
+                        break;
+                    case "Delete":
+                        if (args.Count() > 2)
+                        {
+                            if (args[2] != "recurs")
+                            {
+                                throw new ArgumentException("Invalid last argument. It must be \"recurs\".");
+                            }
+                            isRecursive = true;
+                        }
+                        FileUtils.Delete(args[1], isRecursive);
+                        Console.WriteLine("Deletion complete");
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }
