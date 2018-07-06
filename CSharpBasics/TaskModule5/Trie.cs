@@ -51,14 +51,16 @@ namespace TaskModule5
             var result = new List<KeyValue>();
             foreach (var root in _roots)
             {
-                result.AddRange(root.ShowAll());
+                root.ShowAll(result);
             }
             return result;
         }
 
         public List<KeyValue> Find(string key)
         {
-            return _roots.Find(item => item.Item.Key == key.Substring(0, 1)).Find(key, 2);
+            var result = new List<KeyValue>();
+            _roots.Find(item => item.Item.Key == key.Substring(0, 1)).Find(key, 2, ref result);
+            return result;
         }
     }
 }

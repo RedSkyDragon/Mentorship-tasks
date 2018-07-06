@@ -29,6 +29,9 @@ namespace TaskModule5
             trie.Add(new KeyValue("2", "qwqrdsfge"));
             trie.Add(new KeyValue("111", "qwfdgdfhhhdfghqe"));
             trie.Add(new KeyValue("556438", "123d-00="));
+            trie.Add(new KeyValue("asd", "asd"));
+            trie.Add(new KeyValue("a", "a"));
+            trie.Add(new KeyValue("as", "as"));
             trie.AddRange(array);
 
             var list = trie.ShowAll();
@@ -39,7 +42,7 @@ namespace TaskModule5
 
             Console.WriteLine();
 
-            list = trie.Find("1");
+            list = trie.Find("asd");
             foreach (var elem in list.OrderBy(elem => elem.Key))
             {
                 Console.WriteLine($"{elem.Key} : {elem.Value}");

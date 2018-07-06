@@ -63,35 +63,35 @@ namespace TaskModule5
         /// Recursive search for all elements in trie-tree 
         /// </summary>
         /// <returns>List of KeyValue objects</returns>
-        public List<KeyValue> ShowAll()
+        public void ShowAll(List<KeyValue> result)
         {
-            var result = new List<KeyValue>();
             foreach (var node in _nextNodes)
             {
-                result.AddRange(node.ShowAll());
+                node.ShowAll(result);
             }
             if (Item.Value != null)
             {
                 result.Add(Item);
             }
-            return result;
+            return;
         }
 
-        public List<KeyValue> Find(string key, int level)
+        public void Find(string key, int level, ref List<KeyValue> result)
         {
-            var result = new List<KeyValue>();
             if (Item.Value != null)
             {
                 result.Add(Item);
             }
             if (Item.Key == key)
             {
-                return result;
+                return;
             }
             var next = _nextNodes.Find(item => item.Item.Key == key.Substring(0, level));
             if (next != null)
-            result.AddRange(next.Find(key, level + 1));
-            return result;
+            {
+                next.Find(key, level + 1, ref result);
+            }
+            return;
         }
 
     }
