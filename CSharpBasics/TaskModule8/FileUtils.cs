@@ -17,31 +17,22 @@ namespace TaskModule8
         /// </summary>
         /// <param name="filePath">Path to file</param>
         /// <param name="newName">New name of file</param>
-        public static void Rename(string filePath, string newName)
+        /// <param name="overwrite">True if you want to rewrite existing file with this name</param>
+        public static void Rename(string filePath, string newName, bool overwrite)
         {
             if (File.Exists(filePath))
             {
-                string newPath = Path.GetDirectoryName(filePath) + Path.DirectorySeparatorChar + newName;
-                if (File.Exists(newPath))
+                string newPath = Path.Combine(Path.GetDirectoryName(filePath), newName);
+                if (File.Exists(newPath) && !overwrite)
                 {
-                    string answer;
-                    do
-                    {
-                        Console.WriteLine("File with name " + newName + " has already exists.Do you want to replace it ? y - yes, n - no");
-                        answer = Console.ReadLine();
-                    }
-                    while (answer != "y" && answer != "n");
-                    if (answer == "n")
-                    {
-                        return;
-                    }
+                    return;
                 }
                 File.Copy(filePath, newPath, true);
                 File.Delete(filePath);
             }
             else
             {
-                Console.WriteLine("File does not exist");
+                throw new FileNotFoundException("File " + filePath + " does not exists.");
             }
         }
         /// <summary>
@@ -50,30 +41,23 @@ namespace TaskModule8
         /// <param name="folderPath">Path to directory</param>
         /// <param name="nameTemplate">Name Template</param>
         /// <param name="recursive">True if files in subdirectories also should be renamed</param>
-        public static void RenameAll(string folderPath, string nameTemplate, bool recursive = false)
+        /// <param name="overwrite">True if you want to rewrite existing files</param>
+        public static void RenameAll(string folderPath, string nameTemplate, bool recursive, bool overwrite = false)
         {
-            try
+            string[] files = Directory.GetFiles(folderPath);
+            int counter = 1;
+            foreach (var file in files)
             {
-                string[] files = Directory.GetFiles(folderPath);
-                int counter = 1;
-                foreach (var file in files)
-                {
-                    var newName = nameTemplate + counter++ + Path.GetExtension(file);
-                    Rename(file, newName);
-                }
-                if (recursive)
-                {
-                    string[] directories = Directory.GetDirectories(folderPath);
-                    foreach (var dir in directories)
-                    {
-                        RenameAll(dir, nameTemplate, recursive);
-                    }
-                    
-                }
+                var newName = nameTemplate + counter++ + Path.GetExtension(file);
+                Rename(file, newName, overwrite);
             }
-            catch (Exception ex)
+            if (recursive)
             {
-                Console.WriteLine(ex.Message);
+                string[] directories = Directory.GetDirectories(folderPath);
+                foreach (var dir in directories)
+                {
+                    RenameAll(dir, nameTemplate, recursive);
+                }       
             }
         }
         /// <summary>
@@ -83,40 +67,33 @@ namespace TaskModule8
         /// <param name="recursive">True if files in subdirectories also should be deleted</param>
         public static void Delete(string path, bool recursive = false)
         {
-            try
+            if (File.GetAttributes(path) == FileAttributes.Directory)
             {
-                if (File.GetAttributes(path) == FileAttributes.Directory)
+                string[] files = Directory.GetFiles(path);
+                foreach (var file in files)
                 {
-                    string[] files = Directory.GetFiles(path);
-                    foreach (var file in files)
-                    {
-                        File.Delete(file);
-                    }
-                    if (recursive)
-                    {
-                        string[] directories = Directory.GetDirectories(path);
-                        foreach (var dir in directories)
-                        {
-                            Delete(dir, recursive);
-                            Directory.Delete(dir);
-                        }
-                    }
+                    File.Delete(file);
                 }
-                else
+                if (recursive)
                 {
-                    if (File.Exists(path))
+                    string[] directories = Directory.GetDirectories(path);
+                    foreach (var dir in directories)
                     {
-                        File.Delete(path);
-                    }
-                    else
-                    {
-                        Console.WriteLine("File does not exist");
+                        Delete(dir, recursive);
+                        Directory.Delete(dir);
                     }
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                else
+                {
+                    throw new FileNotFoundException("File " + path + " does not exists.");
+                }
             }
         }
     }

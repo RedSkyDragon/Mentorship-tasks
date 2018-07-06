@@ -18,6 +18,7 @@ namespace TaskModule8
         static void Main(string[] args)
         {
             bool isRecursive = false;
+            bool overwrite = false;
 
             if (args.Length < 2)
             {
@@ -34,7 +35,9 @@ namespace TaskModule8
                 switch (args[0])
                 {
                     case "Rename":
-                        FileUtils.Rename(args[1], args[2]);
+                        Console.WriteLine("Overwrite file if it exists? y - yes");
+                        overwrite = Console.ReadLine().ToLower() == "y";
+                        FileUtils.Rename(args[1], args[2], overwrite);
                         Console.WriteLine("File was renamed");
                         break;
                     case "RenameAll":
@@ -46,7 +49,9 @@ namespace TaskModule8
                             }
                             isRecursive = true;
                         }
-                        FileUtils.RenameAll(args[1], args[2], isRecursive);
+                        Console.WriteLine("Overwrite files if they exists? y - yes");
+                        overwrite = Console.ReadLine().ToLower() == "y";
+                        FileUtils.RenameAll(args[1], args[2], isRecursive, overwrite);
                         Console.WriteLine("All files were renamed");
                         break;
                     case "Delete":
@@ -65,7 +70,7 @@ namespace TaskModule8
                         break;
                 }
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
