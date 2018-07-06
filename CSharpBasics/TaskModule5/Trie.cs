@@ -37,6 +37,11 @@ namespace TaskModule5
             _roots = elems._roots;
         }
 
+        private Node FindRoot(string key)
+        {
+            return _roots.Find(item => item.Item.Key == key.Substring(0, 1));
+        }
+
         /// <summary>
         /// Adds range of Key-Value elements to the trie-tree
         /// </summary>
@@ -55,7 +60,7 @@ namespace TaskModule5
         /// <param name="elems">Another trie-tree</param>
         public void AddRange(Trie elems)
         {
-            var listOfElems = elems.ShowAll();
+            var listOfElems = elems.ToIEnumerable();
             AddRange(listOfElems);
         }
 
@@ -65,22 +70,21 @@ namespace TaskModule5
         /// <param name="elems">KeyValue element to add</param>
         public void Add(KeyValue elem)
         {
-            var node = _roots.Find(root => root.Item.Key == elem.Key.Substring(0, 1));
-            if (node == null)
+            if (FindRoot(elem.Key) == null)
                 _roots.Add(new Node(new KeyValue(elem.Key.Substring(0, 1))));
-            _roots.Find(root => root.Item.Key == elem.Key.Substring(0, 1)).Add(elem, 2);
+            FindRoot(elem.Key).Add(elem, 2);
         }
 
         /// <summary>
-        /// Converts all elements of trie-tree into list
+        /// Converts all elements of trie-tree into IEnumerable
         /// </summary>
         /// <returns>IEnumerable collection of KeyValue elements</returns>
-        public IEnumerable<KeyValue> ShowAll()
+        public IEnumerable<KeyValue> ToIEnumerable()
         {
             var result = new List<KeyValue>();
             foreach (var root in _roots)
             {
-                root.ShowAll(result);
+                root.FillList(result);
             }
             return result;
         }
@@ -93,7 +97,7 @@ namespace TaskModule5
         public IEnumerable<KeyValue> Find(string key)
         {
             var result = new List<KeyValue>();
-            _roots.Find(item => item.Item.Key == key.Substring(0, 1)).Find(key, 2, ref result);
+            FindRoot(key).Find(key, 2, result);
             return result;
         }
 
@@ -103,7 +107,7 @@ namespace TaskModule5
         /// <param name="key">Requested key</param>
         public void Remove(string key)
         {
-            var next = _roots.Find(item => item.Item.Key == key.Substring(0, 1));
+            var next = FindRoot(key);
             if (next?.Remove(key, 2) ?? false)
             {
                 _roots.Remove(next);
@@ -116,7 +120,7 @@ namespace TaskModule5
         /// <param name="key">Requested key</param>
         public void RemoveWithChildren(string key)
         {
-            var next = _roots.Find(item => item.Item.Key == key.Substring(0, 1));
+            var next = FindRoot(key);
             if (next?.RemoveWithChildren(key, 2) ?? false)
             {
                 _roots.Remove(next);

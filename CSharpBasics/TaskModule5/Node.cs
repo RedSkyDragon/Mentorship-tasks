@@ -11,10 +11,6 @@ namespace TaskModule5
     /// </summary>
     public class Node
     {
-        /// <summary>
-        /// Key-Value element of node
-        /// </summary>
-        public KeyValue Item { get; }
 
         /// <summary>
         /// List of next Nodes
@@ -29,6 +25,16 @@ namespace TaskModule5
         {
             Item = item;
             _nextNodes = new List<Node>();
+        }
+
+        /// <summary>
+        /// Key-Value element of node
+        /// </summary>
+        public KeyValue Item { get; }
+
+        private Node FindNextNode(string key, int curr_length)
+        {
+            return _nextNodes.Find(item => item.Item.Key == key.Substring(0, curr_length));
         }
 
         /// <summary>
@@ -51,11 +57,11 @@ namespace TaskModule5
             }
             else
             {
-                if (_nextNodes.Find(node => node.Item.Key == elem.Key.Substring(0, level)) == null)
+                if (FindNextNode(elem.Key, level) == null)
                 {
                     _nextNodes.Add(new Node(new KeyValue(elem.Key.Substring(0, level))));
                 }
-                _nextNodes.Find(node => node.Item.Key == elem.Key.Substring(0, level)).Add(elem, level + 1);
+                FindNextNode(elem.Key, level).Add(elem, level + 1);
             }
         }
 
@@ -63,11 +69,11 @@ namespace TaskModule5
         /// Recursive search for all elements in trie-tree 
         /// </summary>
         /// <returns>List of KeyValue objects</returns>
-        public void ShowAll(List<KeyValue> result)
+        public void FillList(List<KeyValue> result)
         {
             foreach (var node in _nextNodes)
             {
-                node.ShowAll(result);
+                node.FillList(result);
             }
             if (Item.Value != null)
             {
@@ -82,7 +88,7 @@ namespace TaskModule5
         /// <param name="key">Requested tree</param>
         /// <param name="level">Current reqursive level (number of letters in current key)</param>
         /// <param name="result">Result list of KeyValue elements</param>
-        public void Find(string key, int level, ref List<KeyValue> result)
+        public void Find(string key, int level, List<KeyValue> result)
         {
             if (Item.Value != null)
             {
@@ -92,10 +98,10 @@ namespace TaskModule5
             {
                 return;
             }
-            var next = _nextNodes.Find(item => item.Item.Key == key.Substring(0, level));
+            var next = FindNextNode(key, level);
             if (next != null)
             {
-                next.Find(key, level + 1, ref result);
+                next.Find(key, level + 1, result);
             }
             return;
         }
@@ -117,11 +123,11 @@ namespace TaskModule5
                 }
                 return true;
             }
-            var next = _nextNodes.Find(item => item.Item.Key == key.Substring(0, level));
+            var next = FindNextNode(key, level);
             if (next?.Remove(key, level + 1) ?? false)
             {
                 _nextNodes.Remove(next);
-                if (Item.Value == null && _nextNodes.Count() == 0)
+                if (Item.Value == null && _nextNodes.Count == 0)
                 {
                     return true;
                 }
@@ -141,10 +147,10 @@ namespace TaskModule5
             {
                 return true;
             }
-            var next = _nextNodes.Find(item => item.Item.Key == key.Substring(0, level));
+            var next = FindNextNode(key, level);
             if (next?.RemoveWithChildren(key, level + 1) ?? false)
             {               
-                if (Item.Value == null && _nextNodes.Count() == 1)
+                if (Item.Value == null && _nextNodes.Count == 1)
                 {
                     return true;
                 }

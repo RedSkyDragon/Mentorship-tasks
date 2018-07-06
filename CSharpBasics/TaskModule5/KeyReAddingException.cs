@@ -10,23 +10,18 @@ namespace TaskModule5
     /// Exception class for case of adding element with existing key
     /// </summary>
     public class KeyReAddingException : Exception
-    {
-        /// <summary>
-        /// Message for user
-        /// </summary>
-        public override string Message { get; }
-        /// <summary>
-        /// Element which coused an exception
-        /// </summary>
-        public KeyValue Value { get; }
+    { 
         /// <summary>
         /// Constructor for exception
         /// </summary>
         /// <param name="value">Element which coused an exception</param>
-        public KeyReAddingException(KeyValue value)
+        public KeyReAddingException(KeyValue value) : base("Element with this key has already exist")
         {
-            Message = "Element with this key has already exist";
             Value = value;
         }
+        /// <summary>
+        /// Element which coused an exception
+        /// </summary>
+        public KeyValue Value { get; }     
     }
 }

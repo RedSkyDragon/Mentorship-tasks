@@ -11,15 +11,12 @@ namespace TaskModule5
     /// </summary>
     public class KeyValue
     {
-        public string Key { get; }
-        public string Value { get; set; }
-
-        public KeyValue(string key, string value)
+        public KeyValue(string key, string value = null)
         {
             Key = key;
             Value = value;
         }
-
-        public KeyValue(string key) : this(key, null) { }
+        public string Key { get; }
+        public string Value { get; set; }
     }
 }

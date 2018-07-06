@@ -43,7 +43,7 @@ namespace TaskModule5
                 Console.WriteLine(ex.Message + $" Key: \"{ex.Value.Key}\", Value: \"{ex.Value.Value}\"");
             }
 
-            var list = trie.ShowAll();
+            var list = trie.ToIEnumerable();
             foreach (var elem in list.OrderBy(elem => elem.Key))
             {
                 Console.WriteLine($"{elem.Key} : {elem.Value}");
@@ -60,7 +60,7 @@ namespace TaskModule5
             Console.WriteLine();
 
             trie.Remove("as");
-            list = trie.ShowAll();
+            list = trie.ToIEnumerable();
             foreach (var elem in list.OrderBy(elem => elem.Key))
             {
                 Console.WriteLine($"{elem.Key} : {elem.Value}");
@@ -69,7 +69,7 @@ namespace TaskModule5
             Console.WriteLine();
 
             trie.RemoveWithChildren("1");
-            list = trie.ShowAll();
+            list = trie.ToIEnumerable();
             foreach (var elem in list.OrderBy(elem => elem.Key))
             {
                 Console.WriteLine($"{elem.Key} : {elem.Value}");
