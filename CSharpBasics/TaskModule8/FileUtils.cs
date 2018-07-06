@@ -56,7 +56,7 @@ namespace TaskModule8
                 string[] directories = Directory.GetDirectories(folderPath);
                 foreach (var dir in directories)
                 {
-                    RenameAll(dir, nameTemplate, recursive);
+                    RenameAll(dir, nameTemplate, recursive, overwrite);
                 }       
             }
         }
