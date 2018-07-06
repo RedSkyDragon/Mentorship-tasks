@@ -34,6 +34,15 @@ namespace TaskModule5
             trie.Add(new KeyValue("as", "as"));
             trie.AddRange(array);
 
+            try
+            {
+                trie.Add(new KeyValue("as", "as"));
+            }
+            catch (KeyReAddingException ex)
+            {
+                Console.WriteLine(ex.Message + $" Key: \"{ex.Value.Key}\", Value: \"{ex.Value.Value}\"");
+            }
+
             var list = trie.ShowAll();
             foreach (var elem in list.OrderBy(elem => elem.Key))
             {
@@ -43,6 +52,24 @@ namespace TaskModule5
             Console.WriteLine();
 
             list = trie.Find("asd");
+            foreach (var elem in list.OrderBy(elem => elem.Key))
+            {
+                Console.WriteLine($"{elem.Key} : {elem.Value}");
+            }
+
+            Console.WriteLine();
+
+            trie.Remove("as");
+            list = trie.ShowAll();
+            foreach (var elem in list.OrderBy(elem => elem.Key))
+            {
+                Console.WriteLine($"{elem.Key} : {elem.Value}");
+            }
+
+            Console.WriteLine();
+
+            trie.RemoveWithChildren("1");
+            list = trie.ShowAll();
             foreach (var elem in list.OrderBy(elem => elem.Key))
             {
                 Console.WriteLine($"{elem.Key} : {elem.Value}");
