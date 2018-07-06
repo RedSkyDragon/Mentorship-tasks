@@ -32,11 +32,6 @@ namespace TaskModule5
         /// </summary>
         public KeyValue Item { get; }
 
-        private Node FindNextNode(string key, int curr_length)
-        {
-            return _nextNodes.Find(item => item.Item.Key == key.Substring(0, curr_length));
-        }
-
         /// <summary>
         /// Recursive method to add new elem
         /// </summary>
@@ -96,30 +91,6 @@ namespace TaskModule5
         }
 
         /// <summary>
-        /// Finds elements of subtree, whose key is substring of requested key
-        /// </summary>
-        /// <param name="key">Requested key</param>
-        /// <param name="level">Current reqursive level (number of letters in current key)</param>
-        /// <param name="result">Result list of KeyValue elements</param>
-        private void Find(string key, int level, List<KeyValue> result)
-        {
-            if (Item.Value != null)
-            {
-                result.Add(Item);
-            }
-            if (Item.Key == key)
-            {
-                return;
-            }
-            var next = FindNextNode(key, level);
-            if (next != null)
-            {
-                next.Find(key, level + 1, result);
-            }
-            return;
-        }
-
-        /// <summary>
         /// Removes node in subtree with requested key
         /// </summary>
         /// <param name="key">Requested key</param>
@@ -172,5 +143,33 @@ namespace TaskModule5
             return false;
         }
 
+        private Node FindNextNode(string key, int curr_length)
+        {
+            return _nextNodes.Find(item => item.Item.Key == key.Substring(0, curr_length));
+        }
+
+        /// <summary>
+        /// Finds elements of subtree, whose key is substring of requested key
+        /// </summary>
+        /// <param name="key">Requested key</param>
+        /// <param name="level">Current reqursive level (number of letters in current key)</param>
+        /// <param name="result">Result list of KeyValue elements</param>
+        private void Find(string key, int level, List<KeyValue> result)
+        {
+            if (Item.Value != null)
+            {
+                result.Add(Item);
+            }
+            if (Item.Key == key)
+            {
+                return;
+            }
+            var next = FindNextNode(key, level);
+            if (next != null)
+            {
+                next.Find(key, level + 1, result);
+            }
+            return;
+        }
     }
 }

@@ -37,11 +37,6 @@ namespace TaskModule5
             _roots = elems._roots;
         }
 
-        private Node FindRoot(string key)
-        {
-            return _roots.Find(item => item.Item.Key == key.Substring(0, 1));
-        }
-
         /// <summary>
         /// Adds range of Key-Value elements to the trie-tree
         /// </summary>
@@ -123,6 +118,11 @@ namespace TaskModule5
             {
                 _roots.Remove(next);
             }
+        }
+
+        private Node FindRoot(string key)
+        {
+            return _roots.Find(item => item.Item.Key == key.Substring(0, 1));
         }
     }
 }
