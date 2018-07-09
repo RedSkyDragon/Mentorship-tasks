@@ -20,20 +20,16 @@ namespace TaskModule8
         /// <param name="overwrite">True if you want to rewrite existing file with this name</param>
         public static void Rename(string filePath, string newName, bool overwrite)
         {
-            if (File.Exists(filePath))
-            {
-                string newPath = Path.Combine(Path.GetDirectoryName(filePath), newName);
-                if (File.Exists(newPath) && !overwrite)
-                {
-                    return;
-                }
-                File.Copy(filePath, newPath, true);
-                File.Delete(filePath);
-            }
-            else
+            if (!File.Exists(filePath))
             {
                 throw new FileNotFoundException("File " + filePath + " does not exists.");
             }
+            string newPath = Path.Combine(Path.GetDirectoryName(filePath), newName);
+            if (!File.Exists(newPath) || overwrite)
+            {
+                File.Copy(filePath, newPath, true);
+                File.Delete(filePath);
+            }           
         }
         /// <summary>
         /// Renames all files in directory using a template
