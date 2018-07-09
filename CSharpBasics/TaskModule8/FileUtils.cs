@@ -31,6 +31,7 @@ namespace TaskModule8
                 File.Delete(filePath);
             }           
         }
+
         /// <summary>
         /// Renames all files in directory using a template
         /// </summary>
@@ -56,6 +57,7 @@ namespace TaskModule8
                 }       
             }
         }
+
         /// <summary>
         /// Delets files from directory or deletes file
         /// </summary>
@@ -63,33 +65,43 @@ namespace TaskModule8
         /// <param name="recursive">True if files in subdirectories also should be deleted</param>
         public static void Delete(string path, bool recursive = false)
         {
-            if (File.GetAttributes(path) == FileAttributes.Directory)
+            if (File.GetAttributes(path).HasFlag(FileAttributes.Directory))
             {
-                string[] files = Directory.GetFiles(path);
-                foreach (var file in files)
-                {
-                    File.Delete(file);
-                }
-                if (recursive)
-                {
-                    string[] directories = Directory.GetDirectories(path);
-                    foreach (var dir in directories)
-                    {
-                        Delete(dir, recursive);
-                        Directory.Delete(dir);
-                    }
-                }
+                DeleteDirectory(path, recursive);
             }
             else
             {
-                if (File.Exists(path))
+                DeleteFile(path);
+            }
+        }
+
+        private static void DeleteDirectory(string path, bool recursive)
+        {
+            string[] files = Directory.GetFiles(path);
+            foreach (var file in files)
+            {
+                File.Delete(file);
+            }
+            if (recursive)
+            {
+                string[] directories = Directory.GetDirectories(path);
+                foreach (var dir in directories)
                 {
-                    File.Delete(path);
+                    DeleteDirectory(dir, recursive);
+                    Directory.Delete(dir);
                 }
-                else
-                {
-                    throw new FileNotFoundException("File " + path + " does not exists.");
-                }
+            }
+        }
+
+        private static void DeleteFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            else
+            {
+                throw new FileNotFoundException("File " + path + " does not exists.");
             }
         }
     }
