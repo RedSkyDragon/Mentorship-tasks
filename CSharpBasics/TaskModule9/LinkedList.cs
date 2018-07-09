@@ -133,6 +133,10 @@ namespace TaskModule9
             {
                 _head = _head.Next;
                 _count--;
+                if (_head.Next == null)
+                {
+                    _tail = _head;
+                }
             }
             else
             {
