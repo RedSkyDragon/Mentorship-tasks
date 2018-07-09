@@ -21,6 +21,7 @@ namespace TaskModule9
         /// Creates an empty linked list
         /// </summary>
         public LinkedList() { }
+
         /// <summary>
         /// Creates linked list from IEnumerable collection
         /// </summary>
@@ -57,6 +58,7 @@ namespace TaskModule9
             }
             _count++;
         }
+
         /// <summary>
         /// Inserts new element at requested position of the list
         /// </summary>
@@ -66,7 +68,7 @@ namespace TaskModule9
         {
             if (position < 0 || position > _count)
             {
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException("Can not insert at the position more than count or less than zero.");
             }
             ListNode<T> newNode;
             if (position == 0)
@@ -90,6 +92,7 @@ namespace TaskModule9
             }
             _count++;                 
         }
+
         /// <summary>
         /// Removes element at the specified position of the list
         /// </summary>
@@ -98,7 +101,7 @@ namespace TaskModule9
         {
             if (position < 0 || position >= _count)
             {
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException("Can not remove at the position more or equals than count or less than zero.");
             }
             if (position == 0)
             {
@@ -123,13 +126,14 @@ namespace TaskModule9
             }
             _count--;
         }
+
         /// <summary>
         /// Removes the first occurrence of a specific element
         /// </summary>
         /// <param name="elem">Element to remove</param>
         public void Remove(T elem)
         {
-            if (_head.Info.Equals(elem))
+            if (_head.Value.Equals(elem))
             {
                 _head = _head.Next;
                 _count--;
@@ -141,7 +145,7 @@ namespace TaskModule9
             else
             {
                 ListNode<T> current = _head;
-                while (current.Next != null && !current.Next.Info.Equals(elem))
+                while (current.Next != null && !current.Next.Value.Equals(elem))
                 {
                     current = current.Next;
                 }
@@ -157,6 +161,7 @@ namespace TaskModule9
             }
             
         }
+
         /// <summary>
         /// Searches for an element at specified position of the list
         /// </summary>
@@ -166,15 +171,16 @@ namespace TaskModule9
         {
             if (position < 0 || position >= _count)
             {
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException("Can not search at the position more or equals than count or less than zero.");
             }
             var current = _head;
             while (position-- > 0)
             {
                 current = current.Next;
             }
-            return current.Info;
+            return current.Value;
         }
+
         /// <summary>
         /// Searches for an specified element of the list
         /// </summary>
@@ -184,13 +190,14 @@ namespace TaskModule9
         {
             int index = 0;
             var current = _head;
-            while (current != null && !current.Info.Equals(elem))
+            while (current != null && !current.Value.Equals(elem))
             {
                 current = current.Next;
                 index++;
             }
             return current == null ? -1 : index;
         }
+
         /// <summary>
         /// Determines whether element is in the list
         /// </summary>
@@ -200,18 +207,24 @@ namespace TaskModule9
         {
             return IndexOf(elem) != -1;
         }
+
         /// <inheritdoc/>
         public override string ToString()
         {
-            string result = "";
+            string result = string.Empty;
             var current = _head;
             while (current != null)
             {
-                result += current.Info.ToString() + " -> ";
+                result += current.Value.ToString();
                 current = current.Next;
+                if (current != null)
+                {
+                    result += " -> ";
+                }
             }
-            return result.TrimEnd(' ', '-', '>');
+            return result;
         }
+
         /// <summary>
         /// Clears the list
         /// </summary>
@@ -221,13 +234,14 @@ namespace TaskModule9
             _head = null;
             _tail = null;
         }
+
         /// <summary>
         /// Returns an enumerator that iterates through the list
         /// </summary>
         /// <returns>Enumerator</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            return new ListEnum<T>(_head);
+            return new ListEnumerator<T>(_head);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

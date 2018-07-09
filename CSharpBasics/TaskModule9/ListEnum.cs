@@ -11,53 +11,52 @@ namespace TaskModule9
     /// Enumerator class for Linked List
     /// </summary>
     /// <typeparam name="T">Type of list element</typeparam>
-    public class ListEnum<T> : IEnumerator<T>
+    public class ListEnumerator<T> : IEnumerator<T>
     {
         private ListNode<T> _head;
         private ListNode<T> _current;
+
         /// <summary>
         /// Constructor for list enumerator
         /// </summary>
         /// <param name="head">Head of the list</param>
-        public ListEnum(ListNode<T> head)
+        public ListEnumerator(ListNode<T> head)
         {
             _head = head;
-            _current = null;
+            Reset();
         }
+
         /// <summary>
         /// Returns current element of the collection
         /// </summary>
-        public T Current => _current.Info;
+        public T Current => _current.Value;
+
         /// <summary>
         /// Returns current element
         /// </summary>
         object IEnumerator.Current => Current;
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose() { }
+
         /// <summary>
         /// Advances the enumerator to the next element of the collection
         /// </summary>
         /// <returns>False if the end of the collection</returns>
         public bool MoveNext()
         {
-            if (_current == null)
-            {
-                _current = _head;
-            }
-            else
-            {
-                _current = _current.Next;
-            }
+            _current = _current?.Next;
             return _current != null;
         }
+
         /// <summary>
         /// Resets current position
         /// </summary>
         public void Reset()
         {
-            _current = null;
+            _current = new ListNode<T>(default(T), _head);
         }
     }
 }

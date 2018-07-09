@@ -19,13 +19,15 @@ namespace TaskModule9
         /// <param name="next">Next node</param>
         public ListNode(T info, ListNode<T> next = null)
         {
-            Info = info;
+            Value = info;
             Next = next;
         }
+
         /// <summary>
         /// Information in the node
         /// </summary>
-        public T Info { get; set; }
+        public T Value { get; set; }
+
         /// <summary>
         /// Next node of the list
         /// </summary>
