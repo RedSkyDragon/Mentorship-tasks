@@ -21,7 +21,8 @@ namespace FinalTask
         private static bool _overwrite = false;
 
         static void Main(string[] args)
-        {                      
+        {
+            CancellationTokenSource source = new CancellationTokenSource();
             try
             {               
                 if (args.Length > 0)
@@ -32,8 +33,7 @@ namespace FinalTask
                 {
                     PrintMenuAndGetValues();
                 }
-                Task search;
-                CancellationTokenSource source = new CancellationTokenSource();
+                Task search;                
                 Console.WriteLine("Press esc to stop");
                 if (string.IsNullOrEmpty(_savepath))
                 {
@@ -43,13 +43,17 @@ namespace FinalTask
                 {
                     search = SearchAndSaveTask(source);
                 }
-               Task.WhenAny(search, AcceptCancel(source)).Wait();
+                Task.WhenAny(search, AcceptCancel(source)).Wait();                
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                source.Cancel();
             }
-            Console.ReadLine();
+            finally
+            {
+                Console.ReadLine();
+            }
         }
         private static void ArgsToValues(string[] args)
         {
@@ -91,10 +95,14 @@ namespace FinalTask
                 ConsoleKeyInfo key;
                 do
                 {
-                    source.Token.ThrowIfCancellationRequested();
+                    if(source.Token.IsCancellationRequested)
+                    {
+                        return;
+                    }
                     key = Console.ReadKey(true);
                 }
                 while (key.Key != ConsoleKey.Escape);
+                Console.WriteLine("Search was stopped");
                 source.Cancel();
             });
         }

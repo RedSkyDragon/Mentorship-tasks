@@ -47,30 +47,13 @@ namespace FinalTask
                 foreach (var dir in directories)
                 {
                     files = files.Concat(Search(token, mask, dir, recursive));
-                    token.ThrowIfCancellationRequested();
+                    if (token.IsCancellationRequested)
+                    {
+                        return files;
+                    }
                 }
             }
             return files;
         }
-
-        //private static void SearchAndSaveRec(string mask, string startPath, string savePath, bool recursive = false)
-        //{
-        //    var filesToSave = Directory.EnumerateFiles(startPath, mask);
-        //    foreach (var file in filesToSave)
-        //    {
-        //        using (var save = new StreamWriter(savePath, append: true))
-        //        {
-        //            save.WriteLine(file);
-        //        }
-        //    }
-        //    if (recursive)
-        //    {
-        //        var directories = Directory.GetDirectories(startPath);
-        //        foreach (var dir in directories)
-        //        {
-        //            SearchAndSaveRec(mask, dir, savePath, recursive);
-        //        }
-        //    }
-        //}
     }
 }
