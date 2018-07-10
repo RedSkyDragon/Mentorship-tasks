@@ -21,10 +21,9 @@ namespace FinalTask
         /// <param name="recursive">True if search should be recursive</param>
         public static void SearchAndSave(string mask, string startPath, string savePath, bool recursive = false)
         {
-            using (StreamWriter saveFile = new StreamWriter(savePath))
-            {
-                SearchAndSaveRec(mask, startPath, saveFile, recursive);
-            }
+            File.Delete(savePath);
+            File.Create(savePath);
+            SearchAndSaveRec(mask, startPath, savePath, recursive);
         }
 
         /// <summary>
@@ -48,19 +47,22 @@ namespace FinalTask
             return files;
         }
 
-        private static void SearchAndSaveRec(string mask, string startPath, StreamWriter save, bool recursive = false)
+        private static void SearchAndSaveRec(string mask, string startPath, string savePath, bool recursive = false)
         {
             var filesToSave = Directory.EnumerateFiles(startPath, mask);
             foreach (var file in filesToSave)
             {
-                save.WriteLine(file);
+                using (var save = new StreamWriter(savePath, append: true))
+                {
+                    save.WriteLine(file);
+                }
             }
             if (recursive)
             {
                 var directories = Directory.GetDirectories(startPath);
                 foreach (var dir in directories)
                 {
-                    SearchAndSaveRec(mask, dir, save, recursive);
+                    SearchAndSaveRec(mask, dir, savePath, recursive);
                 }
             }
         }
