@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FinalTask
@@ -19,11 +20,15 @@ namespace FinalTask
         /// <param name="startPath">Start directory</param>
         /// <param name="savePath">Path to savefile</param>
         /// <param name="recursive">True if search should be recursive</param>
-        public static void SearchAndSave(string mask, string startPath, string savePath, bool recursive = false)
+        public static void SearchAndSave(CancellationToken token, string mask, string startPath, string savePath, bool recursive = false)
         {
-            File.Delete(savePath);
-            File.Create(savePath);
-            SearchAndSaveRec(mask, startPath, savePath, recursive);
+            using (var save = new StreamWriter(savePath, append: true))
+            {
+                foreach (var file in Search(token, mask, startPath, recursive))
+                {
+                    save.WriteLine(file);
+                }
+            }
         }
 
         /// <summary>
@@ -33,7 +38,7 @@ namespace FinalTask
         /// <param name="startPath">Start directory</param>
         /// <param name="recursive">True if search should be recursive</param>
         /// <returns></returns>
-        public static IEnumerable<string> Search(string mask, string startPath, bool recursive = false)
+        public static IEnumerable<string> Search(CancellationToken token, string mask, string startPath, bool recursive = false)
         {
             var files = Directory.EnumerateFiles(startPath, mask);
             if (recursive)
@@ -41,30 +46,31 @@ namespace FinalTask
                 var directories = Directory.GetDirectories(startPath);
                 foreach (var dir in directories)
                 {
-                    files = files.Concat(Search(mask, dir, recursive));
+                    files = files.Concat(Search(token, mask, dir, recursive));
+                    token.ThrowIfCancellationRequested();
                 }
             }
             return files;
         }
 
-        private static void SearchAndSaveRec(string mask, string startPath, string savePath, bool recursive = false)
-        {
-            var filesToSave = Directory.EnumerateFiles(startPath, mask);
-            foreach (var file in filesToSave)
-            {
-                using (var save = new StreamWriter(savePath, append: true))
-                {
-                    save.WriteLine(file);
-                }
-            }
-            if (recursive)
-            {
-                var directories = Directory.GetDirectories(startPath);
-                foreach (var dir in directories)
-                {
-                    SearchAndSaveRec(mask, dir, savePath, recursive);
-                }
-            }
-        }
+        //private static void SearchAndSaveRec(string mask, string startPath, string savePath, bool recursive = false)
+        //{
+        //    var filesToSave = Directory.EnumerateFiles(startPath, mask);
+        //    foreach (var file in filesToSave)
+        //    {
+        //        using (var save = new StreamWriter(savePath, append: true))
+        //        {
+        //            save.WriteLine(file);
+        //        }
+        //    }
+        //    if (recursive)
+        //    {
+        //        var directories = Directory.GetDirectories(startPath);
+        //        foreach (var dir in directories)
+        //        {
+        //            SearchAndSaveRec(mask, dir, savePath, recursive);
+        //        }
+        //    }
+        //}
     }
 }

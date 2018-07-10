@@ -33,31 +33,17 @@ namespace FinalTask
                     PrintMenuAndGetValues();
                 }
                 Task search;
+                CancellationTokenSource source = new CancellationTokenSource();
                 Console.WriteLine("Press esc to stop");
-                var acceptCancelKey = Task.Factory.StartNew(AcceptCancel);
-                if (_savepath == string.Empty)
+                if (string.IsNullOrEmpty(_savepath))
                 {
-                    search = Task.Factory.StartNew(SearchTask);
+                    search = SearchTask(source);
                 }
                 else
                 {
-                    search = Task.Factory.StartNew(SearchAndSaveTask);
+                    search = SearchAndSaveTask(source);
                 }
-
-                while (!acceptCancelKey.IsCompleted && !search.IsCompleted)
-                {
-                    search.Wait(1);
-                }
-
-                if (acceptCancelKey.IsCompleted && !search.IsCompleted)
-                {
-                    search.Wait(new CancellationToken());
-                    Console.WriteLine("Search was stopped");
-                }
-                else if (!acceptCancelKey.IsCompleted)
-                {
-                    acceptCancelKey.Wait(new CancellationToken());
-                }
+               Task.WhenAny(search, AcceptCancel(source)).Wait();
             }
             catch (Exception ex)
             {
@@ -98,30 +84,43 @@ namespace FinalTask
             while (File.Exists(_savepath) && !_overwrite);
         }
 
-        private static void AcceptCancel()
+        private static Task AcceptCancel(CancellationTokenSource source)
         {
-            ConsoleKeyInfo key;
-            do
+            return Task.Run(() =>
             {
-                key = Console.ReadKey(true);
-            }
-            while (key.Key != ConsoleKey.Escape);
+                ConsoleKeyInfo key;
+                do
+                {
+                    source.Token.ThrowIfCancellationRequested();
+                    key = Console.ReadKey(true);
+                }
+                while (key.Key != ConsoleKey.Escape);
+                source.Cancel();
+            });
         }
 
-        private static void SearchTask()
+        private static Task SearchTask(CancellationTokenSource source)
         {
-            var files = SearchUtils.Search(_mask, _pathFrom, _recursive);
-            foreach (var file in files)
+            return Task.Run(() =>
             {
-                Console.WriteLine(file);
-            }
-            Console.WriteLine("Search is done!");
+                var files = SearchUtils.Search(source.Token, _mask, _pathFrom, _recursive);
+                foreach (var file in files)
+                {
+                    Console.WriteLine(file);
+                }
+                Console.WriteLine("Search is done!");
+                source.Cancel();
+            });           
         }
 
-        private static void SearchAndSaveTask()
+        private static Task SearchAndSaveTask(CancellationTokenSource source)
         {
-            SearchUtils.SearchAndSave(_mask, _pathFrom, _savepath, _recursive);
-            Console.WriteLine("Search is done!");
+            return Task.Run(() =>
+            {
+                SearchUtils.SearchAndSave(source.Token, _mask, _pathFrom, _savepath, _recursive);
+                Console.WriteLine("Search is done!");
+                source.Cancel();
+            });          
         }
     }
 }
