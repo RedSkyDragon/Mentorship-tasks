@@ -33,8 +33,25 @@ namespace FinalTask
                 {
                     PrintMenuAndGetValues();
                 }
-                Task.WhenAny(AcceptCancel(source.Token), Search(source.Token)).Wait();
-                source.Cancel();
+                Console.WriteLine("Press esc to stop");
+                Task search = Search(source.Token);
+                do
+                {
+                    while (!Console.KeyAvailable && !search.IsCompleted)
+                    {
+                        Thread.Sleep(100);
+                    }
+                    if (search.IsCompleted)
+                    {
+                        break;
+                    }
+                }
+                while (Console.ReadKey().Key != ConsoleKey.Escape);
+                if (!search.IsCompleted)
+                {
+                    source.Cancel();
+                    Console.WriteLine("Search was stopped");
+                }                
             }
             catch (Exception ex)
             {
@@ -78,24 +95,6 @@ namespace FinalTask
                 }
             }
             while (File.Exists(_savepath) && !overwrite);
-        }
-
-        private static async Task AcceptCancel(CancellationToken token)
-        {
-            Console.WriteLine("Press esc to stop");
-            do
-            {
-                while (!Console.KeyAvailable)
-                {
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    await Task.Delay(100);
-                }
-            }
-            while (Console.ReadKey().Key != ConsoleKey.Escape);
-            Console.WriteLine("Search was stopped");
         }
 
         private static async Task Search(CancellationToken token)
