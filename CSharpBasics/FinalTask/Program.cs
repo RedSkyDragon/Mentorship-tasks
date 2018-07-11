@@ -41,12 +41,8 @@ namespace FinalTask
                     {
                         Thread.Sleep(100);
                     }
-                    if (search.IsCompleted)
-                    {
-                        break;
-                    }
                 }
-                while (Console.ReadKey().Key != ConsoleKey.Escape);
+                while (!search.IsCompleted && Console.ReadKey().Key != ConsoleKey.Escape);
                 if (!search.IsCompleted)
                 {
                     source.Cancel();
