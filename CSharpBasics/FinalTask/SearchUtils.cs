@@ -32,6 +32,23 @@ namespace FinalTask
         }
 
         /// <summary>
+        /// Returns Task which searches for files that match the mask and saves them to file
+        /// </summary>
+        /// <param name="token">Token that stops the search</param>
+        /// <param name="mask">Mask for files or filename</param>
+        /// <param name="startPath">Start directory</param>
+        /// <param name="savePath">Path to savefile</param>
+        /// <param name="recursive">True if search should be recursive</param>
+        /// <returns>Task for search</returns>
+        public static async Task SearchTask(CancellationToken token, StreamWriter saveStream, string mask, string startPath, bool recursive = false)
+        {
+            await Task.Run(() =>
+            {
+                SearchUtils.Search(token, saveStream, mask, startPath, recursive);
+            });
+        }
+
+        /// <summary>
         /// Searches for files that match the mask and returns IEnumerable collection of filenames
         /// </summary>
         /// <param name="mask">Mask for files or filename</param>
@@ -54,23 +71,6 @@ namespace FinalTask
                 }
             }
             return files;
-        }
-
-        /// <summary>
-        /// Returns Task which searches for files that match the mask and saves them to file
-        /// </summary>
-        /// <param name="token">Token that stops the search</param>
-        /// <param name="mask">Mask for files or filename</param>
-        /// <param name="startPath">Start directory</param>
-        /// <param name="savePath">Path to savefile</param>
-        /// <param name="recursive">True if search should be recursive</param>
-        /// <returns>Task for search</returns>
-        public static async Task SearchTask(CancellationToken token, StreamWriter saveStream, string mask, string startPath, bool recursive = false)
-        {
-            await Task.Run(() =>
-            {
-                SearchUtils.Search(token, saveStream, mask, startPath, recursive);
-            });
         }
     }
 }
