@@ -20,13 +20,13 @@ namespace FinalTask
         /// <param name="startPath">Start directory</param>
         /// <param name="savePath">Path to savefile</param>
         /// <param name="recursive">True if search should be recursive</param>
-        public static void SearchAndSave(CancellationToken token, string mask, string startPath, string savePath, bool recursive = false)
+        public static void Search(CancellationToken token, StreamWriter saveStream, string mask, string startPath, bool recursive = false)
         {
-            using (var save = new StreamWriter(savePath, append: true))
+            using (saveStream)
             {
                 foreach (var file in Search(token, mask, startPath, recursive))
                 {
-                    save.WriteLine(file);
+                    saveStream.WriteLine(file);
                 }
             }
         }
@@ -38,7 +38,7 @@ namespace FinalTask
         /// <param name="startPath">Start directory</param>
         /// <param name="recursive">True if search should be recursive</param>
         /// <returns>IEnumerable collection of found filenames</returns>
-        public static IEnumerable<string> Search(CancellationToken token, string mask, string startPath, bool recursive = false)
+        private static IEnumerable<string> Search(CancellationToken token, string mask, string startPath, bool recursive = false)
         {
             var files = Directory.EnumerateFiles(startPath, mask);
             if (recursive)
@@ -57,22 +57,6 @@ namespace FinalTask
         }
 
         /// <summary>
-        /// Returns Task which searches for files that match the mask and returns with IEnumerable collection of filenames
-        /// </summary>
-        /// <param name="token">Token that stops the search</param>
-        /// <param name="mask">Mask for files or filename</param>
-        /// <param name="startPath">Start directory</param>
-        /// <param name="recursive">True if search should be recursive</param>
-        /// <returns>Task for search which returns IEnumerable collection of found filenames</returns>
-        public static async Task<IEnumerable<string>> SearchTask(CancellationToken token, string mask, string startPath, bool recursive = false)
-        {
-            return await Task.Run(() =>
-            {
-                return SearchUtils.Search(token, mask, startPath, recursive); ;
-            });
-        }
-
-        /// <summary>
         /// Returns Task which searches for files that match the mask and saves them to file
         /// </summary>
         /// <param name="token">Token that stops the search</param>
@@ -81,11 +65,11 @@ namespace FinalTask
         /// <param name="savePath">Path to savefile</param>
         /// <param name="recursive">True if search should be recursive</param>
         /// <returns>Task for search</returns>
-        public static async Task SearchAndSaveTask(CancellationToken token, string mask, string startPath, string savePath, bool recursive = false)
+        public static async Task SearchTask(CancellationToken token, StreamWriter saveStream, string mask, string startPath, bool recursive = false)
         {
             await Task.Run(() =>
             {
-                SearchUtils.SearchAndSave(token, mask, startPath, savePath, recursive);
+                SearchUtils.Search(token, saveStream, mask, startPath, recursive);
             });
         }
     }

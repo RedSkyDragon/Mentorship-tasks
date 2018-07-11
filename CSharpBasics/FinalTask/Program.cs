@@ -19,7 +19,6 @@ namespace FinalTask
         private static string _pathFrom = string.Empty;
         private static bool _recursive = false;
         private static string _savepath = string.Empty;
-        private static bool _showResult;
        
         static void Main(string[] args)
         {
@@ -34,8 +33,8 @@ namespace FinalTask
                 {
                     PrintMenuAndGetValues();
                 }
-                _showResult = string.IsNullOrEmpty(_savepath);           
                 Task.WhenAny(AcceptCancel(source.Token), Search(source.Token)).Wait();
+                source.Cancel();
             }
             catch (Exception ex)
             {
@@ -43,7 +42,6 @@ namespace FinalTask
             }
             finally
             {
-                source.Cancel();
                 Console.ReadLine();
             }
         }
@@ -56,7 +54,6 @@ namespace FinalTask
             if (args.Length > 2)
             {
                 _savepath = _recursive && args.Length == 4 ? args[3] : args[2];
-
             }
         }
 
@@ -85,44 +82,27 @@ namespace FinalTask
 
         private static async Task AcceptCancel(CancellationToken token)
         {
-            await Task.Run(() =>
+            Console.WriteLine("Press esc to stop");
+            do
             {
-                Console.WriteLine("Press esc to stop");
-                ConsoleKeyInfo key;
-                do
+                while (!Console.KeyAvailable)
                 {
-                    if(token.IsCancellationRequested)
+                    if (token.IsCancellationRequested)
                     {
-                        break;
+                        return;
                     }
-                    key = Console.ReadKey(true);
+                    await Task.Delay(100);
                 }
-                while (key.Key != ConsoleKey.Escape);
-                if (!token.IsCancellationRequested)
-                {
-                    Console.WriteLine("Search was stopped");
-                }
-            });
+            }
+            while (Console.ReadKey().Key != ConsoleKey.Escape);
+            Console.WriteLine("Search was stopped");
         }
 
         private static async Task Search(CancellationToken token)
         {
-            if (_showResult)
-            {
-                var result = await SearchUtils.SearchTask(token, _mask, _pathFrom, _recursive);
-                foreach (var file in result)
-                {
-                    if (token.IsCancellationRequested)
-                    {
-                        break;
-                    }
-                    Console.WriteLine(file);
-                }
-            }
-            else
-            {
-                await SearchUtils.SearchAndSaveTask(token, _mask, _pathFrom,_savepath, _recursive);                    
-            }
+            bool showResult = string.IsNullOrEmpty(_savepath);
+            StreamWriter streamWriter = showResult ? new StreamWriter(Console.OpenStandardOutput()) : new StreamWriter(_savepath);
+            await SearchUtils.SearchTask(token, streamWriter, _mask, _pathFrom, _recursive);
             if (!token.IsCancellationRequested)
             {
                 Console.WriteLine("Search is done!");
