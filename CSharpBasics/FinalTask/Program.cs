@@ -6,6 +6,7 @@
   As a sub task to consider: Can you provide a way to stop a search
 */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,13 +19,13 @@ namespace FinalTask
         private static string _pathFrom = string.Empty;
         private static bool _recursive = false;
         private static string _savepath = string.Empty;
-        private static bool _overwrite = false;
-
+        private static bool _showResult;
+       
         static void Main(string[] args)
         {
             CancellationTokenSource source = new CancellationTokenSource();
             try
-            {               
+            {
                 if (args.Length > 0)
                 {
                     ArgsToValues(args);
@@ -33,33 +34,25 @@ namespace FinalTask
                 {
                     PrintMenuAndGetValues();
                 }
-                Task search;                
-                Console.WriteLine("Press esc to stop");
-                if (string.IsNullOrEmpty(_savepath))
-                {
-                    search = SearchTask(source);
-                }
-                else
-                {
-                    search = SearchAndSaveTask(source);
-                }
-                Task.WhenAny(search, AcceptCancel(source)).Wait();                
+                _showResult = string.IsNullOrEmpty(_savepath);           
+                Task.WhenAny(AcceptCancel(source.Token), Search(source.Token)).Wait();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                source.Cancel();
             }
             finally
             {
+                source.Cancel();
                 Console.ReadLine();
             }
         }
+
         private static void ArgsToValues(string[] args)
         {
             _mask = args[0];
             _pathFrom = args[1];
-            _recursive = args.Length > 2 ? args[2] == "\r" : false ;
+            _recursive = args.Length > 2 ? args[2] == "\r" : false;
             if (args.Length > 2)
             {
                 _savepath = _recursive && args.Length == 4 ? args[3] : args[2];
@@ -75,6 +68,8 @@ namespace FinalTask
             _pathFrom = Console.ReadLine();
             Console.WriteLine("Should search be recursive? y - yes");
             _recursive = Console.ReadLine().ToLower() == "y";
+
+            bool overwrite = false;
             do
             {
                 Console.WriteLine("Please specify filepath where search results must be saved (if empty results would be printed to console):");
@@ -82,53 +77,56 @@ namespace FinalTask
                 if (File.Exists(_savepath))
                 {
                     Console.WriteLine(_savepath + " has already exists. Do you want to overwrite it? y - yes");
-                    _overwrite = Console.ReadLine().ToLower() == "y";
+                    overwrite = Console.ReadLine().ToLower() == "y";
                 }
             }
-            while (File.Exists(_savepath) && !_overwrite);
+            while (File.Exists(_savepath) && !overwrite);
         }
 
-        private static Task AcceptCancel(CancellationTokenSource source)
+        private static async Task AcceptCancel(CancellationToken token)
         {
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
+                Console.WriteLine("Press esc to stop");
                 ConsoleKeyInfo key;
                 do
                 {
-                    if(source.Token.IsCancellationRequested)
+                    if(token.IsCancellationRequested)
                     {
-                        return;
+                        break;
                     }
                     key = Console.ReadKey(true);
                 }
                 while (key.Key != ConsoleKey.Escape);
-                Console.WriteLine("Search was stopped");
-                source.Cancel();
+                if (!token.IsCancellationRequested)
+                {
+                    Console.WriteLine("Search was stopped");
+                }
             });
         }
 
-        private static Task SearchTask(CancellationTokenSource source)
+        private static async Task Search(CancellationToken token)
         {
-            return Task.Run(() =>
+            if (_showResult)
             {
-                var files = SearchUtils.Search(source.Token, _mask, _pathFrom, _recursive);
-                foreach (var file in files)
+                var result = await SearchUtils.SearchTask(token, _mask, _pathFrom, _recursive);
+                foreach (var file in result)
                 {
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     Console.WriteLine(file);
                 }
-                Console.WriteLine("Search is done!");
-                source.Cancel();
-            });           
-        }
-
-        private static Task SearchAndSaveTask(CancellationTokenSource source)
-        {
-            return Task.Run(() =>
+            }
+            else
             {
-                SearchUtils.SearchAndSave(source.Token, _mask, _pathFrom, _savepath, _recursive);
+                await SearchUtils.SearchAndSaveTask(token, _mask, _pathFrom,_savepath, _recursive);                    
+            }
+            if (!token.IsCancellationRequested)
+            {
                 Console.WriteLine("Search is done!");
-                source.Cancel();
-            });          
+            }
         }
     }
 }
