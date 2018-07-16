@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IncomeAndExpenses.Models", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IncomeAndExpenses.DataAccess", "IncomeAndExpenses.DataAccess\IncomeAndExpenses.DataAccess.csproj", "{FA144432-7EAC-464D-9D53-E1C95E305148}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IncomeAndExpenses.Web", "IncomeAndExpenses.Web\IncomeAndExpenses.Web.csproj", "{22E4244F-8385-4B56-B084-55946CF5C4AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FA144432-7EAC-464D-9D53-E1C95E305148}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA144432-7EAC-464D-9D53-E1C95E305148}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA144432-7EAC-464D-9D53-E1C95E305148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22E4244F-8385-4B56-B084-55946CF5C4AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22E4244F-8385-4B56-B084-55946CF5C4AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22E4244F-8385-4B56-B084-55946CF5C4AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22E4244F-8385-4B56-B084-55946CF5C4AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
