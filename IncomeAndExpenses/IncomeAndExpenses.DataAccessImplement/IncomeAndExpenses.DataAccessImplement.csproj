@@ -55,13 +55,13 @@
   <ItemGroup>
     <Compile Include="InAndExDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="UnitOfWork.cs" />
-    <Compile Include="UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IncomeAndExpenses.Models\IncomeAndExpenses.Models.csproj">
-      <Project>{9bf4356a-7b87-4b28-8aa0-e358a63db9e2}</Project>
-      <Name>IncomeAndExpenses.Models</Name>
+    <ProjectReference Include="..\IncomeAndExpenses.DataAccessInterface\IncomeAndExpenses.DataAccessInterface.csproj">
+      <Project>{654d5e38-72bb-430a-89c1-4294e017dde6}</Project>
+      <Name>IncomeAndExpenses.DataAccessInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

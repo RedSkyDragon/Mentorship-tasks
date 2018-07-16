@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace IncomeAndExpenses.Models
+namespace IncomeAndExpenses.DataAccessInterface
 {
-    public class User 
+    public class User : Entity<string>
     {
         public User()
         {
@@ -10,7 +10,6 @@ namespace IncomeAndExpenses.Models
             IncomeTypes = new List<IncomeType>();
         }
 
-        public string Id { get; set; }
         public string UserName { get; set; }
 
         public ICollection<ExpenseType> ExpenseTypes { get; set; }

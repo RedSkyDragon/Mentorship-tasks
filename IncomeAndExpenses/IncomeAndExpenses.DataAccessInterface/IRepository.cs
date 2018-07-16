@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace IncomeAndExpenses.Models
+namespace IncomeAndExpenses.DataAccessInterface
 {
-    public interface IRepository<TId, T> where T : class
+    public interface IRepository<TId, T> where T : Entity<TId>
     {
         IEnumerable<T> GetAll();
 

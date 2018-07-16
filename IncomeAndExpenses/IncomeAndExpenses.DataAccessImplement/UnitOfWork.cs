@@ -1,18 +1,12 @@
-﻿using IncomeAndExpenses.Models;
+﻿using IncomeAndExpenses.DataAccessInterface;
 
-namespace IncomeAndExpenses.Web.Models
+
+namespace IncomeAndExpenses.DataAccessImplement
 {
     public class UnitOfWork : IUnitOfWork
     {
         private InAndExDbContext _db = new InAndExDbContext();
         private bool _disposed = false;
-
-        public UnitOfWork()
-        {
-            Users = new UserRepository(_db);
-        }
-
-        public UserRepository Users { get; }
 
         public void Save()
         {
@@ -29,6 +23,11 @@ namespace IncomeAndExpenses.Web.Models
                 }
                 _disposed = true;
             }
+        }
+
+        public IRepository<TId, T> Repository<TId, T>() where T : Entity<TId>
+        {
+            return new Repository<TId, T>(_db);
         }
 
         public void Dispose()

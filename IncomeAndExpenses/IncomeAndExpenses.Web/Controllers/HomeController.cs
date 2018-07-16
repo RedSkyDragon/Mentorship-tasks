@@ -1,46 +1,40 @@
-﻿using DotNetOpenAuth.GoogleOAuth2;
-using IncomeAndExpenses.Models;
+﻿using IncomeAndExpenses.DataAccessImplement;
+using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
-using Microsoft.AspNet.Membership.OpenAuth;
-using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
-        private UnitOfWork _unitOfWork;
+        private IUnitOfWork _unitOfWork;
 
         public HomeController()
         {
             _unitOfWork = new UnitOfWork();
         }
 
-        [Authorize]
         public ActionResult Index()
         {
-            return View();
-        }
-
-        [Authorize]
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        [Authorize]
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            var user = _unitOfWork.Repository<string, User>().Get(User.Identity.Name);
+            ViewBag.UserName = user.UserName;
+            var iTypes = _unitOfWork.Repository<int, IncomeType>().GetAll().Where(it => it.UserId == user.Id);
+            var eTypes = _unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == user.Id);
+            List<Income> incomes = new List<Income>();
+            List<Expense> expenses = new List<Expense>();
+            foreach (var type in  iTypes)
+            {
+                incomes = incomes.Concat(type.Incomes).ToList();
+            }
+            foreach (var type in eTypes)
+            {
+                expenses = expenses.Concat(type.Expenses).ToList();
+            }
+            var homeViewModel = new HomeIndexViewModel { User = user, Expenses = expenses, Incomes = incomes };
+            return View(homeViewModel);
         }
 
         protected override void Dispose(bool disposing)

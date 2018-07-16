@@ -1,18 +1,16 @@
 namespace IncomeAndExpenses.Web.Migrations
 {
-    using System;
-    using System.Data.Entity;
+    using IncomeAndExpenses.DataAccessImplement;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<IncomeAndExpenses.Web.Models.InAndExDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<InAndExDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(IncomeAndExpenses.Web.Models.InAndExDbContext context)
+        protected override void Seed(InAndExDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

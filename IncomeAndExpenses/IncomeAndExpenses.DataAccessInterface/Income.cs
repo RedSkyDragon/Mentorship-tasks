@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace IncomeAndExpenses.Models
+namespace IncomeAndExpenses.DataAccessInterface
 {
-    public class Income
+    public class Income : Entity<int>
     {
-        public int Id { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public string Comment { get; set; }

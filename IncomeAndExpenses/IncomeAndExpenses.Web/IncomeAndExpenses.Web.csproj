@@ -19,8 +19,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44323</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -180,16 +179,17 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ExpensesController.cs" />
+    <Compile Include="Controllers\ExpenseTypesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IncomesController.cs" />
+    <Compile Include="Controllers\IncomeTypesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201807131249175_DBCreation.cs" />
-    <Compile Include="Migrations\201807131249175_DBCreation.Designer.cs">
-      <DependentUpon>201807131249175_DBCreation.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ExternalLoginResult.cs" />
+    <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -259,8 +259,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />
@@ -273,6 +271,22 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Shared\_LayoutNotAuth.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\ExpenseTypes\Edit.cshtml" />
+    <Content Include="Views\ExpenseTypes\Delete.cshtml" />
+    <Content Include="Views\ExpenseTypes\Index.cshtml" />
+    <Content Include="Views\IncomeTypes\Index.cshtml" />
+    <Content Include="Views\ExpenseTypes\Create.cshtml" />
+    <Content Include="Views\IncomeTypes\Edit.cshtml" />
+    <Content Include="Views\IncomeTypes\Create.cshtml" />
+    <Content Include="Views\IncomeTypes\Delete.cshtml" />
+    <Content Include="Views\Expenses\Create.cshtml" />
+    <Content Include="Views\Expenses\Delete.cshtml" />
+    <Content Include="Views\Expenses\Edit.cshtml" />
+    <Content Include="Views\Expenses\Details.cshtml" />
+    <Content Include="Views\Incomes\Create.cshtml" />
+    <Content Include="Views\Incomes\Edit.cshtml" />
+    <Content Include="Views\Incomes\Details.cshtml" />
+    <Content Include="Views\Incomes\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -287,19 +301,14 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IncomeAndExpenses.DataAccess\IncomeAndExpenses.DataAccess.csproj">
+    <ProjectReference Include="..\IncomeAndExpenses.DataAccessImplement\IncomeAndExpenses.DataAccessImplement.csproj">
       <Project>{fa144432-7eac-464d-9d53-e1c95e305148}</Project>
-      <Name>IncomeAndExpenses.DataAccess</Name>
+      <Name>IncomeAndExpenses.DataAccessImplement</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IncomeAndExpenses.Models\IncomeAndExpenses.Models.csproj">
-      <Project>{9bf4356a-7b87-4b28-8aa0-e358a63db9e2}</Project>
-      <Name>IncomeAndExpenses.Models</Name>
+    <ProjectReference Include="..\IncomeAndExpenses.DataAccessInterface\IncomeAndExpenses.DataAccessInterface.csproj">
+      <Project>{654d5e38-72bb-430a-89c1-4294e017dde6}</Project>
+      <Name>IncomeAndExpenses.DataAccessInterface</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201807131249175_DBCreation.resx">
-      <DependentUpon>201807131249175_DBCreation.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
