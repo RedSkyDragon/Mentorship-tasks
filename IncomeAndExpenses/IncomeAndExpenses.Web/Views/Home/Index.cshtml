@@ -9,7 +9,7 @@
         <p>
             @Html.ActionLink("Create New", "Create", "Expenses")
         </p>
-        <table class="table text-center">
+        <table class="table">
             <tr>
                 <th>
                     Amount
@@ -22,8 +22,9 @@
                 </th>
                 <th></th>
             </tr>
-
-            @foreach (var item in Model.Expenses)
+        @if (Model.Expenses.Count() > 0)
+        { 
+            foreach (var item in Model.Expenses)
             {
                 <tr>
                     <td>
@@ -42,6 +43,13 @@
                     </td>
                 </tr>
             }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">It seems there is nothing here...</td>
+            </tr>
+        }
 
         </table>
     </div>
@@ -63,8 +71,9 @@
                 </th>
                 <th></th>
             </tr>
-
-            @foreach (var item in Model.Incomes)
+        @if (Model.Incomes.Count() > 0)
+        { 
+            foreach (var item in Model.Incomes)
             {
                 <tr>
                     <td>
@@ -83,6 +92,13 @@
                     </td>
                 </tr>
             }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">It seems there is nothing here...</td>
+            </tr>
+        }
 
         </table>
     </div>

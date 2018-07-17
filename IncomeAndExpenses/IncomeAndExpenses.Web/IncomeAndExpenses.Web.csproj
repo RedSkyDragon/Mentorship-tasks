@@ -188,6 +188,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\DeleteExpenseTypeViewModel.cs" />
+    <Compile Include="Models\DeleteIncomeTypeViewModel.cs" />
     <Compile Include="Models\ExpenseViewModel.cs" />
     <Compile Include="Models\ExternalLoginResult.cs" />
     <Compile Include="Models\HomeViewModel.cs" />

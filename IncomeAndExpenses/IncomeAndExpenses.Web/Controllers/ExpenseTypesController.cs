@@ -1,5 +1,6 @@
 ﻿using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.Web.Models;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -74,7 +75,7 @@ namespace IncomeAndExpenses.Web.Controllers
         public ActionResult Delete(int id)
         {
             ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
-            return View(_unitOfWork.Repository<int, ExpenseType>().Get(id));
+            return View(CreateDeleteViewModel(id));
         }
 
         // POST: ExpenseTypes/Delete/1
@@ -83,13 +84,33 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             try
             {
-                _unitOfWork.Repository<int, ExpenseType>().Delete(id);
+                var str = collection["DeleteAll"];
+                bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
+                var expenses = _unitOfWork.Repository<int, Expense>().GetAll().Where(ex => ex.ExpenseTypeId == id);
+                if (delAll)
+                {
+                    foreach (var expense in expenses)
+                    {
+                        _unitOfWork.Repository<int, Expense>().Delete(expense.Id);
+                    }
+                    _unitOfWork.Repository<int, ExpenseType>().Delete(id);
+                }
+                else
+                {
+                    int newTypeId = int.Parse(collection["ReplacementTypeId"]);                    
+                    foreach(var expense in expenses)
+                    {
+                        var upd = new Expense { Id = expense.Id, Amount = expense.Amount, Comment = expense.Comment, Date = expense.Date, ExpenseTypeId = newTypeId };
+                        _unitOfWork.Repository<int, Expense>().Update(upd);
+                    }
+                    _unitOfWork.Repository<int, ExpenseType>().Delete(id);
+                }
                 _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View(_unitOfWork.Repository<int, ExpenseType>().Get(id));
+                return View(CreateDeleteViewModel(id));
             }
         }
 
@@ -97,6 +118,15 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             _unitOfWork.Dispose();
             base.Dispose(disposing);
+        }
+
+        private DeleteExpenseTypeViewModel CreateDeleteViewModel(int id)
+        {
+            var type = _unitOfWork.Repository<int, ExpenseType>().Get(id);
+            var replace = _unitOfWork.Repository<int, ExpenseType>().GetAll()
+                .Where(t => t.UserId == type.UserId && t.Id != type.Id)
+                .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });
+            return new DeleteExpenseTypeViewModel { ExpenseType = type, ReplacementTypes = replace };
         }
     }
 }
