@@ -1,12 +1,15 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace IncomeAndExpenses.DataAccessInterface
 {
     public class Expense : Entity<int>
     {
         public decimal Amount { get; set; }
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:MM/dd/yy}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
         public string Comment { get; set; }
+
         public int ExpenseTypeId { get; set; }
         public virtual ExpenseType ExpenseType { get; set; }
     }
