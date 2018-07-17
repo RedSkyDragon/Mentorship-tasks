@@ -8,6 +8,6 @@ namespace IncomeAndExpenses.DataAccessInterface
         public DateTime Date { get; set; }
         public string Comment { get; set; }
         public int ExpenseTypeId { get; set; }
-        public ExpenseType ExpenseType { get; set; }
+        public virtual ExpenseType ExpenseType { get; set; }
     }
 }

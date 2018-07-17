@@ -17,6 +17,7 @@ namespace IncomeAndExpenses.Web.Controllers
             _unitOfWork = new UnitOfWork();
         }
 
+        // GET Home
         public ActionResult Index()
         {
             var user = _unitOfWork.Repository<string, User>().Get(User.Identity.Name);

@@ -188,8 +188,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ExpenseViewModel.cs" />
     <Compile Include="Models\ExternalLoginResult.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
+    <Compile Include="Models\IncomeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

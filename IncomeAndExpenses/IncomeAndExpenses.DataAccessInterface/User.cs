@@ -12,7 +12,7 @@ namespace IncomeAndExpenses.DataAccessInterface
 
         public string UserName { get; set; }
 
-        public ICollection<ExpenseType> ExpenseTypes { get; set; }
-        public ICollection<IncomeType> IncomeTypes { get; set; }            
+        public virtual ICollection<ExpenseType> ExpenseTypes { get; set; }
+        public virtual ICollection<IncomeType> IncomeTypes { get; set; }            
     }
 }

@@ -39,10 +39,10 @@ namespace IncomeAndExpenses.DataAccessImplement
 
         public void Update(T item)
         {
-            var aitem = _db.Set<T>().Find(item.Id);
+            var last_vers = _db.Set<T>().Find(item.Id);
             if (item != null)
             {
-                _db.Entry(item).CurrentValues.SetValues(item);
+                _db.Entry(last_vers).CurrentValues.SetValues(item);
             }
         }
     }

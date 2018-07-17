@@ -9,6 +9,6 @@ namespace IncomeAndExpenses.DataAccessInterface
         public string Comment { get; set; }
 
         public int IncomeTypeId { get; set; }
-        public IncomeType IncomeType { get; set; }
+        public virtual IncomeType IncomeType { get; set; }
     }
 }

@@ -29,8 +29,8 @@
             @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            <a href=@Url.Action("Edit", new { id = item.Id })><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;
+            <a href=@Url.Action("Delete", new { id = item.Id })><i class="fas fa-trash"></i></a>
         </td>
     </tr>
 }
