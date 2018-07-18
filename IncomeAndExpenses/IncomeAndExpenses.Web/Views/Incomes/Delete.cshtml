@@ -1,4 +1,4 @@
-﻿@model IncomeAndExpenses.DataAccessInterface.Income
+﻿@model IncomeAndExpenses.Web.Models.IncomeViewModel
 
 @{
     ViewBag.Title = "Delete";
@@ -36,11 +36,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.IncomeType.Name)
+            @Html.DisplayNameFor(model => model.IncomeTypeName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.IncomeType.Name)
+            @Html.DisplayFor(model => model.IncomeTypeName)
         </dd>
 
     </dl>

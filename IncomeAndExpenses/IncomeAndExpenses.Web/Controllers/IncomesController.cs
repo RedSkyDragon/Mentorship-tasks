@@ -1,4 +1,5 @@
-﻿using IncomeAndExpenses.DataAccessImplement;
+﻿using AutoMapper;
+using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
 using System;
@@ -21,68 +22,79 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: Incomes/Create
         public ActionResult Create()
         {
-            ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
-            return View(CreateIncomeViewModel(null));
+            return View(CreateIncomeCUViewModel(null));
         }
 
         // POST: Incomes/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(IncomeCUViewModel incomeVM)
         {
-            var income = new Income { Amount = decimal.Parse(collection["Income.Amount"]), Date = DateTime.Parse(collection["Income.Date"]), Comment = collection["Income.Comment"], IncomeTypeId = int.Parse(collection["Income.IncomeTypeId"]) };
-            try
-            {
-                _unitOfWork.Repository<int, Income>().Create(income);
-                _unitOfWork.Save();
-                return RedirectToAction("Index", "Home");
+            Income income = ModelFromViewModel(incomeVM.Income);
+            if (ModelState.IsValid)
+            {               
+                try
+                {
+                    _unitOfWork.Repository<int, Income>().Create(income);
+                    _unitOfWork.Save();
+                    return RedirectToAction("Index", "Home");
+                }
+                catch
+                {
+                    return View(CreateIncomeCUViewModel(income));
+                }
             }
-            catch
+            else
             {
-                return View(CreateIncomeViewModel(income));
+                return View(CreateIncomeCUViewModel(income));
             }
         }
 
         // GET: Incomes/Edit/1
         public ActionResult Edit(int id)
         {
-            ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
-            return View(CreateIncomeViewModel(id));
+            return View(CreateIncomeCUViewModel(id));
         }
 
         // POST: Incomes/Edit/1
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, IncomeCUViewModel incomeVM)
         {
-            var income = new Income { Id = id, Amount = decimal.Parse(collection["Income.Amount"]), Date = DateTime.Parse(collection["Income.Date"]), Comment = collection["Income.Comment"], IncomeTypeId = int.Parse(collection["Income.IncomeTypeId"]) };
-            try
+            Income income = ModelFromViewModel(incomeVM.Income);
+            if (ModelState.IsValid)
             {
-                _unitOfWork.Repository<int, Income>().Update(income);
-                _unitOfWork.Save();
-                return RedirectToAction("Index", "Home");
+                try
+                {
+                    _unitOfWork.Repository<int, Income>().Update(income);
+                    _unitOfWork.Save();
+                    return RedirectToAction("Index", "Home");
+                }
+                catch
+                {
+                    return View(CreateIncomeCUViewModel(income));
+                }
             }
-            catch
+            else
             {
-                return View(CreateIncomeViewModel(income));
+                return View(CreateIncomeCUViewModel(income));
             }
+
         }
 
         // GET: Incomes/Details/1
         public ActionResult Details(int id)
         {
-            ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
-            return View(_unitOfWork.Repository<int, Income>().Get(id));
+            return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
         }
 
         // GET: Incomes/Delete/1
         public ActionResult Delete(int id)
         {
-            ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
-            return View(_unitOfWork.Repository<int, Income>().Get(id));
+            return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
         }
 
         // POST: Incomes/Delete/1
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, IncomeViewModel incomeVM)
         {
             try
             {
@@ -92,7 +104,7 @@ namespace IncomeAndExpenses.Web.Controllers
             }
             catch
             {
-                return View(_unitOfWork.Repository<int, Income>().Get(id));
+                return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
             }
         }
 
@@ -102,22 +114,35 @@ namespace IncomeAndExpenses.Web.Controllers
             base.Dispose(disposing);
         }
 
-        private IncomeViewModel CreateIncomeViewModel(int id)
+        private IncomeCUViewModel CreateIncomeCUViewModel(int id)
         {
             Income income = _unitOfWork.Repository<int, Income>().Get(id);
-            return new IncomeViewModel { Income = income, IncomeTypes = CreateTypesList(income) };
+            return new IncomeCUViewModel { Income = ViewModelFromModel(income), IncomeTypes = CreateTypesList(income) };
         }
 
-        private IncomeViewModel CreateIncomeViewModel(Income income)
-        {
-            return new IncomeViewModel { Income = income, IncomeTypes = CreateTypesList(income) };
+        private IncomeCUViewModel CreateIncomeCUViewModel(Income income)
+        {            
+            return new IncomeCUViewModel { Income = ViewModelFromModel(income), IncomeTypes = CreateTypesList(income) };
         }
 
         private IEnumerable<SelectListItem> CreateTypesList(Income income)
         {
+            string userId = User.Identity.Name.Split('|').First();
             return _unitOfWork.Repository<int, IncomeType>().GetAll()
-               .Where(it => it.UserId == User.Identity.Name)
+               .Where(it => it.UserId == userId)
                .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = income?.IncomeTypeId == t.Id });
+        }
+
+        private Income ModelFromViewModel(IncomeViewModel incomeVM)
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeViewModel, Income>());
+            return config.CreateMapper().Map<IncomeViewModel, Income>(incomeVM);
+        }
+
+        private IncomeViewModel ViewModelFromModel(Income income)
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Income, IncomeViewModel>().ForMember(destination => destination.IncomeTypeName, opts => opts.MapFrom(source => source.IncomeType.Name)));
+            return config.CreateMapper().Map<Income, IncomeViewModel>(income);
         }
     }
 }

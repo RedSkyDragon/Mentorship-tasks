@@ -7,10 +7,9 @@ using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Models
 {
-    public class DeleteExpenseTypeViewModel
+    public class ExpenseCUViewModel
     {
-        public ExpenseTypeViewModel ExpenseType { get; set; }
-        public IEnumerable<SelectListItem> ReplacementTypes { get; set; }
-
+        public ExpenseViewModel Expense { get; set; }
+        public IEnumerable<SelectListItem> ExpenseTypes { get; set; }
     }
 }

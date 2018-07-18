@@ -4,6 +4,7 @@ using IncomeAndExpenses.Web.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using AutoMapper;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
@@ -20,8 +21,13 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET Home
         public ActionResult Index()
         {
-            var user = _unitOfWork.Repository<string, User>().Get(User.Identity.Name);
-            ViewBag.UserName = user.UserName;
+            var config = new MapperConfiguration(cfg => {
+
+                cfg.CreateMap<Income, IncomeViewModel>();
+
+            });
+            string userId = User.Identity.Name.Split('|').First();
+            var user = _unitOfWork.Repository<string, User>().Get(userId);
             var iTypes = _unitOfWork.Repository<int, IncomeType>().GetAll().Where(it => it.UserId == user.Id);
             var eTypes = _unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == user.Id);
             List<Income> incomes = new List<Income>();
@@ -34,7 +40,9 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 expenses = expenses.Concat(type.Expenses).ToList();
             }
-            var homeViewModel = new HomeIndexViewModel { User = user, Expenses = expenses, Incomes = incomes };
+            var incomeView = incomes.Select(i => config.CreateMapper().Map<Income, IncomeViewModel>(i));
+            var expenseView = expenses.Select(i => config.CreateMapper().Map<Expense, ExpenseViewModel>(i));
+            var homeViewModel = new HomeIndexViewModel { Expenses = expenseView, Incomes = incomeView };
             return View(homeViewModel);
         }
 

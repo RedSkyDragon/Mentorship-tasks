@@ -8,6 +8,9 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
+@{ 
+    string UserName = User.Identity.Name.Split('|').Last();
+}
 <body>
     <div class="navbar navbar-expand-sm navbar-dark fixed-top bg-dark">
         <div class="container">
@@ -20,7 +23,7 @@
                     <li class="nav-item">@Html.ActionLink("Income types", "Index", "IncomeTypes", new { }, new { @class = "nav-link" })</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right ml-auto">
-                    <li class="nav-item navbar-text">Hello, @ViewBag.UserName!</li>
+                    <li class="nav-item navbar-text">Hello, @UserName!</li>
                     <li class="nav-item">@Html.ActionLink("Log off", "LogOff", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
                 </ul>
             </div>

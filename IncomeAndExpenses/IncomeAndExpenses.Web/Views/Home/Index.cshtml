@@ -34,7 +34,7 @@
                         @Html.DisplayFor(modelItem => item.Date)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ExpenseType.Name)
+                        @Html.DisplayFor(modelItem => item.ExpenseTypeName)
                     </td>
                     <td>
                         <a href=@Url.Action("Edit", "Expenses", new { id = item.Id })><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;
@@ -83,7 +83,7 @@
                         @Html.DisplayFor(modelItem => item.Date)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.IncomeType.Name)
+                        @Html.DisplayFor(modelItem => item.IncomeTypeName)
                     </td>
                     <td>
                         <a href=@Url.Action("Edit", "Incomes", new { id = item.Id })><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;

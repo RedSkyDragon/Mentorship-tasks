@@ -47,7 +47,8 @@ namespace IncomeAndExpenses.Web.Controllers
                 _unitOfWork.Repository<int, ExpenseType>().Create(new ExpenseType { UserId = authResult.ProviderUserId, Name = "Other", Description = "Expense that are difficult to classify as specific type." });
                 _unitOfWork.Save();
             }
-            FormsAuthentication.SetAuthCookie(authResult.ProviderUserId, true);
+            
+            FormsAuthentication.SetAuthCookie(string.Join("|", authResult.ProviderUserId, authResult.UserName), true);
             return Redirect(Url.Action("Index", "Home"));
         }
 

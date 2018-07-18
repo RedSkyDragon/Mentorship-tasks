@@ -1,4 +1,5 @@
-﻿using IncomeAndExpenses.DataAccessImplement;
+﻿using AutoMapper;
+using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
 using System.Linq;
@@ -19,62 +20,77 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: ExpenseTypes
         public ActionResult Index()
         {
-            ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
-            return View(_unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == User.Identity.Name));
+            string userId = User.Identity.Name.Split('|').First();
+            return View(_unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == userId).Select(t=> ViewModelFromModel(t)));
         }
 
         // GET: ExpenseTypes/Create
         public ActionResult Create()
         {
-            ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
             return View();
         }
 
         // POST: ExpenseTypes/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(ExpenseTypeViewModel typeVM)
         {
-            var type = new ExpenseType { Name = collection["Name"], Description = collection["Description"], UserId = User.Identity.Name };
-            try
+            string userId = User.Identity.Name.Split('|').First();
+            ExpenseType type = ModelFromViewModel(typeVM);
+            type.UserId = userId;
+            if (ModelState.IsValid)
             {
-                _unitOfWork.Repository<int, ExpenseType>().Create(type);
-                _unitOfWork.Save();
-                return RedirectToAction("Index");
+                try
+                {
+                    _unitOfWork.Repository<int, ExpenseType>().Create(type);
+                    _unitOfWork.Save();
+                    return RedirectToAction("Index");
+                }
+                catch
+                {
+                    return View(typeVM);
+                }
             }
-            catch
+            else
             {
-                return View(type);
+                return View(typeVM);
             }
         }
 
         // GET: ExpenseTypes/Edit/1
         public ActionResult Edit(int id)
         {
-            ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
-            return View(_unitOfWork.Repository<int, ExpenseType>().Get(id));
+            return View(ViewModelFromModel(_unitOfWork.Repository<int, ExpenseType>().Get(id)));
         }
 
         // POST: ExpenseTypes/Edit/1
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, ExpenseTypeViewModel typeVM)
         {
-            var type = new ExpenseType { Id = id, Name = collection["Name"], Description = collection["Description"], UserId = User.Identity.Name };
-            try
+            string userId = User.Identity.Name.Split('|').First();
+            ExpenseType type = ModelFromViewModel(typeVM);
+            type.UserId = userId;
+            if (ModelState.IsValid)
             {
-                _unitOfWork.Repository<int, ExpenseType>().Update(type);
-                _unitOfWork.Save();
-                return RedirectToAction("Index");
+                try
+                {
+                    _unitOfWork.Repository<int, ExpenseType>().Update(type);
+                    _unitOfWork.Save();
+                    return RedirectToAction("Index");
+                }
+                catch
+                {
+                    return View(typeVM);
+                }
             }
-            catch
+            else
             {
-                return View(type);
+                return View(typeVM);
             }
         }
 
         // GET: ExpenseTypes/Delete/1
         public ActionResult Delete(int id)
         {
-            ViewBag.UserName = _unitOfWork.Repository<string, User>().Get(User.Identity.Name).UserName;
             return View(CreateDeleteViewModel(id));
         }
 
@@ -125,8 +141,20 @@ namespace IncomeAndExpenses.Web.Controllers
             var type = _unitOfWork.Repository<int, ExpenseType>().Get(id);
             var replace = _unitOfWork.Repository<int, ExpenseType>().GetAll()
                 .Where(t => t.UserId == type.UserId && t.Id != type.Id)
-                .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });
-            return new DeleteExpenseTypeViewModel { ExpenseType = type, ReplacementTypes = replace };
+                .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });           
+            return new DeleteExpenseTypeViewModel { ExpenseType = ViewModelFromModel(type), ReplacementTypes = replace };
+        }
+
+        private ExpenseType ModelFromViewModel(ExpenseTypeViewModel typeVM)
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseTypeViewModel, ExpenseType>());
+            return config.CreateMapper().Map<ExpenseTypeViewModel, ExpenseType>(typeVM);
+        }
+
+        private ExpenseTypeViewModel ViewModelFromModel(ExpenseType type)
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseType, ExpenseTypeViewModel>());
+            return config.CreateMapper().Map<ExpenseType, ExpenseTypeViewModel>(type);
         }
     }
 }

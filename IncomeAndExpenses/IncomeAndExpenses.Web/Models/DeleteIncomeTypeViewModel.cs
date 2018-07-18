@@ -9,7 +9,7 @@ namespace IncomeAndExpenses.Web.Models
 {
     public class DeleteIncomeTypeViewModel
     {
-        public IncomeType IncomeType { get; set; }
+        public IncomeTypeViewModel IncomeType { get; set; }
         public IEnumerable<SelectListItem> ReplacementTypes { get; set; }
 
     }

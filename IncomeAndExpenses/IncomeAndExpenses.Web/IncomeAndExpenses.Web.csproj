@@ -47,6 +47,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth.AspNet, Version=4.2.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.2.2.13055\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
     </Reference>
@@ -91,6 +94,10 @@
     <Reference Include="System.Net.Http.WebRequest">
       <HintPath>..\packages\Microsoft.Net.Http.2.0.20505.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -190,9 +197,13 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DeleteExpenseTypeViewModel.cs" />
     <Compile Include="Models\DeleteIncomeTypeViewModel.cs" />
+    <Compile Include="Models\ExpenseCUViewModel.cs" />
+    <Compile Include="Models\ExpenseTypeViewModel.cs" />
     <Compile Include="Models\ExpenseViewModel.cs" />
     <Compile Include="Models\ExternalLoginResult.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
+    <Compile Include="Models\IncomeCUViewModel.cs" />
+    <Compile Include="Models\IncomeTypeViewModel.cs" />
     <Compile Include="Models\IncomeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
