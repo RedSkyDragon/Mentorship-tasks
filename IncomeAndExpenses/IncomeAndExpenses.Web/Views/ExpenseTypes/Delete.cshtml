@@ -1,0 +1,82 @@
+﻿@model IncomeAndExpenses.Web.Models.DeleteExpenseTypeViewModel
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Expense type</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ExpenseType.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ExpenseType.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ExpenseType.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ExpenseType.Description)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+       
+        <div class="form-actions no-color">
+        @if (Model.ReplacementTypes.Count() > 0)
+        {
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Do you want to delete all expenses with this type?</span>
+                @Html.CheckBox("DeleteAll", new { @class = "form-control col-md-1", @id = "DeleteAll" })
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Select a replacement type: </span>
+                </div>
+                @Html.DropDownList("ReplacementTypeId", Model.ReplacementTypes, new { @class = "form-control custom-select", @id = "Replace" })
+            </div>
+        }
+        else
+        {
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Do you want to delete all expenses with this type?</span>
+                <input name="DeleteAll" disabled="disabled" class="form-control col-md-1" id="DeleteAll" type="checkbox" checked="checked" value="true">
+                <input name="DeleteAll" type="hidden" value="true">
+            </div>
+            <div class="alert alert-danger" role="alert">
+                Deleting the last expense type will delete all expense records. If you want to save your expenses please @Html.ActionLink("create new type", "Create") before delete this type.
+            </div>
+        }
+
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-light" })
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function () {
+
+        $('#DeleteAll').click(function () {
+            if ($(this).is(':checked')) {
+                $('#Replace').attr("disabled", "disabled");
+            } else {
+                $('#Replace').removeAttr("disabled");
+            }
+        });
+    });
+</script>
+}
+
+
