@@ -12,15 +12,8 @@ namespace IncomeAndExpenses.Web.Controllers
 {
 
     [Authorize]
-    public class ExpensesController : Controller
+    public class ExpensesController : BaseController
     {
-        private IUnitOfWork _unitOfWork;
-
-        public ExpensesController()
-        {
-            _unitOfWork = new UnitOfWork();
-        }
-
         // GET: Expenses/Create
         public ActionResult Create()
         {
@@ -108,12 +101,6 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 return View(ViewModelFromModel(_unitOfWork.Repository<int, Expense>().Get(id)));
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
         }
 
         private ExpenseCUViewModel CreateExpenseCUViewModel(int id)

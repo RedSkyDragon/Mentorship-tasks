@@ -9,20 +9,12 @@ using System.Web.Mvc;
 namespace IncomeAndExpenses.Web.Controllers
 {
     [Authorize]
-    public class IncomeTypesController : Controller
+    public class IncomeTypesController : BaseController
     {
-        private IUnitOfWork _unitOfWork;
-
-        public IncomeTypesController()
-        {
-            _unitOfWork = new UnitOfWork();
-        }
-
         // GET: IncomeTypes
         public ActionResult Index()
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
-            return View(_unitOfWork.Repository<int,IncomeType>().GetAll().Where(it=>it.UserId == userId).Select(t => ViewModelFromModel(t)));
+            return View(_unitOfWork.Repository<int,IncomeType>().GetAll().Where(it=>it.UserId == UserId).Select(t => ViewModelFromModel(t)));
         }
 
         // GET: IncomeTypes/Create
@@ -35,9 +27,8 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpPost]
         public ActionResult Create(IncomeTypeViewModel typeVM)
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             IncomeType type = ModelFromViewModel(typeVM);
-            type.UserId = userId;
+            type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
@@ -67,9 +58,8 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpPost]
         public ActionResult Edit(int id, IncomeTypeViewModel typeVM)
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             IncomeType type = ModelFromViewModel(typeVM);
-            type.UserId = userId;
+            type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
@@ -129,12 +119,6 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 return View(CreateDeleteViewModel(id));
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
         }
 
         private DeleteIncomeTypeViewModel CreateDeleteViewModel(int id)

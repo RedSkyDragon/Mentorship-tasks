@@ -16,43 +16,17 @@ using System.Web.Security;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
-        private IUnitOfWork _unitOfWork;
-
-        public AccountController()
-        {
-            _unitOfWork = new UnitOfWork();
-        }
-
         // GET: Account
         public ActionResult Index()
         {
             return View();
         }
         
-        [AllowAnonymous]
-        public void IdentitySignin(string userId, string name, bool isPersistent = false)
-        {
-            var claims = new List<Claim>();
-
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
-            claims.Add(new Claim(ClaimTypes.Name, name));
-
-            var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-
-            AuthenticationManager.SignIn(new AuthenticationProperties()
-            {
-                AllowRefresh = true,
-                IsPersistent = isPersistent,
-                ExpiresUtc = DateTime.UtcNow.AddDays(7)
-            }, identity);
-        }
-
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie,
-                                          DefaultAuthenticationTypes.ExternalCookie);
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie);
             return Redirect(Url.Action("Index", "Account"));
         }
 
@@ -61,16 +35,16 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             string provider = "Google";
             string returnUrl = "";
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback",
-                                       "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             if (string.IsNullOrEmpty(returnUrl))
+            {
                 returnUrl = "~/";
-
+            }
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
@@ -85,16 +59,22 @@ namespace IncomeAndExpenses.Web.Controllers
                 _unitOfWork.Repository<int, ExpenseType>().Create(new ExpenseType { UserId = userId, Name = "Other", Description = "Expense that are difficult to classify as specific type." });
                 _unitOfWork.Save();
             }
-
             IdentitySignin(userId, name, isPersistent: true);
-
             return Redirect(returnUrl);
         }
 
-        protected override void Dispose(bool disposing)
+        private void IdentitySignin(string userId, string name, bool isPersistent = false)
         {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
+            claims.Add(new Claim(ClaimTypes.Name, name));
+            var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+            AuthenticationManager.SignIn(new AuthenticationProperties()
+            {
+                AllowRefresh = true,
+                IsPersistent = isPersistent,
+                ExpiresUtc = DateTime.UtcNow.AddDays(7)
+            }, identity);
         }
 
         private IAuthenticationManager AuthenticationManager

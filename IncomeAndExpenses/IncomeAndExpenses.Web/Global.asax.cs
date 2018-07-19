@@ -1,4 +1,5 @@
 ﻿using IncomeAndExpenses.Web.App_Start;
+using IncomeAndExpenses.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace IncomeAndExpenses.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            //AuthConfig.RegisterAuth();
+
+            ModelValidatorProviders.Providers.Add(new InExValidationProvider());
         }
     }
 }

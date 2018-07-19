@@ -10,15 +10,8 @@ using System.Security.Claims;
 namespace IncomeAndExpenses.Web.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private IUnitOfWork _unitOfWork;
-
-        public HomeController()
-        {
-            _unitOfWork = new UnitOfWork();
-        }
-
         // GET Home
         public ActionResult Index()
         {
@@ -26,9 +19,8 @@ namespace IncomeAndExpenses.Web.Controllers
 
                 cfg.CreateMap<Income, IncomeViewModel>();
 
-            });
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
-            var user = _unitOfWork.Repository<string, User>().Get(userId);
+            });           
+            var user = _unitOfWork.Repository<string, User>().Get(UserId);
             var iTypes = _unitOfWork.Repository<int, IncomeType>().GetAll().Where(it => it.UserId == user.Id);
             var eTypes = _unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == user.Id);
             List<Income> incomes = new List<Income>();
@@ -47,11 +39,6 @@ namespace IncomeAndExpenses.Web.Controllers
             return View(homeViewModel);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
-        }
     }
 
 }

@@ -9,20 +9,12 @@ using System.Web.Mvc;
 namespace IncomeAndExpenses.Web.Controllers
 {
     [Authorize]
-    public class ExpenseTypesController : Controller
+    public class ExpenseTypesController : BaseController
     {
-        private IUnitOfWork _unitOfWork;
-
-        public ExpenseTypesController()
-        {
-            _unitOfWork = new UnitOfWork();
-        }
-
         // GET: ExpenseTypes
         public ActionResult Index()
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
-            return View(_unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == userId).Select(t=> ViewModelFromModel(t)));
+            return View(_unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == UserId).Select(t=> ViewModelFromModel(t)));
         }
 
         // GET: ExpenseTypes/Create
@@ -35,9 +27,8 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpPost]
         public ActionResult Create(ExpenseTypeViewModel typeVM)
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             ExpenseType type = ModelFromViewModel(typeVM);
-            type.UserId = userId;
+            type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
@@ -67,9 +58,8 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpPost]
         public ActionResult Edit(int id, ExpenseTypeViewModel typeVM)
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             ExpenseType type = ModelFromViewModel(typeVM);
-            type.UserId = userId;
+            type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
@@ -129,12 +119,6 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 return View(CreateDeleteViewModel(id));
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
         }
 
         private DeleteExpenseTypeViewModel CreateDeleteViewModel(int id)

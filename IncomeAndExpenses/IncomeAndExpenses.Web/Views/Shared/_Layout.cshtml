@@ -7,12 +7,17 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link rel="Stylesheet" href="@Href("~/Content/Site.css")" />
 </head>
 <body>
-    <div class="navbar navbar-expand-sm navbar-dark fixed-top bg-dark">
+    <div class="navbar navbar-expand-sm fixed-top navbar-light" style="background-color: #ABDF8F;">
         <div class="container">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
-            <a class="navbar-brand" href="/">Income & Expenses</a>
+            <nav class="navbar navbar-lignt style="background-color: #ABDF8F;"">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </nav>
+            <a class="navbar-brand" href="/IncomeAndExpenses">Income & Expenses</a>
             <div class="navbar-collapse collapse" id="navbarSupportedContent">
                 <ul class="nav navbar-nav mr-auto">
                     <li class="nav-item">@Html.ActionLink("Home", "Index", "Home", new { },  new { @class = "nav-link"})</li>
@@ -20,7 +25,7 @@
                     <li class="nav-item">@Html.ActionLink("Income types", "Index", "IncomeTypes", new { }, new { @class = "nav-link" })</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right ml-auto">
-                    <li class="nav-item navbar-text">Hello, @User.Identity.Name</li>
+                    <li class="nav-item navbar-text">Hello, @User.Identity.Name!</li>
                     <li class="nav-item">@Html.ActionLink("Log off", "LogOff", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
                 </ul>
             </div>
