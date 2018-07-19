@@ -3,6 +3,7 @@ using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
 using System.Linq;
+using System.Security.Claims;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Controllers
@@ -20,7 +21,7 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: IncomeTypes
         public ActionResult Index()
         {
-            string userId = User.Identity.Name.Split('|').First();
+            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             return View(_unitOfWork.Repository<int,IncomeType>().GetAll().Where(it=>it.UserId == userId).Select(t => ViewModelFromModel(t)));
         }
 
@@ -34,7 +35,7 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpPost]
         public ActionResult Create(IncomeTypeViewModel typeVM)
         {
-            string userId = User.Identity.Name.Split('|').First();
+            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             IncomeType type = ModelFromViewModel(typeVM);
             type.UserId = userId;
             if (ModelState.IsValid)
@@ -66,7 +67,7 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpPost]
         public ActionResult Edit(int id, IncomeTypeViewModel typeVM)
         {
-            string userId = User.Identity.Name.Split('|').First();
+            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             IncomeType type = ModelFromViewModel(typeVM);
             type.UserId = userId;
             if (ModelState.IsValid)

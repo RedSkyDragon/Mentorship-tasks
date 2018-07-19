@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using AutoMapper;
+using System.Security.Claims;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
@@ -26,7 +27,7 @@ namespace IncomeAndExpenses.Web.Controllers
                 cfg.CreateMap<Income, IncomeViewModel>();
 
             });
-            string userId = User.Identity.Name.Split('|').First();
+            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             var user = _unitOfWork.Repository<string, User>().Get(userId);
             var iTypes = _unitOfWork.Repository<int, IncomeType>().GetAll().Where(it => it.UserId == user.Id);
             var eTypes = _unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == user.Id);

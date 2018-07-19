@@ -5,6 +5,7 @@ using IncomeAndExpenses.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Controllers
@@ -127,7 +128,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private IEnumerable<SelectListItem> CreateTypesList(Income income)
         {
-            string userId = User.Identity.Name.Split('|').First();
+            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             return _unitOfWork.Repository<int, IncomeType>().GetAll()
                .Where(it => it.UserId == userId)
                .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = income?.IncomeTypeId == t.Id });
