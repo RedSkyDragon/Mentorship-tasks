@@ -1,14 +1,15 @@
 ﻿using IncomeAndExpenses.DataAccessInterface;
 using System.Collections.Generic;
+using System.Data.Entity;
 
 namespace IncomeAndExpenses.DataAccessImplement
 {
     public class Repository<TId, T> : IRepository<TId, T> 
         where T: Entity<TId>
     {
-        private InAndExDbContext _db;
+        private DbContext _db;
 
-        public Repository(InAndExDbContext db)
+        public Repository(DbContext db)
         {
             _db = db;
         }

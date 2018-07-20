@@ -1,14 +1,13 @@
 ﻿using IncomeAndExpenses.DataAccessInterface;
-
+using System.Data.Entity;
 
 namespace IncomeAndExpenses.DataAccessImplement
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private InAndExDbContext _db;
-        private bool _disposed = false;
+        private DbContext _db;
 
-        public UnitOfWork(InAndExDbContext db)
+        public UnitOfWork(DbContext db)
         {
             _db = db;
         }
@@ -16,18 +15,6 @@ namespace IncomeAndExpenses.DataAccessImplement
         public void Save()
         {
             _db.SaveChanges();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _db.Dispose();
-                }
-                _disposed = true;
-            }
         }
 
         public IRepository<TId, T> Repository<TId, T>() 
@@ -38,7 +25,7 @@ namespace IncomeAndExpenses.DataAccessImplement
 
         public void Dispose()
         {
-            Dispose(true);
+            _db?.Dispose();
         }
     }
 }

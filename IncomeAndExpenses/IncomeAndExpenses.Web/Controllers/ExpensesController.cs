@@ -121,9 +121,9 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private IEnumerable<SelectListItem> CreateTypesList(Expense expense)
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             return _unitOfWork.Repository<int, ExpenseType>().GetAll()
-               .Where(it => it.UserId == userId)
+               .Where(t => t.UserId == UserId)
+               .OrderBy(t => t.Name)
                .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = expense?.ExpenseTypeId == t.Id });
         }
 

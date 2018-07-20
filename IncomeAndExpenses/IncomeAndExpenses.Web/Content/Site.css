@@ -1,8 +1,9 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
-    background: url(images/background.png) 100% repeat-x;
-    background-position: center;
+    background: url(images/background.png) repeat-x;
+    background-position-x: center;
+    background-position-y: top;
 }
 
 .body-content {
@@ -46,4 +47,11 @@ a:hover {
 }
 #menu{
     background-color: #C0DA23;
+    min-height: 50px;
+}
+.padding-zero{
+    padding: 0;
+}
+#loginLink{
+    padding-right: 0;
 }

@@ -19,7 +19,7 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: ExpenseTypes
         public ActionResult Index()
         {
-            return View(_unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == UserId).Select(t=> ViewModelFromModel(t)));
+            return View(_unitOfWork.Repository<int, ExpenseType>().GetAll().Where(t => t.UserId == UserId).Select(t=> ViewModelFromModel(t)).OrderBy(t => t.Name));
         }
 
         // GET: ExpenseTypes/Create
@@ -131,6 +131,7 @@ namespace IncomeAndExpenses.Web.Controllers
             var type = _unitOfWork.Repository<int, ExpenseType>().Get(id);
             var replace = _unitOfWork.Repository<int, ExpenseType>().GetAll()
                 .Where(t => t.UserId == type.UserId && t.Id != type.Id)
+                .OrderBy(t => t.Name)
                 .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });           
             return new DeleteExpenseTypeViewModel { ExpenseType = ViewModelFromModel(type), ReplacementTypes = replace };
         }
