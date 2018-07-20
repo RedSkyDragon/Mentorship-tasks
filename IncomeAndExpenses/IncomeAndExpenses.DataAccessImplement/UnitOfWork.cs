@@ -25,7 +25,8 @@ namespace IncomeAndExpenses.DataAccessImplement
             }
         }
 
-        public IRepository<TId, T> Repository<TId, T>() where T : Entity<TId>
+        public IRepository<TId, T> Repository<TId, T>() 
+            where T : Entity<TId>
         {
             return new Repository<TId, T>(_db);
         }

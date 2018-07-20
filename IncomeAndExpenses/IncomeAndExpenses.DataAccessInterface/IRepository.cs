@@ -2,7 +2,8 @@
 
 namespace IncomeAndExpenses.DataAccessInterface
 {
-    public interface IRepository<TId, T> where T : Entity<TId>
+    public interface IRepository<TId, T> 
+        where T : Entity<TId>
     {
         IEnumerable<T> GetAll();
 
