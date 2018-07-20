@@ -18,6 +18,11 @@ namespace IncomeAndExpenses.Web.Controllers
 {
     public class AccountController : BaseController
     {
+        public AccountController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         // GET: Account
         public ActionResult Index()
         {

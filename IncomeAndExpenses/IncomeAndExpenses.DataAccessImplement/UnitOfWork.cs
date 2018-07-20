@@ -5,8 +5,13 @@ namespace IncomeAndExpenses.DataAccessImplement
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private InAndExDbContext _db = new InAndExDbContext();
+        private InAndExDbContext _db;
         private bool _disposed = false;
+
+        public UnitOfWork(InAndExDbContext db)
+        {
+            _db = db;
+        }
 
         public void Save()
         {

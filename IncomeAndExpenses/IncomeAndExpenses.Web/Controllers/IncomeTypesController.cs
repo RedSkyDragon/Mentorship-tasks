@@ -11,6 +11,11 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class IncomeTypesController : BaseController
     {
+        public IncomeTypesController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         // GET: IncomeTypes
         public ActionResult Index()
         {

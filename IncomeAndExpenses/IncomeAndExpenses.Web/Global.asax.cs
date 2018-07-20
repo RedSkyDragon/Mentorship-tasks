@@ -1,5 +1,6 @@
 ﻿using IncomeAndExpenses.Web.App_Start;
 using IncomeAndExpenses.Web.Models;
+using IncomeAndExpenses.Web.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,11 @@ namespace IncomeAndExpenses.Web
     {
         protected void Application_Start()
         {
+            AutofacConfig.ConfigureContainer();
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
             ModelValidatorProviders.Providers.Add(new InExValidationProvider());
         }
     }

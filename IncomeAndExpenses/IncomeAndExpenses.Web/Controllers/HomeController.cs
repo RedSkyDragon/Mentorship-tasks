@@ -12,6 +12,11 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class HomeController : BaseController
     {
+        public HomeController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         // GET Home
         public ActionResult Index()
         {

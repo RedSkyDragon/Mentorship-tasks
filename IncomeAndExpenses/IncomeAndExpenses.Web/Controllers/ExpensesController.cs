@@ -14,6 +14,11 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class ExpensesController : BaseController
     {
+        public ExpensesController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         // GET: Expenses/Create
         public ActionResult Create()
         {

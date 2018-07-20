@@ -14,10 +14,12 @@ namespace IncomeAndExpenses.Web.Controllers
         protected IUnitOfWork _unitOfWork;
         protected string UserId { get { return (HttpContext?.User.Identity as ClaimsIdentity)?.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value; } }
 
-        public BaseController()
+        public BaseController(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = new UnitOfWork();
+            _unitOfWork = unitOfWork;
         }
+
+        public BaseController() : this(null) { }
 
         protected override void Dispose(bool disposing)
         {
