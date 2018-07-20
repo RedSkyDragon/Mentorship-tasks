@@ -10,6 +10,8 @@ namespace IncomeAndExpenses.Web.Controllers
         protected IUnitOfWork _unitOfWork;
         protected string UserId { get { return User.Identity.GetUserId(); } }
 
+        protected log4net.ILog Logger { get { return log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType); } }
+
         public BaseController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;

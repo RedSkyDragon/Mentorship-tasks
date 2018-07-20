@@ -2,6 +2,7 @@
 using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Web.Mvc;
@@ -19,7 +20,8 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: IncomeTypes
         public ActionResult Index()
         {
-            return View(_unitOfWork.Repository<int,IncomeType>().GetAll().Where(t=>t.UserId == UserId).Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
+            throw new NotImplementedException();
+            //return View(_unitOfWork.Repository<int,IncomeType>().GetAll().Where(t=>t.UserId == UserId).Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
         }
 
         // GET: IncomeTypes/Create
