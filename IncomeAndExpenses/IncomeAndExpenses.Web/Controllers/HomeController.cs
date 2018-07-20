@@ -38,9 +38,12 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 expenses = expenses.Concat(type.Expenses).ToList();
             }
-            var incomeView = incomes.Select(i => config.CreateMapper().Map<Income, IncomeViewModel>(i));
-            var expenseView = expenses.Select(i => config.CreateMapper().Map<Expense, ExpenseViewModel>(i));
-            var homeViewModel = new HomeIndexViewModel { Expenses = expenseView, Incomes = incomeView };
+            var incomeTotal = incomes.Sum(i => i.Amount);
+            var expenseTotal = expenses.Sum(e => e.Amount);
+            var currentBalance = incomeTotal - expenseTotal;
+            var incomeView = incomes.OrderByDescending(i => i.Date).Select(i => config.CreateMapper().Map<Income, IncomeViewModel>(i));
+            var expenseView = expenses.OrderByDescending(e => e.Date).Select(i => config.CreateMapper().Map<Expense, ExpenseViewModel>(i));
+            var homeViewModel = new HomeIndexViewModel { Expenses = expenseView, Incomes = incomeView, ExpenseTotal = expenseTotal, IncomeTotal = incomeTotal, CurrentBalance = currentBalance };
             return View(homeViewModel);
         }
 

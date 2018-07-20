@@ -7,5 +7,11 @@ namespace IncomeAndExpenses.Web.Models
     {
         public IEnumerable<ExpenseViewModel> Expenses { get; set; }
         public IEnumerable<IncomeViewModel> Incomes { get; set; }
+
+        public decimal IncomeTotal { get; set; }
+
+        public decimal ExpenseTotal { get; set; }
+
+        public decimal CurrentBalance { get; set; }
     }
 }

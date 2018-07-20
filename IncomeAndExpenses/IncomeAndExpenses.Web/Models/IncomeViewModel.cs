@@ -14,7 +14,7 @@ namespace IncomeAndExpenses.Web.Models
         [Range(0.01, 99999999.99, ErrorMessage = "Amount shuld be greater than 0 and less than 99999999,99")]
         public decimal Amount { get; set; }
         [Required(ErrorMessage = "Required")]
-        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:MM/dd/yy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:dd.MM.yy}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
         public string Comment { get; set; }
 
