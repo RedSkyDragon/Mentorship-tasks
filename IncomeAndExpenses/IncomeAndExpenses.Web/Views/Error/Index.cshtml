@@ -1,7 +1,12 @@
-﻿@model string
-@{
+﻿@{
     ViewBag.Title = "Error";
 }
 
-<h2>Sorry, something went wrong!</h2>
-<p>@ViewData["message"]</p>
+<div class="row justify-content-center">
+    <div class="col-md-12 text-center">
+        <img id="sad-cat" src="/IncomeAndExpenses/Content/images/sad_cat.png" alt="Sad cat" />
+        <div class="lead font-weight-bold">Sorry, something went wrong!</div>
+        <div class="mb-4 lead font-weight-bold">@ViewData["message"]</div>
+        <a href="/IncomeAndExpenses">Back to Home</a>
+    </div>
+</div>

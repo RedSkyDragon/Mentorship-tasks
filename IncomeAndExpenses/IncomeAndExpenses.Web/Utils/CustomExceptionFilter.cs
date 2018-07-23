@@ -16,7 +16,7 @@ namespace IncomeAndExpenses.Web.Utils
             var exceptionType = context.Exception.GetType();
             if (exceptionType == typeof(UnauthorizedAccessException))
             {
-                message = "Unauthorized Access";
+                message = "Unauthorized Access.";
             }
             else if (exceptionType == typeof(NotImplementedException))
             {
