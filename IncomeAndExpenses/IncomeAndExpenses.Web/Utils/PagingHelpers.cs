@@ -22,7 +22,9 @@ namespace IncomeAndExpenses.Web.Utils
             prev.InnerHtml = "&laquo;";
             prev.AddCssClass("btn btn-light");
             result.Append(prev.ToString());
-            for (int i = 1; i <= pageInfo.TotalPages; i++)
+            int first = pageInfo.PageNumber - maxPagesAround < 1 ? 1 : pageInfo.PageNumber - maxPagesAround;
+            int last = pageInfo.PageNumber + maxPagesAround > pageInfo.TotalPages ? pageInfo.TotalPages : pageInfo.PageNumber + maxPagesAround;
+            for (int i = first; i <= last; i++)
             {
                 TagBuilder tag = new TagBuilder("a");
                 tag.MergeAttribute("href", pageUrl(i));
@@ -30,12 +32,11 @@ namespace IncomeAndExpenses.Web.Utils
                 if (i == pageInfo.PageNumber)
                 {
                     tag.AddCssClass("selected");
-                    tag.AddCssClass("btn-primary");
+                    tag.AddCssClass("btn btn-primary");
                 }
-                tag.AddCssClass("btn btn-light");
-                if (i < pageInfo.PageNumber - maxPagesAround || i > pageInfo.PageNumber + maxPagesAround)
+                else
                 {
-                    tag.AddCssClass("display-none");
+                    tag.AddCssClass("btn btn-light");
                 }
                 result.Append(tag.ToString());
             }
