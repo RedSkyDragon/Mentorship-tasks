@@ -6,7 +6,12 @@ namespace IncomeAndExpenses.Web.Models
     public class HomeIndexViewModel
     {
         public IEnumerable<ExpenseViewModel> Expenses { get; set; }
+
         public IEnumerable<IncomeViewModel> Incomes { get; set; }
+
+        public PageInfoViewModel ExpensesPageInfo { get; set; }
+
+        public PageInfoViewModel IncomesPageInfo { get; set; }
 
         public decimal IncomeTotal { get; set; }
 

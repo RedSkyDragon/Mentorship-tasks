@@ -1,4 +1,5 @@
 ﻿@model IncomeAndExpenses.Web.Models.HomeIndexViewModel
+@using IncomeAndExpenses.Web.Utils;
 @{
     ViewBag.Title = "Home";
 }
@@ -6,25 +7,27 @@
 <h3 class="text-right">Current balance: @Model.CurrentBalance</h3>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col col-6">
         <h1>Expenses</h1>
         <div class="float-left">
             @Html.ActionLink("Create New", "Create", "Expenses")
         </div>
         <div class="float-right font-weight-bold">Total: @Model.ExpenseTotal</div>
         <table class="table">
-            <tr>
-                <th>
-                    Amount
-                </th>
-                <th>
-                    Date
-                </th>
-                <th>
-                    Type
-                </th>
-                <th></th>
-            </tr>
+            <thead>
+                <tr>
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
         @if (Model.Expenses.Count() > 0)
         { 
             foreach (var item in Model.Expenses)
@@ -54,8 +57,12 @@
             </tr>
         }
         </table>
+        <br />
+        <div class="btn-group">
+            @Html.PageLinks(Model.ExpensesPageInfo, 2, x => Url.Action("Index", new { expensesPage = x, incomesPage = Model.IncomesPageInfo.PageNumber }))
+        </div>
     </div>
-    <div class="col-md-6">
+    <div class="col col-6">
         <h1>Income</h1>
         <div class="float-left">
             @Html.ActionLink("Create New", "Create", "Incomes")
@@ -103,5 +110,6 @@
             </tr>
         }
         </table>
+        @Html.PageLinks(Model.IncomesPageInfo, 2, x => Url.Action("Index", new { expensesPage = Model.ExpensesPageInfo.PageNumber, incomesPage = x }))
     </div>
 </div>
