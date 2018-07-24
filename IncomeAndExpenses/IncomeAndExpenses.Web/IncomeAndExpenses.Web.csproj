@@ -246,6 +246,7 @@
     <Compile Include="Models\IncomeViewModel.cs" />
     <Compile Include="Models\InExValidationProvider.cs" />
     <Compile Include="Models\PageInfoViewModel.cs" />
+    <Compile Include="Models\SortInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\AutofacConfig.cs" />

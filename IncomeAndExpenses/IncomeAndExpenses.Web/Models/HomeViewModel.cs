@@ -13,6 +13,10 @@ namespace IncomeAndExpenses.Web.Models
 
         public PageInfoViewModel IncomesPageInfo { get; set; }
 
+        public SortInfoViewModel ExpensesSortInfo { get; set; }
+
+        public SortInfoViewModel IncomeSortInfo { get; set; }
+
         public decimal IncomeTotal { get; set; }
 
         public decimal ExpenseTotal { get; set; }

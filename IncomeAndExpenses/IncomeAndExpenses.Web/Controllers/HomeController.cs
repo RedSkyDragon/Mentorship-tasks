@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web.Mvc;
 using AutoMapper;
 using System.Security.Claims;
+using System.Web.Helpers;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
@@ -18,21 +19,28 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET Home
-        public ActionResult Index(int expensesPage = 1, int incomesPage = 1)
+        public ActionResult Index(int expensesPage = 1, int incomesPage = 1, string expenseColName = "", SortDirection expenseSortDir = SortDirection.Ascending)
         {
             var incomes = GetAllIncomeViewModels();
             var expenses = GetAllExpenseViewModels();
             var incomeTotal = incomes.Sum(i => i.Amount);
             var expenseTotal = expenses.Sum(e => e.Amount);
             var currentBalance = incomeTotal - expenseTotal;
-            int pageSize = 3;
+            int pageSize = 5;
+            if (!string.IsNullOrEmpty(expenseColName))
+            {
+                expenses = SortExpenseViewModel(expenses, expenseColName, expenseSortDir);
+            }
             var incomesPerPages = incomes.Skip((incomesPage - 1) * pageSize).Take(pageSize);
             var expensesPerPages = expenses.Skip((expensesPage - 1) * pageSize).Take(pageSize);
-            PageInfoViewModel incomesPageInfo = new PageInfoViewModel { PageNumber = incomesPage, PageSize = pageSize, TotalItems = incomes.Count() };
-            PageInfoViewModel expensesPageInfo = new PageInfoViewModel { PageNumber = expensesPage, PageSize = pageSize, TotalItems = expenses.Count() };
+            var incomesPageInfo = new PageInfoViewModel { PageNumber = incomesPage, PageSize = pageSize, TotalItems = incomes.Count() };
+            var expensesPageInfo = new PageInfoViewModel { PageNumber = expensesPage, PageSize = pageSize, TotalItems = expenses.Count() };
+            var expenseSortInfo = new SortInfoViewModel { ColumnName = expenseColName, Direction = expenseSortDir };
             var homeViewModel = new HomeIndexViewModel
             {
-                Expenses = expensesPerPages, Incomes = incomesPerPages, ExpenseTotal = expenseTotal, IncomeTotal = incomeTotal, CurrentBalance = currentBalance, ExpensesPageInfo = expensesPageInfo, IncomesPageInfo = incomesPageInfo
+                Expenses = expensesPerPages, Incomes = incomesPerPages, ExpenseTotal = expenseTotal, IncomeTotal = incomeTotal,
+                CurrentBalance = currentBalance, ExpensesPageInfo = expensesPageInfo, IncomesPageInfo = incomesPageInfo,
+                ExpensesSortInfo = expenseSortInfo
             };
             return View(homeViewModel);
         }
@@ -69,6 +77,44 @@ namespace IncomeAndExpenses.Web.Controllers
             return expenses.Select(i => config.CreateMapper().Map<ExpenseViewModel>(i));
         }
 
+        private IEnumerable<ExpenseViewModel> SortExpenseViewModel(IEnumerable<ExpenseViewModel> expenses, string colName, SortDirection sortDir)
+        {
+            var result = expenses;
+            switch (colName)
+            {
+                case nameof(ExpenseViewModel.Amount):
+                    if (sortDir == SortDirection.Ascending)
+                    {
+                        result = result.OrderBy(r => r.Amount).ThenByDescending(r => r.Id);
+                    }
+                    else
+                    {
+                        result = result.OrderByDescending(r => r.Amount).ThenByDescending(r => r.Id);
+                    }
+                    break;
+                case nameof(ExpenseViewModel.Date):
+                    if (sortDir == SortDirection.Ascending)
+                    {
+                        result = result.OrderBy(r => r.Date).ThenByDescending(r => r.Id);
+                    }
+                    else
+                    {
+                        result = result.OrderByDescending(r => r.Date).ThenByDescending(r => r.Id);
+                    }
+                    break;
+                case nameof(ExpenseViewModel.ExpenseTypeName):
+                    if (sortDir == SortDirection.Ascending)
+                    {
+                        result = result.OrderBy(r => r.ExpenseTypeName).ThenByDescending(r => r.Id);
+                    }
+                    else
+                    {
+                        result = result.OrderByDescending(r => r.ExpenseTypeName).ThenByDescending(r => r.Id);
+                    }
+                    break;
+            }
+            return result;
+        }
     }
 
 }

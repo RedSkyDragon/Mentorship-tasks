@@ -17,13 +17,25 @@
             <thead>
                 <tr>
                     <th>
-                        Amount
+                        Amount&nbsp;
+                        <div class="btn-group">
+                            <a id="expense_amount_asc" href="@Url.Action("Index", new { expenseColName = "Amount", expenseSortDir = SortDirection.Ascending, incomesPage = Model.IncomesPageInfo.PageNumber })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
+                            <a id="expense_amount_desc" href="@Url.Action("Index", new { expenseColName = "Amount", expenseSortDir = SortDirection.Descending, incomesPage = Model.IncomesPageInfo.PageNumber})" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
+                        </div>
                     </th>
                     <th>
-                        Date
+                        Date&nbsp;
+                        <div class="btn-group">
+                            <a id="expense_date_asc" href="@Url.Action("Index", new { expenseColName = "Date", expenseSortDir = SortDirection.Ascending, incomesPage = Model.IncomesPageInfo.PageNumber })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
+                            <a id="expense_date_desc" href="@Url.Action("Index", new { expenseColName = "Date", expenseSortDir = SortDirection.Descending, incomesPage = Model.IncomesPageInfo.PageNumber })" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
+                        </div>
                     </th>
                     <th>
-                        Type
+                        Type&nbsp;
+                        <div class="btn-group">
+                            <a id="expense_type_asc" href="@Url.Action("Index", new { expenseColName = "ExpenseTypeName", expenseSortDir = SortDirection.Ascending, incomesPage = Model.IncomesPageInfo.PageNumber })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
+                            <a id="expense_type_desc" href="@Url.Action("Index", new { expenseColName = "ExpenseTypeName", expenseSortDir = SortDirection.Descending, incomesPage = Model.IncomesPageInfo.PageNumber })" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
+                        </div>
                     </th>
                     <th></th>
                 </tr>
@@ -59,7 +71,7 @@
         </table>
         <br />
         <div class="btn-group">
-            @Html.PageLinks(Model.ExpensesPageInfo, 2, x => Url.Action("Index", new { expensesPage = x, incomesPage = Model.IncomesPageInfo.PageNumber }))
+            @Html.PageLinks(Model.ExpensesPageInfo, 2, x => Url.Action("Index", new { expensesPage = x, incomesPage = Model.IncomesPageInfo.PageNumber, expenseColName = Model.ExpensesSortInfo.ColumnName, expenseSortDir = Model.ExpensesSortInfo.Direction }))
         </div>
     </div>
     <div class="col col-6">
@@ -110,6 +122,55 @@
             </tr>
         }
         </table>
-        @Html.PageLinks(Model.IncomesPageInfo, 2, x => Url.Action("Index", new { expensesPage = Model.ExpensesPageInfo.PageNumber, incomesPage = x }))
+        <div class="btn-group">
+            @Html.PageLinks(Model.IncomesPageInfo, 2, x => Url.Action("Index", new { expensesPage = Model.ExpensesPageInfo.PageNumber, incomesPage = x }))
+        </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var column = "@Model.ExpensesSortInfo.ColumnName";
+            switch (column)
+            {
+                case "Amount":
+                    if ("@Model.ExpensesSortInfo.Direction" == "@SortDirection.Ascending")
+                    {
+                        $("#expense_amount_asc").removeClass("btn-light");
+                        $("#expense_amount_asc").addClass("btn-primary");
+                    }
+                    else
+                    {
+                        $("#expense_amount_desc").removeClass("btn-light");
+                        $("#expense_amount_desc").addClass("btn-primary");
+                    }
+                    break;
+                case "Date":
+                    if ("@Model.ExpensesSortInfo.Direction" == "@SortDirection.Ascending")
+                    {
+                        $("#expense_date_asc").removeClass("btn-light");
+                        $("#expense_date_asc").addClass("btn-primary");
+                    }                      
+                    else
+                    {
+                        $("#expense_date_desc").removeClass("btn-light");
+                        $("#expense_date_desc").addClass("btn-primary");
+                    }                        
+                    break;
+                case "ExpenseTypeName":
+                    if ("@Model.ExpensesSortInfo.Direction" == "@SortDirection.Ascending")
+                    {
+                        $("#expense_type_asc").removeClass("btn-light");
+                        $("#expense_type_asc").removeClass("btn-primary");
+                    }                        
+                    else
+                    {
+                        $("#expense_type_desc").removeClass("btn-light");
+                        $("#expense_type_desc").removeClass("btn-primary");
+                    }                        
+                    break;
+            };
+        });
+    </script>    
+}
