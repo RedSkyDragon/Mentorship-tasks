@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace IncomeAndExpenses.DataAccessInterface
 {
     public interface IRepository<TId, T> 
         where T : Entity<TId>
     {
-        IEnumerable<T> GetAll();
+        IQueryable<T> GetAll();
 
         T Get(TId id);
 

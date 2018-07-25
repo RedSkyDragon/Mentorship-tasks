@@ -1,6 +1,7 @@
 ﻿using IncomeAndExpenses.DataAccessInterface;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 
 namespace IncomeAndExpenses.DataAccessImplement
 {
@@ -33,7 +34,7 @@ namespace IncomeAndExpenses.DataAccessImplement
             return _db.Set<T>().Find(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> GetAll()
         {
             return _db.Set<T>();
         }

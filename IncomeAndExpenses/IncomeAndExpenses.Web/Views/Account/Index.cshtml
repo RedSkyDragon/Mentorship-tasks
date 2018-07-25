@@ -3,6 +3,13 @@
     ViewBag.Title = "Login";
 }
 
-<h2>To work with this application please login with google</h2>
-@Html.ActionLink("Log in with google", "Login", "Account", null, htmlAttributes: new { id = "loginLink", @class = "btn btn-primary" })
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to <span id="app-name">Income & Expenses</span> App</h1>
+    <p class="lead">This simple application will allow you to keep a record of your earnings and payments as well as calculate your balance.</p>
+    <hr class="my-4">
+    <p>To work with this application please log in with google</p>
+    <p class="lead">
+        @Html.ActionLink("Log in with google", "Login", "Account", null, htmlAttributes: new { id = "loginLink", @class = "btn btn-primary btn-lg" })
+    </p>
+</div>
 

@@ -12,7 +12,7 @@ namespace IncomeAndExpenses.Web.Utils
         public void OnException(ExceptionContext context)
         {
             String message = String.Empty;
-            var logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            var logger = log4net.LogManager.GetLogger(GetType());
             var exceptionType = context.Exception.GetType();
             if (exceptionType == typeof(UnauthorizedAccessException))
             {

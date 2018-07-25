@@ -21,7 +21,7 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: IncomeTypes
         public ActionResult Index()
         {
-            return View(_unitOfWork.Repository<int,IncomeType>().GetAll().Where(t=>t.UserId == UserId).Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
+            return View(_unitOfWork.Repository<IncomeType>().GetAll().Where(t=>t.UserId == UserId).ToList().Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
         }
 
         // GET: IncomeTypes/Create
@@ -40,7 +40,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _unitOfWork.Repository<int, IncomeType>().Create(type);
+                    _unitOfWork.Repository<IncomeType>().Create(type);
                     _unitOfWork.Save();
                     return RedirectToAction("Index");
                 }
@@ -58,7 +58,7 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: IncomeTypes/Edit/1
         public ActionResult Edit(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<int, IncomeType>().Get(id)));
+            return View(ViewModelFromModel(_unitOfWork.Repository<IncomeType>().Get(id)));
         }
 
         // POST: IncomeTypes/Edit/1
@@ -71,7 +71,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _unitOfWork.Repository<int, IncomeType>().Update(type);
+                    _unitOfWork.Repository<IncomeType>().Update(type);
                     _unitOfWork.Save();
                     return RedirectToAction("Index");
                 }
@@ -100,14 +100,14 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 var str = collection["DeleteAll"];
                 bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
-                var incomes = _unitOfWork.Repository<int, Income>().GetAll().Where(ex => ex.IncomeTypeId == id);
+                var incomes = _unitOfWork.Repository<Income>().GetAll().Where(ex => ex.IncomeTypeId == id);
                 if (delAll)
                 {
                     foreach (var income in incomes)
                     {
-                        _unitOfWork.Repository<int, Income>().Delete(income.Id);
+                        _unitOfWork.Repository<Income>().Delete(income.Id);
                     }
-                    _unitOfWork.Repository<int, IncomeType>().Delete(id);
+                    _unitOfWork.Repository<IncomeType>().Delete(id);
                 }
                 else
                 {
@@ -115,9 +115,9 @@ namespace IncomeAndExpenses.Web.Controllers
                     foreach (var income in incomes)
                     {
                         var upd = new Income { Id = income.Id, Amount = income.Amount, Comment = income.Comment, Date = income.Date, IncomeTypeId = newTypeId };
-                        _unitOfWork.Repository<int, Income>().Update(upd);
+                        _unitOfWork.Repository<Income>().Update(upd);
                     }
-                    _unitOfWork.Repository<int, IncomeType>().Delete(id);
+                    _unitOfWork.Repository<IncomeType>().Delete(id);
                 }
                 _unitOfWork.Save();
                 return RedirectToAction("Index");
@@ -130,10 +130,11 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private DeleteIncomeTypeViewModel CreateDeleteViewModel(int id)
         {
-            var type = _unitOfWork.Repository<int, IncomeType>().Get(id);
-            var replace = _unitOfWork.Repository<int, IncomeType>().GetAll()
+            var type = _unitOfWork.Repository<IncomeType>().Get(id);
+            var replace = _unitOfWork.Repository<IncomeType>().GetAll()
                 .Where(t => t.UserId == type.UserId && t.Id != type.Id)
                 .OrderBy(t => t.Name)
+                .ToList()
                 .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });          
             return new DeleteIncomeTypeViewModel { IncomeType = ViewModelFromModel(type), ReplacementTypes = replace };
         }

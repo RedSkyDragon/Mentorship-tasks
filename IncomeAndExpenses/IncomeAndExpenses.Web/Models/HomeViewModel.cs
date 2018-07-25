@@ -1,13 +1,14 @@
 ﻿using IncomeAndExpenses.DataAccessInterface;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IncomeAndExpenses.Web.Models
 {
     public class HomeIndexViewModel
     {
-        public IEnumerable<ExpenseViewModel> Expenses { get; set; }
+        public IQueryable<ExpenseViewModel> Expenses { get; set; }
 
-        public IEnumerable<IncomeViewModel> Incomes { get; set; }
+        public IQueryable<IncomeViewModel> Incomes { get; set; }
 
         public PageInfoViewModel ExpensesPageInfo { get; set; }
 
@@ -15,7 +16,7 @@ namespace IncomeAndExpenses.Web.Models
 
         public SortInfoViewModel ExpensesSortInfo { get; set; }
 
-        public SortInfoViewModel IncomeSortInfo { get; set; }
+        public SortInfoViewModel IncomesSortInfo { get; set; }
 
         public decimal IncomeTotal { get; set; }
 

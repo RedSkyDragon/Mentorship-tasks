@@ -240,6 +240,7 @@
     <Compile Include="Models\ExpenseViewPropertyValidator.cs" />
     <Compile Include="Models\ExpenseViewValidator.cs" />
     <Compile Include="Models\ExternalLoginResult.cs" />
+    <Compile Include="Models\HomeGetViewModel.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IncomeCUViewModel.cs" />
     <Compile Include="Models\IncomeTypeViewModel.cs" />

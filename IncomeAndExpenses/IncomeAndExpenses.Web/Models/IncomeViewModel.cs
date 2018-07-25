@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -20,6 +21,7 @@ namespace IncomeAndExpenses.Web.Models
 
         [Required(ErrorMessage = "Required")]
         public int IncomeTypeId { get; set; }
+        [DisplayName("Income type")]
         public string IncomeTypeName { get; set; }
     }
 }

@@ -60,8 +60,8 @@ namespace IncomeAndExpenses.Web.Controllers
             if (_unitOfWork.Repository<string, User>().Get(userId) == null)
             {
                 _unitOfWork.Repository<string, User>().Create(new User { Id = userId, UserName = name });
-                _unitOfWork.Repository<int, IncomeType>().Create(new IncomeType { UserId = userId, Name = "Other", Description = "Income that are difficult to classify as specific type." });
-                _unitOfWork.Repository<int, ExpenseType>().Create(new ExpenseType { UserId = userId, Name = "Other", Description = "Expense that are difficult to classify as specific type." });
+                _unitOfWork.Repository<IncomeType>().Create(new IncomeType { UserId = userId, Name = "Other", Description = "Income that are difficult to classify as specific type." });
+                _unitOfWork.Repository<ExpenseType>().Create(new ExpenseType { UserId = userId, Name = "Other", Description = "Expense that are difficult to classify as specific type." });
                 _unitOfWork.Save();
             }
             IdentitySignin(userId, name, isPersistent: true);

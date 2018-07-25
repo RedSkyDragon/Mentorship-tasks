@@ -23,6 +23,12 @@ namespace IncomeAndExpenses.DataAccessImplement
             return new Repository<TId, T>(_db);
         }
 
+        public IRepository<int, T> Repository<T>()
+            where T : Entity<int>
+        {
+            return new Repository<int, T>(_db);
+        }
+
         public void Dispose()
         {
             _db?.Dispose();

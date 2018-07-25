@@ -33,7 +33,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {               
                 try
                 {
-                    _unitOfWork.Repository<int, Income>().Create(income);
+                    _unitOfWork.Repository<Income>().Create(income);
                     _unitOfWork.Save();
                     return RedirectToAction("Index", "Home");
                 }
@@ -63,7 +63,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _unitOfWork.Repository<int, Income>().Update(income);
+                    _unitOfWork.Repository<Income>().Update(income);
                     _unitOfWork.Save();
                     return RedirectToAction("Index", "Home");
                 }
@@ -82,13 +82,13 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: Incomes/Details/1
         public ActionResult Details(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
+            return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
         }
 
         // GET: Incomes/Delete/1
         public ActionResult Delete(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
+            return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
         }
 
         // POST: Incomes/Delete/1
@@ -97,19 +97,19 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             try
             {
-                _unitOfWork.Repository<int, Income>().Delete(id);
+                _unitOfWork.Repository<Income>().Delete(id);
                 _unitOfWork.Save();
                 return RedirectToAction("Index", "Home");
             }
             catch
             {
-                return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
+                return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
             }
         }
 
         private IncomeCUViewModel CreateIncomeCUViewModel(int id)
         {
-            Income income = _unitOfWork.Repository<int, Income>().Get(id);
+            Income income = _unitOfWork.Repository<Income>().Get(id);
             return new IncomeCUViewModel { Income = ViewModelFromModel(income), IncomeTypes = CreateTypesList(income) };
         }
 
@@ -120,10 +120,11 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private IEnumerable<SelectListItem> CreateTypesList(Income income)
         {
-            return _unitOfWork.Repository<int, IncomeType>().GetAll()
+            return _unitOfWork.Repository<IncomeType>().GetAll()
                .Where(t => t.UserId == UserId)
                .OrderBy(t => t.Name)
-               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = income?.IncomeTypeId == t.Id });
+               .ToList()
+               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = (income == null ? false : income.IncomeTypeId == t.Id) });
         }
 
         private Income ModelFromViewModel(IncomeViewModel incomeVM)

@@ -32,18 +32,18 @@
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.Income.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.TextAreaFor(model => model.Income.Comment, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Income.Comment, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
                 @Html.Label("Income type", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.DropDownListFor(model => model.Income.IncomeTypeId, Model.IncomeTypes, new { @class = "form-control custom-select" })
                     @Html.ValidationMessageFor(model => model.Income.IncomeTypeId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Income.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Income.Comment, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Income.Comment, "", new { @class = "text-danger" })
                 </div>
             </div>
 

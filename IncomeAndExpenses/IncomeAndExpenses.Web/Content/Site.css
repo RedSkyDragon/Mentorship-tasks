@@ -5,6 +5,16 @@
     background-position-x: center;
     background-position-y: top;
 }
+@media (max-width: 992px) {
+    body {
+        background-position-x: left;
+    }
+}
+@media (min-width: 768px) {
+    .container {
+        max-width: 992px;
+    }
+}
 
 .body-content {
     padding-left: 15px;
@@ -52,12 +62,26 @@ a:hover {
 .padding-zero{
     padding: 0;
 }
-#loginLink{
-    padding-right: 0;
-}
 #sad-cat{
     width: 30%;
 }
 .display-none{
     display: none;
+}
+.table {
+    margin-bottom: 40px;
+}
+footer{
+    margin-top: 20px;
+}
+#app-name {
+    font-weight: 500;
+    color: #256702;
+}
+.jumbotron{
+    background-color: #eeeeee;
+}
+.bottom{
+    position: absolute;
+    bottom: 10px;
 }
