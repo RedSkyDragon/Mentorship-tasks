@@ -1,11 +1,8 @@
-﻿using IncomeAndExpenses.DataAccessImplement;
-using IncomeAndExpenses.DataAccessInterface;
+﻿using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using AutoMapper;
-using System.Security.Claims;
 using System.Web.Helpers;
 
 namespace IncomeAndExpenses.Web.Controllers
@@ -13,13 +10,23 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class HomeController : BaseController
     {
+        //Count of incomes or expenses per page
         private const int PAGE_SIZE = 10;
+
+        /// <summary>
+        /// Creates controller with UnitOfWork instance to connect with database
+        /// </summary>
+        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
         public HomeController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        // GET Home
+        /// <summary>
+        /// GET request Home
+        /// </summary>
+        /// <param name="model">ViewModel for GET request</param>
+        /// <returns>view</returns>
         public ActionResult Index(HomeGetViewModel model)
         {
             model = model ?? new HomeGetViewModel();

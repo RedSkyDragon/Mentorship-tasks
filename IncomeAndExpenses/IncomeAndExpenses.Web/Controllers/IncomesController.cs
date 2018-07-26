@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Controllers
@@ -13,6 +10,10 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class IncomesController : BaseController
     {
+        /// <summary>
+        /// Creates controller with UnitOfWork instance to connect with database
+        /// </summary>
+        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
         public IncomesController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -110,7 +111,7 @@ namespace IncomeAndExpenses.Web.Controllers
         private IncomeCUViewModel CreateIncomeCUViewModel(int id)
         {
             Income income = _unitOfWork.Repository<Income>().Get(id);
-            return new IncomeCUViewModel { Income = ViewModelFromModel(income), IncomeTypes = CreateTypesList(income) };
+            return CreateIncomeCUViewModel(income);
         }
 
         private IncomeCUViewModel CreateIncomeCUViewModel(Income income)

@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
 using System.Linq;
-using System.Security.Claims;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Controllers
@@ -11,6 +9,10 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class ExpenseTypesController : BaseController
     {
+        /// <summary>
+        /// Creates controller with UnitOfWork instance to connect with database
+        /// </summary>
+        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
         public ExpenseTypesController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;

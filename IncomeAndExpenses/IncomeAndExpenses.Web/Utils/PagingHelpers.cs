@@ -1,15 +1,23 @@
 ﻿using IncomeAndExpenses.Web.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Utils
 {
+    /// <summary>
+    /// Helpers for creating pagination
+    /// </summary>
     public static class PagingHelpers
     {
+        /// <summary>
+        /// Create html element for pagination
+        /// </summary>
+        /// <param name="html">The html</param>
+        /// <param name="pageInfo">Information abount requested pagination</param>
+        /// <param name="maxPagesAround">Number of visible pages around current</param>
+        /// <param name="pageUrl">Url of Action for page</param>
+        /// <returns>html of the pagination element</returns>
         public static MvcHtmlString PageLinks(this HtmlHelper html, PageInfoViewModel pageInfo, int maxPagesAround, Func<int, string> pageUrl)
         {
             StringBuilder result = new StringBuilder();

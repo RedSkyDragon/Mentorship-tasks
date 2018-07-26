@@ -214,7 +214,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -231,21 +230,20 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\ChallengeResult.cs" />
+    <Compile Include="Utils\ChallengeResult.cs" />
     <Compile Include="Models\DeleteExpenseTypeViewModel.cs" />
     <Compile Include="Models\DeleteIncomeTypeViewModel.cs" />
     <Compile Include="Models\ExpenseCUViewModel.cs" />
     <Compile Include="Models\ExpenseTypeViewModel.cs" />
     <Compile Include="Models\ExpenseViewModel.cs" />
-    <Compile Include="Models\ExpenseViewPropertyValidator.cs" />
-    <Compile Include="Models\ExpenseViewValidator.cs" />
-    <Compile Include="Models\ExternalLoginResult.cs" />
+    <Compile Include="Utils\ExpenseViewPropertyValidator.cs" />
+    <Compile Include="Utils\ExpenseViewValidator.cs" />
     <Compile Include="Models\HomeGetViewModel.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IncomeCUViewModel.cs" />
     <Compile Include="Models\IncomeTypeViewModel.cs" />
     <Compile Include="Models\IncomeViewModel.cs" />
-    <Compile Include="Models\InExValidationProvider.cs" />
+    <Compile Include="Utils\InExValidationProvider.cs" />
     <Compile Include="Models\PageInfoViewModel.cs" />
     <Compile Include="Models\SortInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

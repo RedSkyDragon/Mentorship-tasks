@@ -2,17 +2,19 @@
 using Autofac.Integration.Mvc;
 using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Utils
 {
+    /// <summary>
+    /// Configures AutoFac
+    /// </summary>
     public class AutofacConfig
     {
+        /// <summary>
+        /// configures AutoFac options for current project
+        /// </summary>
         public static void ConfigureContainer()
         {
             var builder = new ContainerBuilder();

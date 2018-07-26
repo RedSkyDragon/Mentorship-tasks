@@ -1,40 +1,43 @@
-﻿using DotNetOpenAuth.GoogleOAuth2;
-using IncomeAndExpenses.DataAccessImplement;
-using IncomeAndExpenses.DataAccessInterface;
-using IncomeAndExpenses.Web.Models;
+﻿using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.Web.Utils;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Membership.OpenAuth;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
     public class AccountController : BaseController
     {
+        private IAuthenticationManager AuthenticationManager { get { return HttpContext.GetOwinContext().Authentication; } }
+
+        /// <summary>
+        /// Creates controller with UnitOfWork instance to connect with database
+        /// </summary>
+        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
         public AccountController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        // GET: Account
+        //GET Account
         public ActionResult Index()
         {
             return View();
         }
         
+        //GET Account/LogOff
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie);
             return Redirect(Url.Action("Index", "Account"));
         }
 
+        //GET Account/Login
         [AllowAnonymous]
         public ActionResult Login()
         {
@@ -80,14 +83,6 @@ namespace IncomeAndExpenses.Web.Controllers
                 IsPersistent = isPersistent,
                 ExpiresUtc = DateTime.UtcNow.AddDays(7)
             }, identity);
-        }
-
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
         }
     }
 }

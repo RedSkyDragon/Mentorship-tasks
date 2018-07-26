@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Utils
 {
+    /// <summary>
+    /// Exception filter which shows custom exception page and loggers information about exceptions
+    /// </summary>
     public class CustomExceptionFilter : IExceptionFilter
     {
+        /// <summary>
+        /// Actions when exception occurs
+        /// </summary>
+        /// <param name="context">The exception context</param>
         public void OnException(ExceptionContext context)
         {
             String message = String.Empty;

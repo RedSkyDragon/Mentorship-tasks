@@ -1,14 +1,28 @@
-﻿using System;
+﻿using IncomeAndExpenses.Web.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace IncomeAndExpenses.Web.Models
+namespace IncomeAndExpenses.Web.Utils
 {
+    /// <summary>
+    /// Volidator for ExpenseView properties
+    /// </summary>
     internal class ExpenseViewPropertyValidator : ModelValidator
     {
+        /// <summary>
+        /// Creates ExpenseView property validator
+        /// </summary>
+        /// <param name="metadata">the metadata</param>
+        /// <param name="controllerContext">thr context</param>
         public ExpenseViewPropertyValidator(ModelMetadata metadata, ControllerContext controllerContext) : base(metadata, controllerContext) { }
 
+        /// <summary>
+        /// Validates property
+        /// </summary>
+        /// <param name="container">The container</param>
+        /// <returns>List of validation results</returns>
         public override IEnumerable<ModelValidationResult> Validate(object container)
         {
             if (container is ExpenseViewModel expense)
