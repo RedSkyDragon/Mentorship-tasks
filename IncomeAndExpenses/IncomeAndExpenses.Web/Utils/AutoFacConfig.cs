@@ -20,7 +20,7 @@ namespace IncomeAndExpenses.Web.Utils
             var builder = new ContainerBuilder();
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.Register(c => new InAndExDbContext()).As<DbContext>().InstancePerRequest();
-            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerDependency();
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }

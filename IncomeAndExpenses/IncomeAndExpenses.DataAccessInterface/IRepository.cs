@@ -6,7 +6,7 @@ namespace IncomeAndExpenses.DataAccessInterface
     public interface IRepository<TId, T> 
         where T : Entity<TId>
     {
-        IQueryable<T> GetAll();
+        IQueryable<T> All();
 
         T Get(TId id);
 

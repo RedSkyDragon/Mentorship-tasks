@@ -1,8 +1,8 @@
 ﻿@model IncomeAndExpenses.Web.Models.HomeIndexViewModel
-@using IncomeAndExpenses.Web.Utils;
-@using IncomeAndExpenses.Web.Models;
 @{
     ViewBag.Title = "Home";
+    AjaxOptions expesesAjaxOptions = new AjaxOptions { UpdateTargetId = "expenses", HttpMethod = "GET", OnSuccess = "InsertAngles" };
+    AjaxOptions incomesAjaxOptions = new AjaxOptions { UpdateTargetId = "incomes", HttpMethod = "GET", OnSuccess = "InsertAngles" };
 }
 
 <h3 class="text-right">Current balance: @Model.CurrentBalance</h3>
@@ -10,134 +10,40 @@
 <div class="row">
     <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
         <h1>Expenses</h1>
+        @using (Ajax.BeginForm("GetExpensesData", expesesAjaxOptions))
+        {
+            <div class="input-group mb-3">
+                <input id="search" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="" name="searchValue">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="search-btn">Search</button>
+                </div>
+            </div>
+        }
         <div class="float-left">
             @Html.ActionLink("Create New", "Create", "Expenses")
         </div>
         <div class="float-right font-weight-bold">Total: @Model.ExpenseTotal</div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        Amount&nbsp;
-                        <div class="btn-group">
-                            <a id="expense_amount_asc" href="@Url.Action("Index", new HomeGetViewModel { ExpenseSortCol = "Amount", ExpenseSortDir = SortDirection.Ascending, IncomePage = Model.IncomesPageInfo.PageNumber, IncomeSortCol = Model.IncomesSortInfo.ColumnName, IncomeSortDir = Model.IncomesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
-                            <a id="expense_amount_desc" href="@Url.Action("Index", new HomeGetViewModel { ExpenseSortCol = "Amount", ExpenseSortDir = SortDirection.Descending, IncomePage = Model.IncomesPageInfo.PageNumber, IncomeSortCol = Model.IncomesSortInfo.ColumnName, IncomeSortDir = Model.IncomesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
-                        </div>
-                    </th>
-                    <th>
-                        Date&nbsp;
-                        <div class="btn-group">
-                            <a id="expense_date_asc" href="@Url.Action("Index", new HomeGetViewModel { ExpenseSortCol = "Date", ExpenseSortDir = SortDirection.Ascending, IncomePage = Model.IncomesPageInfo.PageNumber, IncomeSortCol = Model.IncomesSortInfo.ColumnName, IncomeSortDir = Model.IncomesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
-                            <a id="expense_date_desc" href="@Url.Action("Index", new HomeGetViewModel { ExpenseSortCol = "Date", ExpenseSortDir = SortDirection.Descending, IncomePage = Model.IncomesPageInfo.PageNumber, IncomeSortCol = Model.IncomesSortInfo.ColumnName, IncomeSortDir = Model.IncomesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
-                        </div>
-                    </th>
-                    <th>
-                        Type&nbsp;
-                        <div class="btn-group">
-                            <a id="expense_type_asc" href="@Url.Action("Index", new HomeGetViewModel { ExpenseSortCol = "ExpenseTypeName", ExpenseSortDir = SortDirection.Ascending, IncomePage = Model.IncomesPageInfo.PageNumber, IncomeSortCol = Model.IncomesSortInfo.ColumnName, IncomeSortDir = Model.IncomesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
-                            <a id="expense_type_desc" href="@Url.Action("Index", new HomeGetViewModel { ExpenseSortCol = "ExpenseTypeName", ExpenseSortDir = SortDirection.Descending, IncomePage = Model.IncomesPageInfo.PageNumber, IncomeSortCol = Model.IncomesSortInfo.ColumnName, IncomeSortDir = Model.IncomesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
-                        </div>
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-        @if (Model.Expenses.Count() > 0)
-        { 
-            foreach (var item in Model.Expenses)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Amount)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ExpenseTypeName)
-                    </td>
-                    <td>
-                        <a href=@Url.Action("Edit", "Expenses", new { id = item.Id })><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;
-                        <a href=@Url.Action("Details", "Expenses", new { id = item.Id })><i class="fas fa-info"></i></a>&nbsp;&nbsp;
-                        <a href=@Url.Action("Delete", "Expenses", new { id = item.Id })><i class="fas fa-trash"></i></a>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4" class="text-center">It seems there is nothing here...</td>
-            </tr>
-        }
-        </table>
-        <br />
-        <div class="btn-group bottom">
-            @Html.PageLinks(Model.ExpensesPageInfo, 2, x => Url.Action("Index", new HomeGetViewModel { ExpensePage = x, IncomePage = Model.IncomesPageInfo.PageNumber, ExpenseSortCol = Model.ExpensesSortInfo.ColumnName, ExpenseSortDir = Model.ExpensesSortInfo.Direction, IncomeSortCol = Model.IncomesSortInfo.ColumnName, IncomeSortDir = Model.IncomesSortInfo.Direction }))
+        <div id="expenses">
+            @Html.Action("GetExpensesData", new { })
         </div>
     </div>
     <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
         <h1>Income</h1>
+        @using (Ajax.BeginForm("GetIncomesData", incomesAjaxOptions))
+        {
+            <div class="input-group mb-3">
+                <input id="search" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="" name="searchValue">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="search-btn">Search</button>
+                </div>
+            </div>
+        }
         <div class="float-left">
             @Html.ActionLink("Create New", "Create", "Incomes")
         </div>
         <div class="float-right font-weight-bold">Total: @Model.IncomeTotal</div>
-        <table class="table">
-            <tr>
-                <th>
-                    Amount&nbsp;
-                    <div class="btn-group">
-                        <a id="income_amount_asc" href="@Url.Action("Index", new HomeGetViewModel { IncomeSortCol = "Amount", IncomeSortDir = SortDirection.Ascending, ExpensePage = Model.ExpensesPageInfo.PageNumber, ExpenseSortCol = Model.ExpensesSortInfo.ColumnName, ExpenseSortDir = Model.ExpensesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
-                        <a id="income_amount_desc" href="@Url.Action("Index", new HomeGetViewModel { IncomeSortCol = "Amount", IncomeSortDir = SortDirection.Descending, ExpensePage = Model.ExpensesPageInfo.PageNumber, ExpenseSortCol = Model.ExpensesSortInfo.ColumnName, ExpenseSortDir = Model.ExpensesSortInfo.Direction})" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
-                    </div>
-                </th>
-                <th>
-                    Date&nbsp;
-                    <div class="btn-group">
-                        <a id="income_date_asc" href="@Url.Action("Index", new HomeGetViewModel { IncomeSortCol = "Date", IncomeSortDir = SortDirection.Ascending, ExpensePage = Model.ExpensesPageInfo.PageNumber, ExpenseSortCol = Model.ExpensesSortInfo.ColumnName, ExpenseSortDir = Model.ExpensesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
-                        <a id="income_date_desc" href="@Url.Action("Index", new HomeGetViewModel { IncomeSortCol = "Date", IncomeSortDir = SortDirection.Descending, ExpensePage = Model.ExpensesPageInfo.PageNumber, ExpenseSortCol = Model.ExpensesSortInfo.ColumnName, ExpenseSortDir = Model.ExpensesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
-                    </div>
-                </th>
-                <th>
-                    Type&nbsp;
-                    <div class="btn-group">
-                        <a id="income_type_asc" href="@Url.Action("Index", new HomeGetViewModel { IncomeSortCol = "IncomeTypeName", IncomeSortDir = SortDirection.Ascending, ExpensePage = Model.ExpensesPageInfo.PageNumber, ExpenseSortCol = Model.ExpensesSortInfo.ColumnName, ExpenseSortDir = Model.ExpensesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-up"></i></a>
-                        <a id="income_type_desc" href="@Url.Action("Index", new HomeGetViewModel { IncomeSortCol = "IncomeTypeName", IncomeSortDir = SortDirection.Descending, ExpensePage = Model.ExpensesPageInfo.PageNumber, ExpenseSortCol = Model.ExpensesSortInfo.ColumnName, ExpenseSortDir = Model.ExpensesSortInfo.Direction })" class="btn btn-sm btn-light"><i class="fas fa-angle-down"></i></a>
-                    </div>
-                </th>
-                <th></th>
-            </tr>
-        @if (Model.Incomes.Count() > 0)
-        { 
-            foreach (var item in Model.Incomes)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Amount)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IncomeTypeName)
-                    </td>
-                    <td>
-                        <a href=@Url.Action("Edit", "Incomes", new { id = item.Id })><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;
-                        <a href=@Url.Action("Details", "Incomes", new { id = item.Id })><i class="fas fa-info"></i></a>&nbsp;&nbsp;
-                        <a href=@Url.Action("Delete", "Incomes", new { id = item.Id })><i class="fas fa-trash"></i></a>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4" class="text-center">It seems there is nothing here...</td>
-            </tr>
-        }
-        </table>
-        <br />
-        <div class="btn-group bottom">
-            @Html.PageLinks(Model.IncomesPageInfo, 2, x => Url.Action("Index", new HomeGetViewModel { ExpensePage = Model.ExpensesPageInfo.PageNumber, IncomePage = x, ExpenseSortCol = Model.ExpensesSortInfo.ColumnName, ExpenseSortDir = Model.ExpensesSortInfo.Direction, IncomeSortCol = Model.IncomesSortInfo.ColumnName, IncomeSortDir = Model.IncomesSortInfo.Direction }))
+        <div id="incomes">
+            @Html.Action("GetIncomesData", new { })
         </div>
     </div>
 </div>
@@ -145,63 +51,17 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            SelectSortBtn("expense", "@Model.ExpensesSortInfo.ColumnName", "@Model.ExpensesSortInfo.Direction");
-            SelectSortBtn("income", "@Model.IncomesSortInfo.ColumnName", "@Model.IncomesSortInfo.Direction");
+            InsertAngles();
         });
-
-        function SelectSortBtn(type, colname, direction)
+        
+        function InsertAngles()
         {
-            switch (colname)
-            {
-                case "Amount":
-                    if (direction == "@SortDirection.Ascending")
-                    {
-                        $("#" + type + "_amount_asc").removeClass("btn-light");
-                        $("#" + type + "_amount_asc").addClass("btn-primary");
-                    }
-                    else
-                    {
-                        $("#" + type + "_amount_desc").removeClass("btn-light");
-                        $("#" + type + "_amount_desc").addClass("btn-primary");
-                    }
-                    break;
-                case "Date":
-                    if (direction == "@SortDirection.Ascending")
-                    {
-                        $("#" + type + "_date_asc").removeClass("btn-light");
-                        $("#" + type + "_date_asc").addClass("btn-primary");
-                    }
-                    else
-                    {
-                        $("#" + type + "_date_desc").removeClass("btn-light");
-                        $("#" + type + "_date_desc").addClass("btn-primary");
-                    }
-                    break;
-                case "ExpenseTypeName":
-                    if (direction  == "@SortDirection.Ascending")
-                    {
-                        $("#" + type + "_type_asc").removeClass("btn-light");
-                        $("#" + type + "_type_asc").addClass("btn-primary");
-                    }
-                    else
-                    {
-                        $("#" + type + "_type_desc").removeClass("btn-light");
-                        $("#" + type + "_type_desc").addClass("btn-primary");
-                    }
-                    break;
-                case "IncomeTypeName":
-                    if (direction  == "@SortDirection.Ascending")
-                    {
-                        $("#" + type + "_type_asc").removeClass("btn-light");
-                        $("#" + type + "_type_asc").addClass("btn-primary");
-                    }
-                    else
-                    {
-                        $("#" + type + "_type_desc").removeClass("btn-light");
-                        $("#" + type + "_type_desc").addClass("btn-primary");
-                    }
-                    break;
-            };
+            $(".asc").each(function () {
+                $(this).html("<i class='fas fa-angle-up'></i>")
+            });
+            $(".desc").each(function () {
+                $(this).html("<i class='fas fa-angle-down'></i>")
+            });
         }
     </script>    
 }

@@ -21,7 +21,7 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: IncomeTypes
         public ActionResult Index()
         {
-            return View(_unitOfWork.Repository<IncomeType>().GetAll().Where(t=>t.UserId == UserId).ToList().Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
+            return View(_unitOfWork.Repository<IncomeType>().All().Where(t=>t.UserId == UserId).ToList().Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
         }
 
         // GET: IncomeTypes/Create
@@ -100,7 +100,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 var str = collection["DeleteAll"];
                 bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
-                var incomes = _unitOfWork.Repository<Income>().GetAll().Where(ex => ex.IncomeTypeId == id);
+                var incomes = _unitOfWork.Repository<Income>().All().Where(ex => ex.IncomeTypeId == id);
                 if (delAll)
                 {
                     foreach (var income in incomes)
@@ -131,7 +131,7 @@ namespace IncomeAndExpenses.Web.Controllers
         private DeleteIncomeTypeViewModel CreateDeleteViewModel(int id)
         {
             var type = _unitOfWork.Repository<IncomeType>().Get(id);
-            var replace = _unitOfWork.Repository<IncomeType>().GetAll()
+            var replace = _unitOfWork.Repository<IncomeType>().All()
                 .Where(t => t.UserId == type.UserId && t.Id != type.Id)
                 .OrderBy(t => t.Name)
                 .ToList()

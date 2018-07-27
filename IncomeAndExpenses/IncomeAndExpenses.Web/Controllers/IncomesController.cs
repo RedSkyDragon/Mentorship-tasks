@@ -121,7 +121,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private IEnumerable<SelectListItem> CreateTypesList(Income income)
         {
-            return _unitOfWork.Repository<IncomeType>().GetAll()
+            return _unitOfWork.Repository<IncomeType>().All()
                .Where(t => t.UserId == UserId)
                .OrderBy(t => t.Name)
                .ToList()

@@ -34,7 +34,7 @@ namespace IncomeAndExpenses.DataAccessImplement
             return _db.Set<T>().Find(id);
         }
 
-        public IQueryable<T> GetAll()
+        public IQueryable<T> All()
         {
             return _db.Set<T>();
         }

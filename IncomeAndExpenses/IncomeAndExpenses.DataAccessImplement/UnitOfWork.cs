@@ -29,9 +29,6 @@ namespace IncomeAndExpenses.DataAccessImplement
             return new Repository<int, T>(_db);
         }
 
-        public void Dispose()
-        {
-            _db?.Dispose();
-        }
+        public void Dispose() { }
     }
 }

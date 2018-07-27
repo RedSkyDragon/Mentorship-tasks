@@ -49,6 +49,11 @@ a:hover {
     background-color: #4D9500;
     border-color: #4D9500;
 }
+.btn:focus {
+    background-color: #4D9500;
+    border-color: #4D9500;
+    box-shadow: none;
+}
 .navbar-light .navbar-nav .nav-link, .navbar-light .navbar-text {
     color: #284C00;
 }
