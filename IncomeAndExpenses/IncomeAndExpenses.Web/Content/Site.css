@@ -15,7 +15,17 @@
         max-width: 992px;
     }
 }
-
+@media (min-width: 992px) and (max-width: 1264px) {
+    .container {
+        max-width: 1264px;
+    }
+}
+@media (min-width: 1264px)
+{
+    .container{
+        max-width: 1264px;
+    }
+}
 .body-content {
     padding-left: 15px;
     padding-right: 15px;

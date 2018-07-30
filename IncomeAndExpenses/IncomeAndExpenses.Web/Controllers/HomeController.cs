@@ -53,6 +53,11 @@ namespace IncomeAndExpenses.Web.Controllers
                 .Where(t => t.UserId == UserId)
                 .Join(_unitOfWork.Repository<Expense>().All(), t => t.Id, e => e.ExpenseTypeId,
                     (t, e) => new ExpenseViewModel { Id = e.Id, Amount = e.Amount, Date = e.Date, ExpenseTypeName = t.Name });
+            decimal searchValueDec;
+            if (decimal.TryParse(searchValue, out searchValueDec))
+            {
+                searchValue = searchValue.Replace(',', '.');
+            }
             if (!string.IsNullOrEmpty(searchValue))
             {
                 expenses = expenses.Where(e => e.Amount.ToString().Contains(searchValue) || e.ExpenseTypeName.Contains(searchValue));
@@ -84,6 +89,11 @@ namespace IncomeAndExpenses.Web.Controllers
                 .Where(t => t.UserId == UserId)
                 .Join(_unitOfWork.Repository<Income>().All(), t => t.Id, i => i.IncomeTypeId,
                     (t, i) => new IncomeViewModel { Id = i.Id, Amount = i.Amount, Date = i.Date, IncomeTypeName = t.Name });
+            decimal searchValueDec;
+            if (decimal.TryParse(searchValue, out searchValueDec))
+            {
+                searchValue = searchValue.Replace(',', '.');
+            }
             if (!string.IsNullOrEmpty(searchValue))
             {
                 incomes = incomes.Where(i => i.Amount.ToString().Contains(searchValue) || i.IncomeTypeName.Contains(searchValue));
