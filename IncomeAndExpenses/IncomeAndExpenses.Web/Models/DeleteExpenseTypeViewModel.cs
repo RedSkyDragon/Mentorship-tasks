@@ -1,15 +1,21 @@
-﻿using IncomeAndExpenses.DataAccessInterface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Models
 {
+    /// <summary>
+    /// ViewModel for delete expense type page
+    /// </summary>
     public class DeleteExpenseTypeViewModel
     {
+        /// <summary>
+        /// Expense type to delete
+        /// </summary>
         public ExpenseTypeViewModel ExpenseType { get; set; }
+
+        /// <summary>
+        /// ExpenseTypes belonging to the same user which could replace deleted type
+        /// </summary>
         public IEnumerable<SelectListItem> ReplacementTypes { get; set; }
 
     }

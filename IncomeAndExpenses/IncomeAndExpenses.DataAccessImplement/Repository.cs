@@ -1,14 +1,16 @@
 ﻿using IncomeAndExpenses.DataAccessInterface;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 
 namespace IncomeAndExpenses.DataAccessImplement
 {
     public class Repository<TId, T> : IRepository<TId, T> 
         where T: Entity<TId>
     {
-        private InAndExDbContext _db;
+        private DbContext _db;
 
-        public Repository(InAndExDbContext db)
+        public Repository(DbContext db)
         {
             _db = db;
         }
@@ -32,7 +34,7 @@ namespace IncomeAndExpenses.DataAccessImplement
             return _db.Set<T>().Find(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> All()
         {
             return _db.Set<T>();
         }

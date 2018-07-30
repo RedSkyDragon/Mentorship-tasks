@@ -1,7 +1,7 @@
 ﻿@model IncomeAndExpenses.Web.Models.ExpenseCUViewModel
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Edit expense";
 }
 
 <h2>Edit</h2>
@@ -33,18 +33,18 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Expense.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextAreaFor(model => model.Expense.Comment, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Expense.Comment, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             @Html.Label("Expense type", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.Expense.ExpenseTypeId, Model.ExpenseTypes, new { @class = "form-control custom-select" })
                 @Html.ValidationMessageFor(model => model.Expense.ExpenseTypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Expense.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.Expense.Comment, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Expense.Comment, "", new { @class = "text-danger" })
             </div>
         </div>
 

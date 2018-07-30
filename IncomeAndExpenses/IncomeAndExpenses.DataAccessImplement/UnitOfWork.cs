@@ -1,38 +1,34 @@
 ﻿using IncomeAndExpenses.DataAccessInterface;
-
+using System.Data.Entity;
 
 namespace IncomeAndExpenses.DataAccessImplement
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private InAndExDbContext _db = new InAndExDbContext();
-        private bool _disposed = false;
+        private DbContext _db;
+
+        public UnitOfWork(DbContext db)
+        {
+            _db = db;
+        }
 
         public void Save()
         {
             _db.SaveChanges();
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _db.Dispose();
-                }
-                _disposed = true;
-            }
-        }
-
-        public IRepository<TId, T> Repository<TId, T>() where T : Entity<TId>
+        public IRepository<TId, T> Repository<TId, T>() 
+            where T : Entity<TId>
         {
             return new Repository<TId, T>(_db);
         }
 
-        public void Dispose()
+        public IRepository<int, T> Repository<T>()
+            where T : Entity<int>
         {
-            Dispose(true);
+            return new Repository<int, T>(_db);
         }
+
+        public void Dispose() { }
     }
 }

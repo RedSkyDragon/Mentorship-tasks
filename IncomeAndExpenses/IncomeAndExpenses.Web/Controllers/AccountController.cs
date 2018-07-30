@@ -1,76 +1,58 @@
-﻿using DotNetOpenAuth.GoogleOAuth2;
-using IncomeAndExpenses.DataAccessImplement;
-using IncomeAndExpenses.DataAccessInterface;
-using IncomeAndExpenses.Web.Models;
+﻿using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.Web.Utils;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Membership.OpenAuth;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
-        private IUnitOfWork _unitOfWork;
+        private IAuthenticationManager AuthenticationManager { get { return HttpContext.GetOwinContext().Authentication; } }
 
-        public AccountController()
+        /// <summary>
+        /// Creates controller with UnitOfWork instance to connect with database
+        /// </summary>
+        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
+        public AccountController(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = new UnitOfWork();
+            _unitOfWork = unitOfWork;
         }
 
-        // GET: Account
+        //GET Account
         public ActionResult Index()
         {
             return View();
         }
         
-        [AllowAnonymous]
-        public void IdentitySignin(string userId, string name, bool isPersistent = false)
-        {
-            var claims = new List<Claim>();
-
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
-            claims.Add(new Claim(ClaimTypes.Name, name));
-
-            var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-
-            AuthenticationManager.SignIn(new AuthenticationProperties()
-            {
-                AllowRefresh = true,
-                IsPersistent = isPersistent,
-                ExpiresUtc = DateTime.UtcNow.AddDays(7)
-            }, identity);
-        }
-
+        //GET Account/LogOff
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie,
-                                          DefaultAuthenticationTypes.ExternalCookie);
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie);
             return Redirect(Url.Action("Index", "Account"));
         }
 
+        //GET Account/Login
         [AllowAnonymous]
         public ActionResult Login()
         {
             string provider = "Google";
             string returnUrl = "";
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback",
-                                       "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             if (string.IsNullOrEmpty(returnUrl))
+            {
                 returnUrl = "~/";
-
+            }
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
@@ -81,28 +63,26 @@ namespace IncomeAndExpenses.Web.Controllers
             if (_unitOfWork.Repository<string, User>().Get(userId) == null)
             {
                 _unitOfWork.Repository<string, User>().Create(new User { Id = userId, UserName = name });
-                _unitOfWork.Repository<int, IncomeType>().Create(new IncomeType { UserId = userId, Name = "Other", Description = "Income that are difficult to classify as specific type." });
-                _unitOfWork.Repository<int, ExpenseType>().Create(new ExpenseType { UserId = userId, Name = "Other", Description = "Expense that are difficult to classify as specific type." });
+                _unitOfWork.Repository<IncomeType>().Create(new IncomeType { UserId = userId, Name = "Other", Description = "Income that are difficult to classify as specific type." });
+                _unitOfWork.Repository<ExpenseType>().Create(new ExpenseType { UserId = userId, Name = "Other", Description = "Expense that are difficult to classify as specific type." });
                 _unitOfWork.Save();
             }
-
             IdentitySignin(userId, name, isPersistent: true);
-
             return Redirect(returnUrl);
         }
 
-        protected override void Dispose(bool disposing)
+        private void IdentitySignin(string userId, string name, bool isPersistent = false)
         {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
-        }
-
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
+            claims.Add(new Claim(ClaimTypes.Name, name));
+            var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+            AuthenticationManager.SignIn(new AuthenticationProperties()
             {
-                return HttpContext.GetOwinContext().Authentication;
-            }
+                AllowRefresh = true,
+                IsPersistent = isPersistent,
+                ExpiresUtc = DateTime.UtcNow.AddDays(7)
+            }, identity);
         }
     }
 }

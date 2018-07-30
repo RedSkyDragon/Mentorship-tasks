@@ -1,7 +1,7 @@
 ﻿@model IncomeAndExpenses.Web.Models.IncomeViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Income Details";
 }
 
 <h2>Details</h2>
@@ -27,19 +27,19 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.IncomeTypeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IncomeTypeName)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.Comment)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.Comment)
-        </dd>
-
-        <dt>
-            @Html.DisplayName("Income type")
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IncomeTypeName)
         </dd>
 
     </dl>

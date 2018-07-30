@@ -1,23 +1,22 @@
 ﻿using AutoMapper;
-using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
     [Authorize]
-    public class IncomesController : Controller
+    public class IncomesController : BaseController
     {
-        private IUnitOfWork _unitOfWork;
-
-        public IncomesController()
+        /// <summary>
+        /// Creates controller with UnitOfWork instance to connect with database
+        /// </summary>
+        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
+        public IncomesController(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = new UnitOfWork();
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Incomes/Create
@@ -35,7 +34,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {               
                 try
                 {
-                    _unitOfWork.Repository<int, Income>().Create(income);
+                    _unitOfWork.Repository<Income>().Create(income);
                     _unitOfWork.Save();
                     return RedirectToAction("Index", "Home");
                 }
@@ -65,7 +64,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _unitOfWork.Repository<int, Income>().Update(income);
+                    _unitOfWork.Repository<Income>().Update(income);
                     _unitOfWork.Save();
                     return RedirectToAction("Index", "Home");
                 }
@@ -84,13 +83,13 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: Incomes/Details/1
         public ActionResult Details(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
+            return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
         }
 
         // GET: Incomes/Delete/1
         public ActionResult Delete(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
+            return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
         }
 
         // POST: Incomes/Delete/1
@@ -99,26 +98,20 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             try
             {
-                _unitOfWork.Repository<int, Income>().Delete(id);
+                _unitOfWork.Repository<Income>().Delete(id);
                 _unitOfWork.Save();
                 return RedirectToAction("Index", "Home");
             }
             catch
             {
-                return View(ViewModelFromModel(_unitOfWork.Repository<int, Income>().Get(id)));
+                return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
         }
 
         private IncomeCUViewModel CreateIncomeCUViewModel(int id)
         {
-            Income income = _unitOfWork.Repository<int, Income>().Get(id);
-            return new IncomeCUViewModel { Income = ViewModelFromModel(income), IncomeTypes = CreateTypesList(income) };
+            Income income = _unitOfWork.Repository<Income>().Get(id);
+            return CreateIncomeCUViewModel(income);
         }
 
         private IncomeCUViewModel CreateIncomeCUViewModel(Income income)
@@ -128,10 +121,11 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private IEnumerable<SelectListItem> CreateTypesList(Income income)
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
-            return _unitOfWork.Repository<int, IncomeType>().GetAll()
-               .Where(it => it.UserId == userId)
-               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = income?.IncomeTypeId == t.Id });
+            return _unitOfWork.Repository<IncomeType>().All()
+               .Where(t => t.UserId == UserId)
+               .OrderBy(t => t.Name)
+               .ToList()
+               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = (income == null ? false : income.IncomeTypeId == t.Id) });
         }
 
         private Income ModelFromViewModel(IncomeViewModel incomeVM)

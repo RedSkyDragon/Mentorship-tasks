@@ -1,105 +1,67 @@
 ﻿@model IncomeAndExpenses.Web.Models.HomeIndexViewModel
 @{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Home";
+    AjaxOptions expesesAjaxOptions = new AjaxOptions { UpdateTargetId = "expenses", HttpMethod = "GET", OnSuccess = "InsertAngles" };
+    AjaxOptions incomesAjaxOptions = new AjaxOptions { UpdateTargetId = "incomes", HttpMethod = "GET", OnSuccess = "InsertAngles" };
 }
 
+<h3 class="text-right">Current balance: @Model.CurrentBalance</h3>
+
 <div class="row">
-    <div class="col-md-6">
+    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
         <h1>Expenses</h1>
-        <p>
+        @using (Ajax.BeginForm("GetExpensesData", expesesAjaxOptions))
+        {
+            <div class="input-group mb-3">
+                <input id="search" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="" name="searchValue">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="search-btn">Search</button>
+                </div>
+            </div>
+        }
+        <div class="float-left">
             @Html.ActionLink("Create New", "Create", "Expenses")
-        </p>
-        <table class="table">
-            <tr>
-                <th>
-                    Amount
-                </th>
-                <th>
-                    Date
-                </th>
-                <th>
-                    Type
-                </th>
-                <th></th>
-            </tr>
-        @if (Model.Expenses.Count() > 0)
-        { 
-            foreach (var item in Model.Expenses)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Amount)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ExpenseTypeName)
-                    </td>
-                    <td>
-                        <a href=@Url.Action("Edit", "Expenses", new { id = item.Id })><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;
-                        <a href=@Url.Action("Details", "Expenses", new { id = item.Id })><i class="fas fa-info"></i></a>&nbsp;&nbsp;
-                        <a href=@Url.Action("Delete", "Expenses", new { id = item.Id })><i class="fas fa-trash"></i></a>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4" class="text-center">It seems there is nothing here...</td>
-            </tr>
-        }
-
-        </table>
+        </div>
+        <div class="float-right font-weight-bold">Total: @Model.ExpenseTotal</div>
+        <div id="expenses">
+            @Html.Action("GetExpensesData", new { })
+        </div>
     </div>
-    <div class="col-md-6">
+    <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
         <h1>Income</h1>
-        <p>
-            @Html.ActionLink("Create New", "Create", "Incomes")
-        </p>
-        <table class="table">
-            <tr>
-                <th>
-                    Amount
-                </th>
-                <th>
-                    Date
-                </th>
-                <th>
-                    Type
-                </th>
-                <th></th>
-            </tr>
-        @if (Model.Incomes.Count() > 0)
-        { 
-            foreach (var item in Model.Incomes)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Amount)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IncomeTypeName)
-                    </td>
-                    <td>
-                        <a href=@Url.Action("Edit", "Incomes", new { id = item.Id })><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;
-                        <a href=@Url.Action("Details", "Incomes", new { id = item.Id })><i class="fas fa-info"></i></a>&nbsp;&nbsp;
-                        <a href=@Url.Action("Delete", "Incomes", new { id = item.Id })><i class="fas fa-trash"></i></a>
-                    </td>
-                </tr>
-            }
-        }
-        else
+        @using (Ajax.BeginForm("GetIncomesData", incomesAjaxOptions))
         {
-            <tr>
-                <td colspan="4" class="text-center">It seems there is nothing here...</td>
-            </tr>
+            <div class="input-group mb-3">
+                <input id="search" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="" name="searchValue">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="search-btn">Search</button>
+                </div>
+            </div>
         }
-
-        </table>
+        <div class="float-left">
+            @Html.ActionLink("Create New", "Create", "Incomes")
+        </div>
+        <div class="float-right font-weight-bold">Total: @Model.IncomeTotal</div>
+        <div id="incomes">
+            @Html.Action("GetIncomesData", new { })
+        </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            InsertAngles();
+        });
+        
+        function InsertAngles()
+        {
+            $(".asc").each(function () {
+                $(this).html("<i class='fas fa-angle-up'></i>")
+            });
+            $(".desc").each(function () {
+                $(this).html("<i class='fas fa-angle-down'></i>")
+            });
+        }
+    </script>    
+}

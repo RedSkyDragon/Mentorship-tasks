@@ -1,0 +1,103 @@
+﻿@using IncomeAndExpenses.Web.Models
+@model HomeIncomeViewModel
+@{
+    AjaxOptions AjaxOptions = new AjaxOptions { UpdateTargetId = "incomes", HttpMethod = "GET", OnSuccess = "InsertAngles" };
+    int pagesAround = 2;
+    int first = Model.PageInfo.PageNumber - pagesAround < 1 ? 1 : Model.PageInfo.PageNumber - pagesAround;
+    int last = Model.PageInfo.PageNumber + pagesAround > Model.PageInfo.TotalPages ? Model.PageInfo.TotalPages : Model.PageInfo.PageNumber + pagesAround;
+    string colName = Model.SortInfo.ColumnName;
+    SortDirection direction = Model.SortInfo.Direction;
+    string search = Model.SearchValue;
+    SortDirection asc = SortDirection.Ascending;
+    SortDirection desc = SortDirection.Descending;
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Amount&nbsp;
+                <div class="btn-group">
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.Amount), sortDir = asc, searchValue = search }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.Amount) && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.Amount), sortDir = desc, searchValue = search }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.Amount) && direction == desc ? "btn-primary" : "btn-lignt") })
+                </div>
+            </th>
+            <th>
+                Date&nbsp;
+                <div class="btn-group">
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.Date), sortDir = asc, searchValue = search }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.Date) && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.Date), sortDir = desc, searchValue = search }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.Date) && direction == desc ? "btn-primary" : "btn-lignt") })
+                </div>
+            </th>
+            <th>
+                Type&nbsp;
+                <div class="btn-group">
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.IncomeTypeName), sortDir = asc, searchValue = search }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.IncomeTypeName) && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.IncomeTypeName), sortDir = desc, searchValue = search }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.IncomeTypeName) && direction == desc ? "btn-primary" : "btn-lignt") })
+                </div>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Incomes.Count() > 0)
+        {
+            foreach (var item in Model.Incomes)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IncomeTypeName)
+                    </td>
+                    <td>
+                        <a href=@Url.Action("Edit", "Incomes", new { id = item.Id })><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;
+                        <a href=@Url.Action("Details", "Incomes", new { id = item.Id })><i class="fas fa-info"></i></a>&nbsp;&nbsp;
+                        <a href=@Url.Action("Delete", "Incomes", new { id = item.Id })><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">It seems there is nothing here...</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<div class="btn-group bottom">
+    @{
+        if (Model.PageInfo.PageNumber - 1 == 0)
+        {
+            <a class="btn btn-light disabled">Prev</a>
+        }
+        else
+        {
+            @Ajax.ActionLink("Prev", "GetIncomesData", new { pageNumber = Model.PageInfo.PageNumber - 1, sortCol = colName, sortDir = direction, searchValue = search }, AjaxOptions, new { @class = "btn btn-light" })
+        }
+        for (int i = first; i <= last; i++)
+        {
+            if (i == Model.PageInfo.PageNumber)
+            {
+                @Ajax.ActionLink(i.ToString(), "GetIncomesData", new { pageNumber = i, sortCol = colName, sortDir = direction, searchValue = search }, AjaxOptions, new { @class = "btn btn-primary selected" })
+            }
+            else
+            {
+                @Ajax.ActionLink(i.ToString(), "GetIncomesData", new { pageNumber = i, sortCol = colName, sortDir = direction, searchValue = search }, AjaxOptions, new { @class = "btn btn-light" })
+            }
+        }
+        if (Model.PageInfo.PageNumber + 1 > Model.PageInfo.TotalPages)
+        {
+            <a class="btn btn-light disabled">Next</a>
+        }
+        else
+        {
+            @Ajax.ActionLink("Next", "GetIncomesData", new { pageNumber = Model.PageInfo.PageNumber + 1, sortCol = colName, sortDir = direction, searchValue = search }, AjaxOptions, new { @class = "btn btn-light" })
+        }
+    }
+</div>

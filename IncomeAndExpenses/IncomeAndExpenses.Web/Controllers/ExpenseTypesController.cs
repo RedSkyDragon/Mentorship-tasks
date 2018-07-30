@@ -1,28 +1,27 @@
 ﻿using AutoMapper;
-using IncomeAndExpenses.DataAccessImplement;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
 using System.Linq;
-using System.Security.Claims;
 using System.Web.Mvc;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
     [Authorize]
-    public class ExpenseTypesController : Controller
+    public class ExpenseTypesController : BaseController
     {
-        private IUnitOfWork _unitOfWork;
-
-        public ExpenseTypesController()
+        /// <summary>
+        /// Creates controller with UnitOfWork instance to connect with database
+        /// </summary>
+        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
+        public ExpenseTypesController(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = new UnitOfWork();
+            _unitOfWork = unitOfWork;
         }
 
         // GET: ExpenseTypes
         public ActionResult Index()
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
-            return View(_unitOfWork.Repository<int, ExpenseType>().GetAll().Where(it => it.UserId == userId).Select(t=> ViewModelFromModel(t)));
+            return View(_unitOfWork.Repository<ExpenseType>().All().Where(t => t.UserId == UserId).ToList().Select(t=> ViewModelFromModel(t)).OrderBy(t => t.Name));
         }
 
         // GET: ExpenseTypes/Create
@@ -35,14 +34,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpPost]
         public ActionResult Create(ExpenseTypeViewModel typeVM)
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             ExpenseType type = ModelFromViewModel(typeVM);
-            type.UserId = userId;
+            type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _unitOfWork.Repository<int, ExpenseType>().Create(type);
+                    _unitOfWork.Repository<ExpenseType>().Create(type);
                     _unitOfWork.Save();
                     return RedirectToAction("Index");
                 }
@@ -60,21 +58,20 @@ namespace IncomeAndExpenses.Web.Controllers
         // GET: ExpenseTypes/Edit/1
         public ActionResult Edit(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<int, ExpenseType>().Get(id)));
+            return View(ViewModelFromModel(_unitOfWork.Repository<ExpenseType>().Get(id)));
         }
 
         // POST: ExpenseTypes/Edit/1
         [HttpPost]
         public ActionResult Edit(int id, ExpenseTypeViewModel typeVM)
         {
-            string userId = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault()?.Value;
             ExpenseType type = ModelFromViewModel(typeVM);
-            type.UserId = userId;
+            type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _unitOfWork.Repository<int, ExpenseType>().Update(type);
+                    _unitOfWork.Repository<ExpenseType>().Update(type);
                     _unitOfWork.Save();
                     return RedirectToAction("Index");
                 }
@@ -103,14 +100,14 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 var str = collection["DeleteAll"];
                 bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
-                var expenses = _unitOfWork.Repository<int, Expense>().GetAll().Where(ex => ex.ExpenseTypeId == id);
+                var expenses = _unitOfWork.Repository<Expense>().All().Where(ex => ex.ExpenseTypeId == id);
                 if (delAll)
                 {
                     foreach (var expense in expenses)
                     {
-                        _unitOfWork.Repository<int, Expense>().Delete(expense.Id);
+                        _unitOfWork.Repository<Expense>().Delete(expense.Id);
                     }
-                    _unitOfWork.Repository<int, ExpenseType>().Delete(id);
+                    _unitOfWork.Repository<ExpenseType>().Delete(id);
                 }
                 else
                 {
@@ -118,9 +115,9 @@ namespace IncomeAndExpenses.Web.Controllers
                     foreach(var expense in expenses)
                     {
                         var upd = new Expense { Id = expense.Id, Amount = expense.Amount, Comment = expense.Comment, Date = expense.Date, ExpenseTypeId = newTypeId };
-                        _unitOfWork.Repository<int, Expense>().Update(upd);
+                        _unitOfWork.Repository<Expense>().Update(upd);
                     }
-                    _unitOfWork.Repository<int, ExpenseType>().Delete(id);
+                    _unitOfWork.Repository<ExpenseType>().Delete(id);
                 }
                 _unitOfWork.Save();
                 return RedirectToAction("Index");
@@ -131,17 +128,13 @@ namespace IncomeAndExpenses.Web.Controllers
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
-        }
-
         private DeleteExpenseTypeViewModel CreateDeleteViewModel(int id)
         {
-            var type = _unitOfWork.Repository<int, ExpenseType>().Get(id);
-            var replace = _unitOfWork.Repository<int, ExpenseType>().GetAll()
+            var type = _unitOfWork.Repository<ExpenseType>().Get(id);
+            var replace = _unitOfWork.Repository<ExpenseType>().All()
                 .Where(t => t.UserId == type.UserId && t.Id != type.Id)
+                .OrderBy(t => t.Name)
+                .ToList()
                 .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });           
             return new DeleteExpenseTypeViewModel { ExpenseType = ViewModelFromModel(type), ReplacementTypes = replace };
         }

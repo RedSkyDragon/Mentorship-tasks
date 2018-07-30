@@ -9,6 +9,10 @@ namespace IncomeAndExpenses.Web
 {
     public partial class Startup
     {
+        /// <summary>
+        /// Configure auth using OWIN
+        /// </summary>
+        /// <param name="app"></param>
         public void ConfigureAuth(IAppBuilder app)
         {
             app.UseCookieAuthentication(new CookieAuthenticationOptions

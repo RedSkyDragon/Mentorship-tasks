@@ -1,24 +1,102 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background: url(images/background.png) repeat-x;
+    background-position-x: center;
+    background-position-y: top;
 }
-
-/* Set padding to keep content from hitting the edges */
+@media (max-width: 992px) {
+    body {
+        background-position-x: left;
+    }
+}
+@media (min-width: 768px) and (max-width: 992px) {
+    .container {
+        max-width: 992px;
+    }
+}
+@media (min-width: 992px) and (max-width: 1264px) {
+    .container {
+        max-width: 1264px;
+    }
+}
+@media (min-width: 1264px)
+{
+    .container{
+        max-width: 1264px;
+    }
+}
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    background: white;
+    min-height: 600px;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
 .dl-horizontal dt {
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
 input,
 select,
 textarea {
     max-width: 280px;
+}
+
+a {
+    color: #256702;
+}
+a:hover {
+    color: #256702;
+}
+
+.btn-primary {
+    background-color: #66B313;
+    border-color: #4D9500;
+}
+
+.btn-primary:hover {
+    background-color: #4D9500;
+    border-color: #4D9500;
+}
+.btn:focus {
+    background-color: #4D9500;
+    border-color: #4D9500;
+    box-shadow: none;
+}
+.navbar-light .navbar-nav .nav-link, .navbar-light .navbar-text {
+    color: #284C00;
+}
+.navbar-light .navbar-nav .nav-link:hover {
+    color: black;
+}
+#menu{
+    background-color: #C0DA23;
+    min-height: 50px;
+}
+.padding-zero{
+    padding: 0;
+}
+#sad-cat{
+    width: 30%;
+}
+.display-none{
+    display: none;
+}
+.table {
+    margin-bottom: 40px;
+}
+footer{
+    margin-top: 20px;
+}
+#app-name {
+    font-weight: 500;
+    color: #256702;
+}
+.jumbotron{
+    background-color: #eeeeee;
+}
+.bottom{
+    position: absolute;
+    bottom: 10px;
 }

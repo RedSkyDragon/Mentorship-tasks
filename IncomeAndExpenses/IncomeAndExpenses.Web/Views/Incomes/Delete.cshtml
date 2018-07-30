@@ -1,7 +1,7 @@
 ﻿@model IncomeAndExpenses.Web.Models.IncomeViewModel
 
 @{
-    ViewBag.Title = "Delete";
+    ViewBag.Title = "Delete income";
 }
 
 <h2>Delete</h2>
@@ -28,19 +28,19 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Comment)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Comment)
-        </dd>
-
-        <dt>
             @Html.DisplayNameFor(model => model.IncomeTypeName)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.IncomeTypeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Comment)
         </dd>
 
     </dl>

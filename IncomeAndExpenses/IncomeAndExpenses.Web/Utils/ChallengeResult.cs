@@ -1,19 +1,17 @@
 ﻿using Microsoft.Owin.Security;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace IncomeAndExpenses.Web.Models
+namespace IncomeAndExpenses.Web.Utils
 {
+    /// <summary>
+    /// Helper class for log in
+    /// </summary>
     public class ChallengeResult : HttpUnauthorizedResult
     {
         private const string XsrfKey = "CodePaste_$31!.2*#";
 
-        public ChallengeResult(string provider, string redirectUri)
-            : this(provider, redirectUri, null)
-        { }
+        public ChallengeResult(string provider, string redirectUri) : this(provider, redirectUri, null) { }
 
         public ChallengeResult(string provider, string redirectUri, string userId)
         {
