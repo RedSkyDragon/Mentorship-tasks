@@ -42,7 +42,7 @@ namespace IncomeAndExpenses.Web.Controllers
         public ActionResult Login()
         {
             string provider = "Google";
-            string returnUrl = "";
+            string returnUrl = string.Empty;
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
