@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -40,8 +41,10 @@ namespace IncomeAndExpenses.Web.Controllers
                     _unitOfWork.Save();
                     return RedirectToAction("Index", "Home");
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error(ex);
+                    ViewData["Error"] = ErrorMessage;
                     return View(CreateIncomeCUViewModel(income));
                 }
             }
@@ -72,8 +75,10 @@ namespace IncomeAndExpenses.Web.Controllers
                     _unitOfWork.Save();
                     return RedirectToAction("Index", "Home");
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error(ex);
+                    ViewData["Error"] = ErrorMessage;
                     return View(CreateIncomeCUViewModel(income));
                 }
             }
@@ -109,8 +114,10 @@ namespace IncomeAndExpenses.Web.Controllers
                 _unitOfWork.Save();
                 return RedirectToAction("Index", "Home");
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error(ex);
+                ViewData["Error"] = ErrorMessage;
                 return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
             }
         }

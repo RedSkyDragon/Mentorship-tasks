@@ -834,3 +834,5 @@ ERROR 2018-07-31 12:58:20,503 100187ms CustomExceptionFilter  OnException       
    at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
    at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_6.<BeginInvokeAction>b__3()
    at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_1.<BeginInvokeAction>b__5(IAsyncResult asyncResult)
+ERROR 2018-07-31 15:47:23,040 35134ms IncomeTypesController  Create             - System.NotImplementedException: The method or operation is not implemented.
+   at IncomeAndExpenses.Web.Controllers.IncomeTypesController.Create(IncomeTypeViewModel typeVM) in C:\Users\aklevtsova\Alexandra-Klevtsova\IncomeAndExpenses\IncomeAndExpenses.Web\Controllers\IncomeTypesController.cs:line 47

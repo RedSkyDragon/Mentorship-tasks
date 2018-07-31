@@ -15,6 +15,8 @@ namespace IncomeAndExpenses.Web.Controllers
 
         protected log4net.ILog Logger { get { return log4net.LogManager.GetLogger(GetType()); } }
 
+        protected const string ErrorMessage = "Sorry, something went wrong. Please try again and be sure that all fields are correct.";
+
         /// <summary>
         /// Creates controller with UnitOfWork instance to connect with database
         /// </summary>
