@@ -13,7 +13,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         protected string UserId { get { return User.Identity.GetUserId(); } }
 
-        protected log4net.ILog Logger { get { return log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType); } }
+        protected log4net.ILog Logger { get { return log4net.LogManager.GetLogger(GetType()); } }
 
         /// <summary>
         /// Creates controller with UnitOfWork instance to connect with database

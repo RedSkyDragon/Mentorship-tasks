@@ -11,13 +11,13 @@ namespace IncomeAndExpenses.Web.Models
     {
         public int Id { get; set; }
 
+        [DataType(DataType.Currency)]
         public decimal Amount { get; set; }
 
         [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:dd.MM.yy}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
 
         public string Comment { get; set; }
-
 
         public int ExpenseTypeId { get; set; }
 

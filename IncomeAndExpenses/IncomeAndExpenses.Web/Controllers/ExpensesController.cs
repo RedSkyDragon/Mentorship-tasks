@@ -21,6 +21,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Expenses/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View(CreateExpenseCUViewModel(null));
@@ -52,6 +53,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Expenses/Edit/1
+        [HttpGet]
         public ActionResult Edit(int id)
         {
             return View(CreateExpenseCUViewModel(id));
@@ -83,6 +85,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Expenses/Details/1
+        [HttpGet]
         public ActionResult Details(int id)
         {
 
@@ -90,6 +93,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Expenses/Delete/1
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             return View(ViewModelFromModel(_unitOfWork.Repository<Expense>().Get(id)));
@@ -129,7 +133,7 @@ namespace IncomeAndExpenses.Web.Controllers
                .Where(t => t.UserId == UserId)
                .OrderBy(t => t.Name)
                .ToList()
-               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = (expense == null ? false : expense.ExpenseTypeId == t.Id) });
+               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = expense?.ExpenseTypeId == t.Id });
         }
 
         private Expense ModelFromViewModel(ExpenseViewModel expenseVM)

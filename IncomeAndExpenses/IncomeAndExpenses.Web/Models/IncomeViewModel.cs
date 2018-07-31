@@ -14,6 +14,7 @@ namespace IncomeAndExpenses.Web.Models
         [Required(ErrorMessage = "Required")]
         [RegularExpression(@"^\d+($|(\,\d{0,2}))$", ErrorMessage = "Format: xx,xx or xx,x or xx")]
         [Range(0.01, 99999999.99, ErrorMessage = "Amount shuld be greater than 0 and less than 99999999,99")]
+        [DataType(DataType.Currency)]
         public decimal Amount { get; set; }
 
         [Required(ErrorMessage = "Required")]

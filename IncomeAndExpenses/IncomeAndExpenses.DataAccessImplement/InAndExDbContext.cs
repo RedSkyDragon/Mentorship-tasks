@@ -8,6 +8,10 @@ namespace IncomeAndExpenses.DataAccessImplement
     {
         public InAndExDbContext() : base("InAndExDbContext") { }
 
+        /// <summary>
+        /// Creates model and tunes properties in database
+        /// </summary>
+        /// <param name="modelBuilder">The model builder</param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().Property(p => p.UserName).IsRequired().HasMaxLength(50);

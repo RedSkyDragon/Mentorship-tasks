@@ -20,6 +20,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Incomes/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View(CreateIncomeCUViewModel(null));
@@ -51,6 +52,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Incomes/Edit/1
+        [HttpGet]
         public ActionResult Edit(int id)
         {
             return View(CreateIncomeCUViewModel(id));
@@ -83,12 +85,14 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Incomes/Details/1
+        [HttpGet]
         public ActionResult Details(int id)
         {
             return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
         }
 
         // GET: Incomes/Delete/1
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
@@ -128,7 +132,7 @@ namespace IncomeAndExpenses.Web.Controllers
                .Where(t => t.UserId == UserId)
                .OrderBy(t => t.Name)
                .ToList()
-               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = (income == null ? false : income.IncomeTypeId == t.Id) });
+               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = income?.IncomeTypeId == t.Id });
         }
 
         private Income ModelFromViewModel(IncomeViewModel incomeVM)

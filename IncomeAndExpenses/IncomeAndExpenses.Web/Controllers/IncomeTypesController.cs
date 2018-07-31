@@ -19,12 +19,14 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: IncomeTypes
+        [HttpGet]
         public ActionResult Index()
         {
             return View(_unitOfWork.Repository<IncomeType>().All().Where(t=>t.UserId == UserId).ToList().Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
         }
 
         // GET: IncomeTypes/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -57,6 +59,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: IncomeTypes/Edit/1
+        [HttpGet]
         public ActionResult Edit(int id)
         {
             return View(ViewModelFromModel(_unitOfWork.Repository<IncomeType>().Get(id)));
@@ -89,6 +92,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: IncomeTypes/Delete/1
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             return View(CreateDeleteViewModel(id));
