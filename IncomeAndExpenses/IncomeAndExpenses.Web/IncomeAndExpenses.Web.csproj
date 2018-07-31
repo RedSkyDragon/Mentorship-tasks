@@ -232,6 +232,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\HomeExpenseViewModel.cs" />
     <Compile Include="Models\HomeIncomeViewModel.cs" />
+    <Compile Include="Models\HomeIndexViewModel.cs" />
     <Compile Include="Utils\ChallengeResult.cs" />
     <Compile Include="Models\DeleteExpenseTypeViewModel.cs" />
     <Compile Include="Models\DeleteIncomeTypeViewModel.cs" />
@@ -240,8 +241,6 @@
     <Compile Include="Models\ExpenseViewModel.cs" />
     <Compile Include="Utils\ExpenseViewPropertyValidator.cs" />
     <Compile Include="Utils\ExpenseViewValidator.cs" />
-    <Compile Include="Models\HomeGetViewModel.cs" />
-    <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IncomeCUViewModel.cs" />
     <Compile Include="Models\IncomeTypeViewModel.cs" />
     <Compile Include="Models\IncomeViewModel.cs" />

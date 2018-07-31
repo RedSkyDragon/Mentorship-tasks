@@ -32,6 +32,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: IncomeTypes/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(IncomeTypeViewModel typeVM)
         {
             IncomeType type = ModelFromViewModel(typeVM);
@@ -63,6 +64,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: IncomeTypes/Edit/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IncomeTypeViewModel typeVM)
         {
             IncomeType type = ModelFromViewModel(typeVM);
@@ -94,6 +96,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: IncomeTypes//Delete/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try

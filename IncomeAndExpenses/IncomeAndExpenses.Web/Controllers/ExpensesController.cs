@@ -28,6 +28,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Expenses/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(ExpenseCUViewModel expenseVM)
         {
             var expense = ModelFromViewModel(expenseVM.Expense);
@@ -58,6 +59,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Expenses/Edit/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, ExpenseCUViewModel expenseVM)
         {
             var expense = ModelFromViewModel(expenseVM.Expense);
@@ -95,6 +97,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Expenses/Delete/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try

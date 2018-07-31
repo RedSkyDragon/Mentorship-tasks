@@ -27,6 +27,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Incomes/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(IncomeCUViewModel incomeVM)
         {
             Income income = ModelFromViewModel(incomeVM.Income);
@@ -57,6 +58,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Incomes/Edit/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IncomeCUViewModel incomeVM)
         {
             Income income = ModelFromViewModel(incomeVM.Income);
@@ -94,6 +96,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Incomes/Delete/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IncomeViewModel incomeVM)
         {
             try
