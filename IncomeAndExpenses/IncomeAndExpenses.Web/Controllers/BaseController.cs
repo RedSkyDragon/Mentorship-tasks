@@ -30,11 +30,5 @@ namespace IncomeAndExpenses.Web.Controllers
         /// Creates controller without UnitOfWork instance to connect with database
         /// </summary>
         public BaseController() : this(null) { }
-
-        protected override void Dispose(bool disposing)
-        {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
-        }
     }
 }
