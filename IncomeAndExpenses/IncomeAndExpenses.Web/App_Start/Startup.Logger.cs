@@ -11,7 +11,7 @@ namespace IncomeAndExpenses.Web
         /// <param name="app"></param>
         public void ConfigureLogger(IAppBuilder app)
         {
-            app.Use(typeof(LoggerMiddleware));
+            app.Use<LoggerMiddleware>();
         }
     }
 }
