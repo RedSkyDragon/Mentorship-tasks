@@ -8,14 +8,6 @@ namespace IncomeAndExpenses.DataAccessInterface
     public class ExpenseType : Entity<int>
     {
         /// <summary>
-        /// Creates new expense type
-        /// </summary>
-        public ExpenseType()
-        {
-            Expenses = new List<Expense>();
-        }
-
-        /// <summary>
         /// Gets or sets name of the type
         /// </summary>
         public string Name { get; set; }
@@ -38,6 +30,6 @@ namespace IncomeAndExpenses.DataAccessInterface
         /// <summary>
         /// ICollection of expenses with this type
         /// </summary>
-        public virtual ICollection<Expense> Expenses { get; set; }
+        public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
     }
 }

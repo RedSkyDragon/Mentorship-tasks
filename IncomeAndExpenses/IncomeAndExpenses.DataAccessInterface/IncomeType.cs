@@ -8,14 +8,6 @@ namespace IncomeAndExpenses.DataAccessInterface
     public class IncomeType : Entity<int>
     {
         /// <summary>
-        /// Creates new income type
-        /// </summary>
-        public IncomeType()
-        {
-            Incomes = new List<Income>();
-        }
-
-        /// <summary>
         /// Gets or sets name of the type
         /// </summary>
         public string Name { get; set; }
@@ -38,6 +30,6 @@ namespace IncomeAndExpenses.DataAccessInterface
         /// <summary>
         /// ICollection of incomes with this type
         /// </summary>
-        public virtual ICollection<Income> Incomes { get; set; }
+        public virtual ICollection<Income> Incomes { get; set; } = new List<Income>();
     }
 }
