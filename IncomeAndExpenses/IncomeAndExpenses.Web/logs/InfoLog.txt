@@ -1070,3 +1070,123 @@ URI: http://localhost/IncomeAndExpenses/__browserLink/requestData/9b6eaa96470d44
 Method: GET
 Status Code: 200
 INFO  2018-08-01 15:27:44,871 536750ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:21,749 693628ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:21,788 693667ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:21,788 693667ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:27,530 699409ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:27,568 699447ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/ExpenseTypes
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:27,568 699447ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:28,458 700337ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:28,497 700376ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/IncomeTypes
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:28,497 700376ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:29,661 701540ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:29,687 701566ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:29,687 701566ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:32,670 704548ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:32,726 704604ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Home/GetExpensesData?searchValue=100&X-Requested-With=XMLHttpRequest&_=1533126629773
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:32,726 704605ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:33,613 705492ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:33,635 705514ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Home/GetExpensesData?sortCol=Date&sortDir=Ascending&searchValue=100&X-Requested-With=XMLHttpRequest&_=1533126629774
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:33,635 705514ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:34,311 706190ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:34,353 706232ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Home/GetExpensesData?sortCol=Amount&sortDir=Descending&searchValue=100&X-Requested-With=XMLHttpRequest&_=1533126629775
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:34,353 706232ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:34,686 706564ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:34,727 706606ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Home/GetExpensesData?sortCol=Amount&sortDir=Ascending&searchValue=100&X-Requested-With=XMLHttpRequest&_=1533126629776
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:34,728 706607ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:36,079 707958ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:36,150 708029ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Expenses/Edit/12
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:36,150 708029ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:46,705 718584ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:46,935 718814ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Expenses/Edit/12
+Method: POST
+Status Code: 302
+INFO  2018-08-01 15:30:46,935 718814ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:46,938 718817ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:46,965 718843ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:46,965 718844ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:49,650 721529ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:49,671 721550ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Account/LogOff
+Method: GET
+Status Code: 302
+INFO  2018-08-01 15:30:49,671 721550ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:49,674 721553ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:49,688 721567ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Account
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:49,689 721567ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:50,634 722513ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:50,646 722525ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Account/Login
+Method: GET
+Status Code: 302
+INFO  2018-08-01 15:30:50,646 722525ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:50,884 722762ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:51,900 723779ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/signin-google?state=r3-dTa6FQMzhkHn1ZB24qGibfvxSDmDusGzkVfIs8OirRDNWxr1wm_vRlxJETxjR9DN6052dEvIwOf66prJqYQM605vKbbd5fZFmPtgmn_r_AE2wg1vtFLoKYhSeOrALkq3lOCz5tg7ukRAUMBb9Q8gEKUSy4E9So1GrVkeKj1cF28mqLI5YMoBJ_uYsQ2LmzYk99RWXPJjBgxNa-I0FsTw2bx0eKgR5w-J5U6nSqANyyWaFWPisoTtQDZskIphH&code=4/AAC4qW0W-smMIHLhjElV9Kqrn4vF_2z666lJKKOfrpP06eyTY4vzQLQYthwc6QHJ1-6UWb9dhLCPFpvLyU8ykAc&authuser=0&session_state=be746ded187a2fdada70b661f670c106d95253bd..c2b1&prompt=none
+Method: GET
+Status Code: 302
+INFO  2018-08-01 15:30:51,901 723780ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:51,905 723784ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:51,941 723820ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Account/ExternalLoginCallback
+Method: GET
+Status Code: 302
+INFO  2018-08-01 15:30:51,941 723820ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:51,944 723823ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:51,973 723852ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:51,973 723852ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:55,058 726937ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:55,077 726956ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Incomes/Delete/2013
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:55,077 726956ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:57,643 729522ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:57,681 729560ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/Incomes/Delete/2013
+Method: POST
+Status Code: 302
+INFO  2018-08-01 15:30:57,682 729561ms LoggerMiddleware       MoveNext           - Finish
+INFO  2018-08-01 15:30:57,686 729565ms LoggerMiddleware       MoveNext           - Start
+INFO  2018-08-01 15:30:57,718 729597ms LoggerMiddleware       MoveNext           - 
+URI: http://localhost/IncomeAndExpenses/
+Method: GET
+Status Code: 200
+INFO  2018-08-01 15:30:57,718 729597ms LoggerMiddleware       MoveNext           - Finish
