@@ -21,7 +21,9 @@ namespace IncomeAndExpenses.Web.Utils
         }
 
         public string LoginProvider { get; set; }
+
         public string RedirectUri { get; set; }
+
         public string UserId { get; set; }
 
         public override void ExecuteResult(ControllerContext context)
