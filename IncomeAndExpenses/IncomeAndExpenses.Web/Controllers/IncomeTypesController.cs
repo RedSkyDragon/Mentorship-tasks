@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -19,12 +20,14 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: IncomeTypes
+        [HttpGet]
         public ActionResult Index()
         {
             return View(_unitOfWork.Repository<IncomeType>().All().Where(t=>t.UserId == UserId).ToList().Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
         }
 
         // GET: IncomeTypes/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -32,6 +35,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: IncomeTypes/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(IncomeTypeViewModel typeVM)
         {
             IncomeType type = ModelFromViewModel(typeVM);
@@ -44,8 +48,10 @@ namespace IncomeAndExpenses.Web.Controllers
                     _unitOfWork.Save();
                     return RedirectToAction("Index");
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error(ex);
+                    ViewData["Error"] = ErrorMessage;
                     return View(typeVM);
                 }
             }
@@ -56,6 +62,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: IncomeTypes/Edit/1
+        [HttpGet]
         public ActionResult Edit(int id)
         {
             return View(ViewModelFromModel(_unitOfWork.Repository<IncomeType>().Get(id)));
@@ -63,6 +70,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: IncomeTypes/Edit/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IncomeTypeViewModel typeVM)
         {
             IncomeType type = ModelFromViewModel(typeVM);
@@ -75,8 +83,10 @@ namespace IncomeAndExpenses.Web.Controllers
                     _unitOfWork.Save();
                     return RedirectToAction("Index");
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error(ex);
+                    ViewData["Error"] = ErrorMessage;
                     return View(typeVM);
                 }
             }
@@ -87,6 +97,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: IncomeTypes/Delete/1
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             return View(CreateDeleteViewModel(id));
@@ -94,6 +105,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: IncomeTypes//Delete/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
@@ -122,8 +134,10 @@ namespace IncomeAndExpenses.Web.Controllers
                 _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error(ex);
+                ViewData["Error"] = ErrorMessage;
                 return View(CreateDeleteViewModel(id));
             }
         }

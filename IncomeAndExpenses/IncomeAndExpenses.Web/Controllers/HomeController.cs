@@ -26,6 +26,7 @@ namespace IncomeAndExpenses.Web.Controllers
         /// </summary>
         /// <param name="model">ViewModel for GET request</param>
         /// <returns>view</returns>
+        [HttpGet]
         public ActionResult Index()
         {
             var incomeTotal = _unitOfWork.Repository<IncomeType>().All()
@@ -47,6 +48,7 @@ namespace IncomeAndExpenses.Web.Controllers
         /// <param name="sortCol">Name of the sorting column</param>
         /// <param name="sortDir">Sorting direction</param>
         /// <returns>Partial view with list of expenses</returns>
+        [HttpGet]
         public PartialViewResult GetExpensesData(int pageNumber = 1, string searchValue = "", string sortCol = nameof(ExpenseViewModel.Date), SortDirection sortDir = SortDirection.Descending)
         {
             var expenses = _unitOfWork.Repository<ExpenseType>().All()
@@ -83,6 +85,7 @@ namespace IncomeAndExpenses.Web.Controllers
         /// <param name="sortCol">Name of the sorting column</param>
         /// <param name="sortDir">Sorting direction</param>
         /// <returns>Partial view with list of incomes</returns>
+        [HttpGet]
         public PartialViewResult GetIncomesData(int pageNumber = 1, string searchValue = "", string sortCol = nameof(IncomeViewModel.Date), SortDirection sortDir = SortDirection.Descending)
         {
             var incomes = _unitOfWork.Repository<IncomeType>().All()

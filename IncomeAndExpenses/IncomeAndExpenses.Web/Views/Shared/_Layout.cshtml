@@ -39,6 +39,15 @@
     </div>
     <div class="container body-content">
         <br />
+        @{
+            string alert = (string)ViewData["Error"];
+            if (!string.IsNullOrEmpty(alert))
+            {
+                <div class="alert alert-danger" role="alert">
+                    @alert
+                </div>
+            }
+        }
         @RenderBody()        
         <footer>
             <hr />

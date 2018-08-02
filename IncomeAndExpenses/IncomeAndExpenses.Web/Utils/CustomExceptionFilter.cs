@@ -17,20 +17,19 @@ namespace IncomeAndExpenses.Web.Utils
             String message = String.Empty;
             var logger = log4net.LogManager.GetLogger(GetType());
             var exceptionType = context.Exception.GetType();
-            if (exceptionType == typeof(UnauthorizedAccessException))
+            if (context.Exception is UnauthorizedAccessException)
             {
                 message = "Unauthorized Access.";
             }
-            else if (exceptionType == typeof(NotImplementedException))
+            else if (context.Exception is NotImplementedException)
             {
-                message = "A server error occurred.";
+                message = "This feature will be implemented later.";
             }
             else
             {
-                message = context.Exception.Message;
-            }
-            context.ExceptionHandled = true;
-            logger.Error(message + " " + context.Exception.StackTrace);
+                message = "A server error occurred.";
+            };
+            logger.Error(message, context.Exception);
             var dataDictionary = new ViewDataDictionary();
             dataDictionary.Add("message", message);
             context.Result = new ViewResult { ViewName = "~/Views/Error/Index.cshtml", ViewData = dataDictionary};

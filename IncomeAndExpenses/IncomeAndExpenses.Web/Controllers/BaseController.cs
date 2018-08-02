@@ -13,7 +13,9 @@ namespace IncomeAndExpenses.Web.Controllers
 
         protected string UserId { get { return User.Identity.GetUserId(); } }
 
-        protected log4net.ILog Logger { get { return log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType); } }
+        protected log4net.ILog Logger { get { return log4net.LogManager.GetLogger(GetType()); } }
+
+        protected const string ErrorMessage = "Sorry, something went wrong. Please try again and be sure that all fields are correct.";
 
         /// <summary>
         /// Creates controller with UnitOfWork instance to connect with database
@@ -28,11 +30,5 @@ namespace IncomeAndExpenses.Web.Controllers
         /// Creates controller without UnitOfWork instance to connect with database
         /// </summary>
         public BaseController() : this(null) { }
-
-        protected override void Dispose(bool disposing)
-        {
-            _unitOfWork.Dispose();
-            base.Dispose(disposing);
-        }
     }
 }

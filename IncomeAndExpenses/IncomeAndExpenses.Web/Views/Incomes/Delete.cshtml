@@ -4,53 +4,52 @@
     ViewBag.Title = "Delete income";
 }
 
-<h2>Delete</h2>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Income</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Amount)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Amount)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IncomeTypeName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IncomeTypeName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Comment)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Comment)
-        </dd>
-
-    </dl>
-
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-danger" />
-            @Html.ActionLink("Back to List", "Index", "Home", null, new { @class="btn btn-light"})
+<div class="alert alert-danger" role="alert">Are you sure you want to delete this?</div>
+<div class="row justify-content-center">
+    <div class="col-xl-6 col-lg-8 col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <h2>Delete</h2>
+            </div>
+            <div class="card-body text-center">
+                <h4 class="card-title">Income</h4>
+                <ul class="list-group list-group-flush text-left">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-auto col-md-3 font-weight-bold">@Html.DisplayNameFor(model => model.Amount):</div>
+                            <div class="col">@Html.DisplayFor(model => model.Amount)</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-auto col-md-3 font-weight-bold">@Html.DisplayNameFor(model => model.Date):</div>
+                            <div class="col">@Html.DisplayFor(model => model.Date)</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-auto col-md-3 font-weight-bold">@Html.DisplayNameFor(model => model.IncomeTypeName):</div>
+                            <div class="col">@Html.DisplayFor(model => model.IncomeTypeName)</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-auto col-md-3 font-weight-bold">@Html.DisplayNameFor(model => model.Comment):</div>
+                            <div class="col">@Html.DisplayFor(model => model.Comment)</div>
+                        </div>
+                    </li>
+                </ul>
+                <br />
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-actions no-color">
+                        <input type="submit" value="Delete" class="btn btn-danger float-right" />
+                        @Html.ActionLink("Back to List", "Index", "Home", null, new { @class = "btn btn-light float-left" })
+                    </div>
+                }
+            </div>
         </div>
-    }
+    </div>
 </div>
+

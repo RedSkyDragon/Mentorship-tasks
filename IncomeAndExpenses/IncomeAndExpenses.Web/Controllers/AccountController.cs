@@ -25,12 +25,14 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         //GET Account
+        [HttpGet]
         public ActionResult Index()
         {
             return View();
         }
-        
+
         //GET Account/LogOff
+        [HttpGet]
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie);
@@ -38,6 +40,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         //GET Account/Login
+        [HttpGet]
         [AllowAnonymous]
         public ActionResult Login()
         {
@@ -46,6 +49,7 @@ namespace IncomeAndExpenses.Web.Controllers
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
+        [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IncomeAndExpenses.DataAccessInterface;
 using IncomeAndExpenses.Web.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -21,6 +22,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Expenses/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View(CreateExpenseCUViewModel(null));
@@ -28,6 +30,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Expenses/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(ExpenseCUViewModel expenseVM)
         {
             var expense = ModelFromViewModel(expenseVM.Expense);
@@ -39,8 +42,10 @@ namespace IncomeAndExpenses.Web.Controllers
                     _unitOfWork.Save();
                     return RedirectToAction("Index", "Home");
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error(ex);
+                    ViewData["Error"] = ErrorMessage;
                     return View(CreateExpenseCUViewModel(expense));
                 }
             }
@@ -51,6 +56,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Expenses/Edit/1
+        [HttpGet]
         public ActionResult Edit(int id)
         {
             return View(CreateExpenseCUViewModel(id));
@@ -58,6 +64,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Expenses/Edit/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, ExpenseCUViewModel expenseVM)
         {
             var expense = ModelFromViewModel(expenseVM.Expense);
@@ -69,8 +76,10 @@ namespace IncomeAndExpenses.Web.Controllers
                     _unitOfWork.Save();
                     return RedirectToAction("Index", "Home");
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error(ex);
+                    ViewData["Error"] = ErrorMessage;
                     return View(CreateExpenseCUViewModel(expense));
                 }
             }
@@ -81,6 +90,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Expenses/Details/1
+        [HttpGet]
         public ActionResult Details(int id)
         {
 
@@ -88,6 +98,7 @@ namespace IncomeAndExpenses.Web.Controllers
         }
 
         // GET: Expenses/Delete/1
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             return View(ViewModelFromModel(_unitOfWork.Repository<Expense>().Get(id)));
@@ -95,6 +106,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         // POST: Expenses/Delete/1
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
@@ -103,8 +115,10 @@ namespace IncomeAndExpenses.Web.Controllers
                 _unitOfWork.Save();
                 return RedirectToAction("Index", "Home");
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error(ex);
+                ViewData["Error"] = ErrorMessage;
                 return View(ViewModelFromModel(_unitOfWork.Repository<Expense>().Get(id)));
             }
         }
@@ -126,7 +140,7 @@ namespace IncomeAndExpenses.Web.Controllers
                .Where(t => t.UserId == UserId)
                .OrderBy(t => t.Name)
                .ToList()
-               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = (expense == null ? false : expense.ExpenseTypeId == t.Id) });
+               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = expense?.ExpenseTypeId == t.Id });
         }
 
         private Expense ModelFromViewModel(ExpenseViewModel expenseVM)

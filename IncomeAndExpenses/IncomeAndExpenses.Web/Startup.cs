@@ -9,6 +9,7 @@ namespace IncomeAndExpenses.Web
     {
         public void Configuration(IAppBuilder app)
         {
+            ConfigureLogger(app);
             ConfigureAuth(app);
         }
     }
