@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.BusinessLogic;
 using IncomeAndExpenses.Web.Models;
 using System;
 using System.Linq;
@@ -11,19 +12,19 @@ namespace IncomeAndExpenses.Web.Controllers
     public class IncomeTypesController : BaseController
     {
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with IBusinessLogic instance
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public IncomeTypesController(IUnitOfWork unitOfWork)
+        /// <param name="businessLogic">IBusinessLogic implementation to work with data</param>
+        public IncomeTypesController(IBusinessLogic businessLogic)
         {
-            _unitOfWork = unitOfWork;
+            _businessLogic = businessLogic;
         }
 
         // GET: IncomeTypes
         [HttpGet]
         public ActionResult Index()
         {
-            return View(_unitOfWork.Repository<IncomeType>().All().Where(t=>t.UserId == UserId).ToList().Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
+            return View(_businessLogic.GetAllIncomeTypes(UserId).Select(t => ViewModelFromModel(t)));
         }
 
         // GET: IncomeTypes/Create
@@ -44,8 +45,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _unitOfWork.Repository<IncomeType>().Create(type);
-                    _unitOfWork.Save();
+                    _businessLogic.CreateIncomeType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -65,7 +65,7 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Edit(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<IncomeType>().Get(id)));
+            return View(ViewModelFromModel(_businessLogic.GetIncomeType(id)));
         }
 
         // POST: IncomeTypes/Edit/1
@@ -79,8 +79,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _unitOfWork.Repository<IncomeType>().Update(type);
-                    _unitOfWork.Save();
+                    _businessLogic.UpdateIncomeType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -112,26 +111,15 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 var str = collection["DeleteAll"];
                 bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
-                var incomes = _unitOfWork.Repository<Income>().All().Where(ex => ex.IncomeTypeId == id);
                 if (delAll)
                 {
-                    foreach (var income in incomes)
-                    {
-                        _unitOfWork.Repository<Income>().Delete(income.Id);
-                    }
-                    _unitOfWork.Repository<IncomeType>().Delete(id);
+                    _businessLogic.DeleteIncomeType(id);
                 }
                 else
                 {
                     int newTypeId = int.Parse(collection["ReplacementTypeId"]);
-                    foreach (var income in incomes)
-                    {
-                        var upd = new Income { Id = income.Id, Amount = income.Amount, Comment = income.Comment, Date = income.Date, IncomeTypeId = newTypeId };
-                        _unitOfWork.Repository<Income>().Update(upd);
-                    }
-                    _unitOfWork.Repository<IncomeType>().Delete(id);
+                    _businessLogic.DeleteAndReplaceIncomeType(id, newTypeId);
                 }
-                _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -144,11 +132,9 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private DeleteIncomeTypeViewModel CreateDeleteViewModel(int id)
         {
-            var type = _unitOfWork.Repository<IncomeType>().Get(id);
-            var replace = _unitOfWork.Repository<IncomeType>().All()
-                .Where(t => t.UserId == type.UserId && t.Id != type.Id)
-                .OrderBy(t => t.Name)
-                .ToList()
+            var type = _businessLogic.GetIncomeType(id);
+            var replace = _businessLogic.GetAllIncomeTypes(UserId)
+                .Where(t => t.Id != type.Id)
                 .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });          
             return new DeleteIncomeTypeViewModel { IncomeType = ViewModelFromModel(type), ReplacementTypes = replace };
         }

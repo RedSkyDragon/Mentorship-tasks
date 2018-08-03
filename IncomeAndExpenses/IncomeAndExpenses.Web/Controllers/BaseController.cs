@@ -1,15 +1,12 @@
-﻿using IncomeAndExpenses.DataAccessInterface;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using IncomeAndExpenses.BusinessLogic;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
     public class BaseController : Controller
     {
-        /// <summary>
-        /// IUnitOfWork to connect with database
-        /// </summary>
-        protected IUnitOfWork _unitOfWork;
+        protected IBusinessLogic _businessLogic;
 
         protected string UserId { get { return User.Identity.GetUserId(); } }
 
@@ -18,16 +15,16 @@ namespace IncomeAndExpenses.Web.Controllers
         protected const string ErrorMessage = "Sorry, something went wrong. Please try again and be sure that all fields are correct.";
 
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with IBusinessLogic instance
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public BaseController(IUnitOfWork unitOfWork)
+        /// <param name="businessLogic">IBusinessLogic implementation to work with data</param>
+        public BaseController(IBusinessLogic businessLogic)
         {
-            _unitOfWork = unitOfWork;
+            _businessLogic = businessLogic;
         }
 
         /// <summary>
-        /// Creates controller without UnitOfWork instance to connect with database
+        /// Creates controller without IBusinessLogic instance
         /// </summary>
         public BaseController() : this(null) { }
     }

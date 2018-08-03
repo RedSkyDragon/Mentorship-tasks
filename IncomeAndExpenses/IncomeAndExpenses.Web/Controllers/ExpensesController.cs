@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.BusinessLogic;
 using IncomeAndExpenses.Web.Models;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,12 @@ namespace IncomeAndExpenses.Web.Controllers
     public class ExpensesController : BaseController
     {
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with IBusinessLogic instance
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public ExpensesController(IUnitOfWork unitOfWork)
+        /// <param name="businessLogic">IBusinessLogic implementation to work with data</param>
+        public ExpensesController(IBusinessLogic businessLogic)
         {
-            _unitOfWork = unitOfWork;
+            _businessLogic = businessLogic;
         }
 
         // GET: Expenses/Create
@@ -38,8 +39,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _unitOfWork.Repository<Expense>().Create(expense);
-                    _unitOfWork.Save();
+                    _businessLogic.CreateExpense(expense);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -72,8 +72,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _unitOfWork.Repository<Expense>().Update(expense);
-                    _unitOfWork.Save();
+                    _businessLogic.UpdateExpense(expense);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -94,14 +93,14 @@ namespace IncomeAndExpenses.Web.Controllers
         public ActionResult Details(int id)
         {
 
-            return View(ViewModelFromModel(_unitOfWork.Repository<Expense>().Get(id)));
+            return View(ViewModelFromModel(_businessLogic.GetExpense(id)));
         }
 
         // GET: Expenses/Delete/1
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<Expense>().Get(id)));
+            return View(ViewModelFromModel(_businessLogic.GetExpense(id)));
         }
 
         // POST: Expenses/Delete/1
@@ -111,21 +110,20 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             try
             {
-                _unitOfWork.Repository<Expense>().Delete(id);
-                _unitOfWork.Save();
+                _businessLogic.DeleteExpense(id);
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
                 ViewData["Error"] = ErrorMessage;
-                return View(ViewModelFromModel(_unitOfWork.Repository<Expense>().Get(id)));
+                return View(ViewModelFromModel(_businessLogic.GetExpense(id)));
             }
         }
 
         private ExpenseCUViewModel CreateExpenseCUViewModel(int id)
         {
-            Expense expense = _unitOfWork.Repository<Expense>().Get(id);
+            Expense expense = _businessLogic.GetExpense(id);
             return CreateExpenseCUViewModel(expense);
         }
 
@@ -136,10 +134,7 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private IEnumerable<SelectListItem> CreateTypesList(Expense expense)
         {
-            return _unitOfWork.Repository<ExpenseType>().All()
-               .Where(t => t.UserId == UserId)
-               .OrderBy(t => t.Name)
-               .ToList()
+            return _businessLogic.GetAllExpenseTypes(UserId)
                .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = expense?.ExpenseTypeId == t.Id });
         }
 

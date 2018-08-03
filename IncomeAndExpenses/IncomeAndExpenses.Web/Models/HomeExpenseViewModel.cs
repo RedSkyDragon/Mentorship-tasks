@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace IncomeAndExpenses.Web.Models
 {
@@ -10,7 +11,7 @@ namespace IncomeAndExpenses.Web.Models
         /// <summary>
         /// Expenses belonging to the current user
         /// </summary>
-        public IQueryable<ExpenseViewModel> Expenses { get; set; }
+        public IEnumerable<ExpenseViewModel> Expenses { get; set; }
 
         /// <summary>
         /// Info about Expenses pagination
