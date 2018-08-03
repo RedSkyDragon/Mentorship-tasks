@@ -5,46 +5,77 @@ using System.Web.Helpers;
 
 namespace IncomeAndExpenses.BusinessLogic
 {
+    /// <summary>
+    /// Implements IbusinessLogic interface
+    /// </summary>
+    /// <seealso cref="IncomeAndExpenses.BusinessLogic.IBusinessLogic" />
     public class InAndExpBL : IBusinessLogic
     {
         private IUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InAndExpBL"/> class.
+        /// </summary>
+        /// <param name="unitOfWork">The unitOfWork.</param>
         public InAndExpBL(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Creates expense
+        /// </summary>
+        /// <param name="expense">the expense</param>
         public void CreateExpense(Expense expense)
         {
             _unitOfWork.Repository<Expense>().Create(expense);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Create expense type
+        /// </summary>
+        /// <param name="type">the expense type</param>
         public void CreateExpenseType(ExpenseType type)
         {
             _unitOfWork.Repository<ExpenseType>().Create(type);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Creates income
+        /// </summary>
+        /// <param name="income">the income</param>
         public void CreateIncome(Income income)
         {
             _unitOfWork.Repository<Income>().Create(income);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Creates income type
+        /// </summary>
+        /// <param name="type">the income type</param>
         public void CreateIncomeType(IncomeType type)
         {
             _unitOfWork.Repository<IncomeType>().Create(type);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Deletes expense
+        /// </summary>
+        /// <param name="id">Id of the expense</param>
         public void DeleteExpense(int id)
         {
             _unitOfWork.Repository<Expense>().Delete(id);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Deletes expense type with expenses
+        /// </summary>
+        /// <param name="id">Id of the expense type</param>
         public void DeleteExpenseType(int id)
         {
             var expenses = _unitOfWork.Repository<Expense>().All().Where(ex => ex.ExpenseTypeId == id);
@@ -56,6 +87,11 @@ namespace IncomeAndExpenses.BusinessLogic
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Deletes expense type and replaces expenses' type
+        /// </summary>
+        /// <param name="id">Id of the expense type</param>
+        /// <param name="replaceId">Id of the replacement type</param>
         public void DeleteAndReplaceExpenseType(int id, int replaceId)
         {
             var expenses = _unitOfWork.Repository<Expense>().All().Where(ex => ex.ExpenseTypeId == id);
@@ -68,6 +104,10 @@ namespace IncomeAndExpenses.BusinessLogic
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Deletes income type with incomes
+        /// </summary>
+        /// <param name="id">Id of the income type</param>
         public void DeleteIncomeType(int id)
         {
             var incomes = _unitOfWork.Repository<Income>().All().Where(ex => ex.IncomeTypeId == id);
@@ -79,6 +119,11 @@ namespace IncomeAndExpenses.BusinessLogic
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Deletes income type and replaces incomes' type
+        /// </summary>
+        /// <param name="id">Id of the income type</param>
+        /// <param name="replaceId">Id of the replacement type</param>
         public void DeleteAndReplaceIncomeType(int id, int replaceId)
         {
             var incomes = _unitOfWork.Repository<Income>().All().Where(ex => ex.IncomeTypeId == id);
@@ -91,19 +136,37 @@ namespace IncomeAndExpenses.BusinessLogic
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Deletes income
+        /// </summary>
+        /// <param name="id">Id of the income</param>
         public void DeleteIncome(int id)
         {
             _unitOfWork.Repository<Income>().Delete(id);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose() { }
 
+        /// <summary>
+        /// Gets User
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <returns>
+        /// User
+        /// </returns>
         public User GetUser(string id)
         {
             return _unitOfWork.Repository<string, User>().Get(id);
         }
 
+        /// <summary>
+        /// Creates user
+        /// </summary>
+        /// <param name="user">the user</param>
         public void CreateUser(User user)
         {
             _unitOfWork.Repository<string, User>().Create(user);
@@ -112,32 +175,76 @@ namespace IncomeAndExpenses.BusinessLogic
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Updates user
+        /// </summary>
+        /// <param name="user">the user</param>
         public void UpdateUser(User user)
         {
             _unitOfWork.Repository<string, User>().Update(user);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Gets expense with requested Id
+        /// </summary>
+        /// <param name="id">Id of the expense</param>
+        /// <returns>
+        /// Expense
+        /// </returns>
         public Expense GetExpense(int id)
         {
             return _unitOfWork.Repository<Expense>().Get(id);
         }
 
+        /// <summary>
+        /// Gets expense type with requested Id
+        /// </summary>
+        /// <param name="id">Id of the type</param>
+        /// <returns>
+        /// Expense type
+        /// </returns>
         public ExpenseType GetExpenseType(int id)
         {
             return _unitOfWork.Repository<ExpenseType>().Get(id);
         }
 
+        /// <summary>
+        /// Gets income with requested Id
+        /// </summary>
+        /// <param name="id">Id of the income</param>
+        /// <returns>
+        /// Income
+        /// </returns>
         public Income GetIncome(int id)
         {
             return _unitOfWork.Repository<Income>().Get(id);
         }
 
+        /// <summary>
+        /// Gets income type with requested Id
+        /// </summary>
+        /// <param name="id">Id of the type</param>
+        /// <returns>
+        /// Income type
+        /// </returns>
         public IncomeType GetIncomeType(int id)
         {
             return _unitOfWork.Repository<IncomeType>().Get(id);
         }
 
+        /// <summary>
+        /// Gets all expenses using requested filters
+        /// </summary>
+        /// <param name="userId">current user Id</param>
+        /// <param name="pageSize">size of the page</param>
+        /// <param name="pageNumber">current page number</param>
+        /// <param name="searchValue">the search value</param>
+        /// <param name="sortCol">name of the sorting column</param>
+        /// <param name="sortDir">name of the sorting direction</param>
+        /// <returns>
+        /// Filled ExpensesBLModel
+        /// </returns>
         public ExpensesBLModel GetAllExpenses(string userId, int pageSize = 10, int pageNumber = 1, string searchValue = "", string sortCol = nameof(IncomeBLModel.Date), SortDirection sortDir = SortDirection.Descending)
         {
             var expenses = _unitOfWork.Repository<ExpenseType>().All()
@@ -153,11 +260,30 @@ namespace IncomeAndExpenses.BusinessLogic
             return new ExpensesBLModel { Expenses = expenses, Count = count };
         }
 
+        /// <summary>
+        /// Gets all expense types for current user
+        /// </summary>
+        /// <param name="userId">current user Id</param>
+        /// <returns>
+        /// IEnumerable of expense types
+        /// </returns>
         public IEnumerable<ExpenseType> GetAllExpenseTypes(string userId)
         {
             return _unitOfWork.Repository<ExpenseType>().All().Where(t => t.UserId == userId).OrderBy(t => t.Name);
         }
 
+        /// <summary>
+        /// Gets all incomes using requested filters
+        /// </summary>
+        /// <param name="userId">current user Id</param>
+        /// <param name="pageSize">size of the page</param>
+        /// <param name="pageNumber">current page number</param>
+        /// <param name="searchValue">the search value</param>
+        /// <param name="sortCol">name of the sorting column</param>
+        /// <param name="sortDir">name of the sorting direction</param>
+        /// <returns>
+        /// Filled IncomesBLModel
+        /// </returns>
         public IncomesBLModel GetAllIncomes(string userId, int pageSize = 10, int pageNumber = 1, string searchValue = "", string sortCol = nameof(IncomeBLModel.Date), SortDirection sortDir = SortDirection.Descending)
         {
             var incomes = _unitOfWork.Repository<IncomeType>().All()
@@ -173,11 +299,25 @@ namespace IncomeAndExpenses.BusinessLogic
             return new IncomesBLModel { Incomes = incomes, Count = count };
         }
 
+        /// <summary>
+        /// Gets all income types for current user
+        /// </summary>
+        /// <param name="userId">current user Id</param>
+        /// <returns>
+        /// IEnumerable of income types
+        /// </returns>
         public IEnumerable<IncomeType> GetAllIncomeTypes(string userId)
         {
             return _unitOfWork.Repository<IncomeType>().All().Where(t => t.UserId == userId).OrderBy(t => t.Name);
         }
 
+        /// <summary>
+        /// Gets information about totals
+        /// </summary>
+        /// <param name="userId">current user Id</param>
+        /// <returns>
+        /// Totals
+        /// </returns>
         public TotalsBLModel GetTotals(string userId)
         {
             var incomeTotal = _unitOfWork.Repository<IncomeType>().All()
@@ -190,24 +330,40 @@ namespace IncomeAndExpenses.BusinessLogic
             return new TotalsBLModel { IncomeTotal = incomeTotal, ExpenseTotal = expenseTotal, CurrentBalance = currentBalance };
         }
 
+        /// <summary>
+        /// Updates expense
+        /// </summary>
+        /// <param name="expense">the expense</param>
         public void UpdateExpense(Expense expense)
         {
             _unitOfWork.Repository<Expense>().Update(expense);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Updates expense type
+        /// </summary>
+        /// <param name="type">the expense type</param>
         public void UpdateExpenseType(ExpenseType type)
         {
             _unitOfWork.Repository<ExpenseType>().Update(type);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Updates income
+        /// </summary>
+        /// <param name="income">the income</param>
         public void UpdateIncome(Income income)
         {
             _unitOfWork.Repository<Income>().Update(income);
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Updates income type
+        /// </summary>
+        /// <param name="type">the income type</param>
         public void UpdateIncomeType(IncomeType type)
         {
             _unitOfWork.Repository<IncomeType>().Update(type);
