@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace IncomeAndExpenses.Web.Utils
 {
+    /// <summary>
+    /// class for view utils
+    /// </summary>
     public class ViewUtils
     {
+        /// <summary>
+        /// Lists for pagination. Includes possible page sizes
+        /// </summary>
+        /// <returns>List with int sizes</returns>
         public static List<int> ListForPagination()
         {
             var result = new List<int>();

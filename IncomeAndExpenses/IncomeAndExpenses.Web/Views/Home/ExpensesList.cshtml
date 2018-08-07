@@ -6,10 +6,10 @@
     int pagesAround = 2;
     int first = Model.PageInfo.PageNumber - pagesAround < 1 ? 1 : Model.PageInfo.PageNumber - pagesAround;
     int last = Model.PageInfo.PageNumber + pagesAround > Model.PageInfo.TotalPages ? Model.PageInfo.TotalPages : Model.PageInfo.PageNumber + pagesAround;
-    var fromDate = Model.Filter.FromDate;
-    var toDate = Model.Filter.ToDate;
-    var fromAmount = Model.Filter.FromAmount;
-    var toAmount = Model.Filter.ToAmount;
+    var fromDate = Model.Filter.MinDate;
+    var toDate = Model.Filter.MaxDate;
+    var fromAmount = Model.Filter.MinAmount;
+    var toAmount = Model.Filter.MaxAmount;
     var typeName = Model.Filter.TypeName;
     var filter = Model.Filter;
     var colName = Model.Filter.SortCol;
@@ -30,24 +30,24 @@
                     <div class="col">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">From</span>
+                                <span class="input-group-text">Min</span>
                             </div>
-                            @Html.EditorFor(model => model.Filter.FromDate, new { htmlAttributes = new { @class = "form-control", id= "expenseDateFrom", @Value = @Model.Filter.FromDate?.ToString("yyyy-MM-dd") } })
-                            @Html.ValidationMessageFor(model => model.Filter.FromDate, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Filter.MinDate, new { htmlAttributes = new { @class = "form-control", id= "expenseDateMin", @Value = @Model.Filter.MinDate?.ToString("yyyy-MM-dd") } })
+                            @Html.ValidationMessageFor(model => model.Filter.MinDate, "", new { @class = "text-danger" })
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#expenseDateFrom"><i class="fas fa-times"></i></button>
+                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#expenseDateMin"><i class="fas fa-times"></i></button>
                             </div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">To</span>
+                                <span class="input-group-text">Max</span>
                             </div>
-                            @Html.EditorFor(model => model.Filter.ToDate, new { htmlAttributes = new { @class = "form-control", id = "expenseDateTo", @Value = @Model.Filter.ToDate?.ToString("yyyy-MM-dd") } })
-                            @Html.ValidationMessageFor(model => model.Filter.ToDate, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Filter.MaxDate, new { htmlAttributes = new { @class = "form-control", id = "expenseDateMax", @Value = @Model.Filter.MaxDate?.ToString("yyyy-MM-dd") } })
+                            @Html.ValidationMessageFor(model => model.Filter.MaxDate, "", new { @class = "text-danger" })
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#expenseDateTo"><i class="fas fa-times"></i></button>
+                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#expenseDateMax"><i class="fas fa-times"></i></button>
                             </div>
                         </div>
                     </div>
@@ -59,24 +59,24 @@
                     <div class="col">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">From</span>
+                                <span class="input-group-text">Min</span>
                             </div>
-                            @Html.EditorFor(model => model.Filter.FromAmount, new { htmlAttributes = new { @class = "form-control", id = "expenseAmountFrom" } })
-                            @Html.ValidationMessageFor(model => model.Filter.FromAmount, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Filter.MinAmount, new { htmlAttributes = new { @class = "form-control", id = "expenseAmountMin" } })
+                            @Html.ValidationMessageFor(model => model.Filter.MinAmount, "", new { @class = "text-danger" })
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#expenseAmountFrom"><i class="fas fa-times"></i></button>
+                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#expenseAmountMin"><i class="fas fa-times"></i></button>
                             </div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">To</span>
+                                <span class="input-group-text">Max</span>
                             </div>
-                            @Html.EditorFor(model => model.Filter.ToAmount, new { htmlAttributes = new { @class = "form-control", id = "expenseAmountTo" } })
-                            @Html.ValidationMessageFor(model => model.Filter.ToAmount, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Filter.MaxAmount, new { htmlAttributes = new { @class = "form-control", id = "expenseAmountMax" } })
+                            @Html.ValidationMessageFor(model => model.Filter.MaxAmount, "", new { @class = "text-danger" })
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#expenseAmountTo"><i class="fas fa-times"></i></button>
+                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#expenseAmountMax"><i class="fas fa-times"></i></button>
                             </div>
                         </div>
                     </div>
@@ -116,22 +116,22 @@
             <th>
                 Amount&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.Amount), SortDir = asc, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(ExpenseViewModel.Amount) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.Amount), SortDir = desc, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(ExpenseViewModel.Amount) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.Amount), SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(ExpenseViewModel.Amount) && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.Amount), SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(ExpenseViewModel.Amount) && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th>
                 Date&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.Date), SortDir = asc, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(ExpenseViewModel.Date) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.Date), SortDir = desc, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(ExpenseViewModel.Date) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.Date), SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(ExpenseViewModel.Date) && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.Date), SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(ExpenseViewModel.Date) && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th>
                 Type&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.ExpenseTypeName), SortDir = asc, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(ExpenseViewModel.ExpenseTypeName) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.ExpenseTypeName), SortDir = desc, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(ExpenseViewModel.ExpenseTypeName) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.ExpenseTypeName), SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(ExpenseViewModel.ExpenseTypeName) && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetExpensesData", new FilterViewModel { SortCol = nameof(ExpenseViewModel.ExpenseTypeName), SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(ExpenseViewModel.ExpenseTypeName) && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th></th>
@@ -177,17 +177,17 @@
         }
         else
         {
-            @Ajax.ActionLink("Prev", "GetExpensesData", new FilterViewModel { PageNumber = Model.PageInfo.PageNumber - 1, SortCol = colName, SortDir = direction, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
+            @Ajax.ActionLink("Prev", "GetExpensesData", new FilterViewModel { PageNumber = Model.PageInfo.PageNumber - 1, SortCol = colName, SortDir = direction, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
         }
         for (int i = first; i <= last; i++)
         {
             if (i == Model.PageInfo.PageNumber)
             {
-                @Ajax.ActionLink(i.ToString(), "GetExpensesData", new FilterViewModel { PageNumber = i, SortCol = colName, SortDir = direction, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-primary selected" })
+                @Ajax.ActionLink(i.ToString(), "GetExpensesData", new FilterViewModel { PageNumber = i, SortCol = colName, SortDir = direction, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-primary selected" })
             }
             else
             {
-                @Ajax.ActionLink(i.ToString(), "GetExpensesData", new FilterViewModel { PageNumber = i, SortCol = colName, SortDir = direction, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
+                @Ajax.ActionLink(i.ToString(), "GetExpensesData", new FilterViewModel { PageNumber = i, SortCol = colName, SortDir = direction, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
             }
         }
         if (Model.PageInfo.PageNumber + 1 > Model.PageInfo.TotalPages)
@@ -196,7 +196,7 @@
         }
         else
         {
-            @Ajax.ActionLink("Next", "GetExpensesData", new FilterViewModel { PageNumber = Model.PageInfo.PageNumber + 1, SortCol = colName, SortDir = direction, FromDate = fromDate, ToDate = toDate, FromAmount = fromAmount, ToAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
+            @Ajax.ActionLink("Next", "GetExpensesData", new FilterViewModel { PageNumber = Model.PageInfo.PageNumber + 1, SortCol = colName, SortDir = direction, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
         }
     }
 </div>

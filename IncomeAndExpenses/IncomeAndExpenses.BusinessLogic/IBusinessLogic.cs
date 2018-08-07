@@ -2,7 +2,6 @@
 using IncomeAndExpenses.DataAccessInterface;
 using System;
 using System.Collections.Generic;
-using System.Web.Helpers;
 
 namespace IncomeAndExpenses.BusinessLogic
 {
@@ -140,12 +139,7 @@ namespace IncomeAndExpenses.BusinessLogic
         /// <summary>
         /// Gets all expenses using requested filters
         /// </summary>
-        /// <param name="userId">current user Id</param>
-        /// <param name="pageSize">size of the page</param>
-        /// <param name="pageNumber">current page number</param>
-        /// <param name="searchValue">the search value</param>
-        /// <param name="sortCol">name of the sorting column</param>
-        /// <param name="sortDir">name of the sorting direction</param>
+        /// <param name="filter">FilterBLModel for filtration</param>
         /// <returns>Filled ExpensesBLModel</returns>
         ExpensesBLModel GetAllExpenses(FilterBLModel filter);
 
@@ -159,12 +153,7 @@ namespace IncomeAndExpenses.BusinessLogic
         /// <summary>
         /// Gets all incomes using requested filters
         /// </summary>
-        /// <param name="userId">current user Id</param>
-        /// <param name="pageSize">size of the page</param>
-        /// <param name="pageNumber">current page number</param>
-        /// <param name="searchValue">the search value</param>
-        /// <param name="sortCol">name of the sorting column</param>
-        /// <param name="sortDir">name of the sorting direction</param>
+        /// <param name="filter">FilterBLModel for filtration</param>
         /// <returns>Filled IncomesBLModel</returns>
         IncomesBLModel GetAllIncomes(FilterBLModel filter);
 

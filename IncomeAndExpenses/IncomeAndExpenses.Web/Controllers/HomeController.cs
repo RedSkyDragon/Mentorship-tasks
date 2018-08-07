@@ -13,9 +13,6 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class HomeController : BaseController
     {
-        //Count of incomes or expenses per page
-        private const int PAGE_SIZE = 10;
-
         /// <summary>
         /// Creates controller with UnitOfWork instance to connect with database
         /// </summary>
@@ -41,10 +38,7 @@ namespace IncomeAndExpenses.Web.Controllers
         /// <summary>
         /// GET request GetExpensesData
         /// </summary>
-        /// <param name="pageNumber">Current page</param>
-        /// <param name="searchValue">Value for search</param>
-        /// <param name="sortCol">Name of the sorting column</param>
-        /// <param name="sortDir">Sorting direction</param>
+        /// <param name="filter">FilterViewModel for filtration</param>
         /// <returns>Partial view with list of expenses</returns>
         [HttpGet]
         public PartialViewResult GetExpensesData(FilterViewModel filter)
@@ -66,10 +60,7 @@ namespace IncomeAndExpenses.Web.Controllers
         /// <summary>
         /// GET request GetIncomesData
         /// </summary>
-        /// <param name="pageNumber">Current page</param>
-        /// <param name="searchValue">Value for search</param>
-        /// <param name="sortCol">Name of the sorting column</param>
-        /// <param name="sortDir">Sorting direction</param>
+        /// <param name="filter">FilterViewModel for filtration</param>
         /// <returns>Partial view with list of incomes</returns>
         [HttpGet]
         public PartialViewResult GetIncomesData(FilterViewModel filter)
@@ -91,10 +82,10 @@ namespace IncomeAndExpenses.Web.Controllers
         private FilterBLModel CreateBLFilter(FilterViewModel filter)
         {
             var result = new FilterBLModel();
-            result.FromDate = filter.FromDate.HasValue ? filter.FromDate.Value : result.FromDate;
-            result.ToDate = filter.ToDate.HasValue ? filter.ToDate.Value : result.ToDate;
-            result.FromAmount = filter.FromAmount.HasValue ? filter.FromAmount.Value : result.FromAmount;
-            result.ToAmount = filter.ToAmount.HasValue ? filter.ToAmount.Value : result.ToAmount;
+            result.MinDate = filter.MinDate.HasValue ? filter.MinDate.Value : result.MinDate;
+            result.MaxDate = filter.MaxDate.HasValue ? filter.MaxDate.Value : result.MaxDate;
+            result.MinAmount = filter.MinAmount.HasValue ? filter.MinAmount.Value : result.MinAmount;
+            result.MaxAmount = filter.MaxAmount.HasValue ? filter.MaxAmount.Value : result.MaxAmount;
             result.UserId = UserId;
             result.TypeName = filter.TypeName;
             result.SortDir = filter.SortDir;

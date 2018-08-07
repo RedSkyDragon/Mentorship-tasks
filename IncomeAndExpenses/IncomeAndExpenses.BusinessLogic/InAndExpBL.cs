@@ -3,7 +3,6 @@ using System.Linq;
 using IncomeAndExpenses.DataAccessInterface;
 using System.Web.Helpers;
 using IncomeAndExpenses.BusinessLogic.Models;
-using System;
 
 namespace IncomeAndExpenses.BusinessLogic
 {
@@ -238,12 +237,7 @@ namespace IncomeAndExpenses.BusinessLogic
         /// <summary>
         /// Gets all expenses using requested filters
         /// </summary>
-        /// <param name="userId">current user Id</param>
-        /// <param name="pageSize">size of the page</param>
-        /// <param name="pageNumber">current page number</param>
-        /// <param name="searchValue">the search value</param>
-        /// <param name="sortCol">name of the sorting column</param>
-        /// <param name="sortDir">name of the sorting direction</param>
+        /// <param name="filter">FilterBLModel for filtration</param>
         /// <returns>
         /// Filled ExpensesBLModel
         /// </returns>
@@ -260,8 +254,8 @@ namespace IncomeAndExpenses.BusinessLogic
             {
                 expenses = expenses.Where(e => e.ExpenseTypeName.Contains(filter.TypeName));
             }
-            expenses = expenses.Where(e => e.Amount >= filter.FromAmount && e.Amount <= filter.ToAmount)
-                .Where(e => e.Date >= filter.FromDate && e.Date <= filter.ToDate);
+            expenses = expenses.Where(e => e.Amount >= filter.MinAmount && e.Amount <= filter.MaxAmount)
+                .Where(e => e.Date >= filter.MinDate && e.Date <= filter.MaxDate);
             int count = expenses.Count();
             expenses = SortExpenseBLModel(expenses, filter.SortCol, filter.SortDir).Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize);
             return new ExpensesBLModel { Expenses = expenses, Count = count };
@@ -282,12 +276,7 @@ namespace IncomeAndExpenses.BusinessLogic
         /// <summary>
         /// Gets all incomes using requested filters
         /// </summary>
-        /// <param name="userId">current user Id</param>
-        /// <param name="pageSize">size of the page</param>
-        /// <param name="pageNumber">current page number</param>
-        /// <param name="searchValue">the search value</param>
-        /// <param name="sortCol">name of the sorting column</param>
-        /// <param name="sortDir">name of the sorting direction</param>
+        /// <param name="filter">FilterBLModel for filtration</param>
         /// <returns>
         /// Filled IncomesBLModel
         /// </returns>
@@ -304,8 +293,8 @@ namespace IncomeAndExpenses.BusinessLogic
             {
                 incomes = incomes.Where(e => e.IncomeTypeName.Contains(filter.TypeName));
             }
-            incomes = incomes.Where(e => e.Amount >= filter.FromAmount && e.Amount <= filter.ToAmount)
-                .Where(e => e.Date >= filter.FromDate && e.Date <= filter.ToDate);
+            incomes = incomes.Where(e => e.Amount >= filter.MinAmount && e.Amount <= filter.MaxAmount)
+                .Where(e => e.Date >= filter.MinDate && e.Date <= filter.MaxDate);
             int count = incomes.Count();
             incomes = SortIncomeBLModel(incomes, filter.SortCol, filter.SortDir).Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize);
             return new IncomesBLModel { Incomes = incomes, Count = count };
