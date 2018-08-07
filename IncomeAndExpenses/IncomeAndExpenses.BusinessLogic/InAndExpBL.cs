@@ -2,6 +2,8 @@
 using System.Linq;
 using IncomeAndExpenses.DataAccessInterface;
 using System.Web.Helpers;
+using IncomeAndExpenses.BusinessLogic.Models;
+using System;
 
 namespace IncomeAndExpenses.BusinessLogic
 {
@@ -245,18 +247,23 @@ namespace IncomeAndExpenses.BusinessLogic
         /// <returns>
         /// Filled ExpensesBLModel
         /// </returns>
-        public ExpensesBLModel GetAllExpenses(string userId, int pageSize = 10, int pageNumber = 1, string searchValue = "", string sortCol = nameof(IncomeBLModel.Date), SortDirection sortDir = SortDirection.Descending)
+        public ExpensesBLModel GetAllExpenses(FilterBLModel filter)
         {
-            var expenses = _unitOfWork.Repository<ExpenseType>().All()
-                 .Where(t => t.UserId == userId)
-                 .Join(_unitOfWork.Repository<Expense>().All(), t => t.Id, e => e.ExpenseTypeId,
-                     (t, e) => new ExpenseBLModel { Id = e.Id, Amount = e.Amount, Date = e.Date, ExpenseTypeName = t.Name });
-            if (!string.IsNullOrEmpty(searchValue))
+            var types = _unitOfWork.Repository<ExpenseType>().All();
+            if (!string.IsNullOrEmpty(filter.UserId))
             {
-                expenses = expenses.Where(e => e.Amount.ToString().Contains(searchValue) || e.ExpenseTypeName.Contains(searchValue));
+                types = types.Where(t => t.UserId == filter.UserId);
             }
+            var expenses = types.Join(_unitOfWork.Repository<Expense>().All(), t => t.Id, e => e.ExpenseTypeId,
+                     (t, e) => new ExpenseBLModel { Id = e.Id, Amount = e.Amount, Date = e.Date, ExpenseTypeName = t.Name });
+            if (!string.IsNullOrEmpty(filter.TypeName))
+            {
+                expenses = expenses.Where(e => e.ExpenseTypeName.Contains(filter.TypeName));
+            }
+            expenses = expenses.Where(e => e.Amount >= filter.FromAmount && e.Amount <= filter.ToAmount)
+                .Where(e => e.Date >= filter.FromDate && e.Date <= filter.ToDate);
             int count = expenses.Count();
-            expenses = SortExpenseBLModel(expenses, sortCol, sortDir).Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            expenses = SortExpenseBLModel(expenses, filter.SortCol, filter.SortDir).Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize);
             return new ExpensesBLModel { Expenses = expenses, Count = count };
         }
 
@@ -284,18 +291,23 @@ namespace IncomeAndExpenses.BusinessLogic
         /// <returns>
         /// Filled IncomesBLModel
         /// </returns>
-        public IncomesBLModel GetAllIncomes(string userId, int pageSize = 10, int pageNumber = 1, string searchValue = "", string sortCol = nameof(IncomeBLModel.Date), SortDirection sortDir = SortDirection.Descending)
+        public IncomesBLModel GetAllIncomes(FilterBLModel filter)
         {
-            var incomes = _unitOfWork.Repository<IncomeType>().All()
-                .Where(t => t.UserId == userId)
-                .Join(_unitOfWork.Repository<Income>().All(), t => t.Id, i => i.IncomeTypeId,
-                    (t, i) => new IncomeBLModel { Id = i.Id, Amount = i.Amount, Date = i.Date, IncomeTypeName = t.Name });
-            if (!string.IsNullOrEmpty(searchValue))
+            var types = _unitOfWork.Repository<IncomeType>().All();
+            if (!string.IsNullOrEmpty(filter.UserId))
             {
-                incomes = incomes.Where(i => i.Amount.ToString().Contains(searchValue) || i.IncomeTypeName.Contains(searchValue));
+                types = types.Where(t => t.UserId == filter.UserId);
             }
+            var incomes = types.Join(_unitOfWork.Repository<Income>().All(), t => t.Id, e => e.IncomeTypeId,
+                     (t, e) => new IncomeBLModel { Id = e.Id, Amount = e.Amount, Date = e.Date, IncomeTypeName = t.Name });
+            if (!string.IsNullOrEmpty(filter.TypeName))
+            {
+                incomes = incomes.Where(e => e.IncomeTypeName.Contains(filter.TypeName));
+            }
+            incomes = incomes.Where(e => e.Amount >= filter.FromAmount && e.Amount <= filter.ToAmount)
+                .Where(e => e.Date >= filter.FromDate && e.Date <= filter.ToDate);
             int count = incomes.Count();
-            incomes = SortIncomeViewModel(incomes, sortCol, sortDir).Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            incomes = SortIncomeBLModel(incomes, filter.SortCol, filter.SortDir).Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize);
             return new IncomesBLModel { Incomes = incomes, Count = count };
         }
 
@@ -409,7 +421,7 @@ namespace IncomeAndExpenses.BusinessLogic
             return result;
         }
 
-        private IQueryable<IncomeBLModel> SortIncomeViewModel(IQueryable<IncomeBLModel> expenses, string colName, SortDirection sortDir)
+        private IQueryable<IncomeBLModel> SortIncomeBLModel(IQueryable<IncomeBLModel> expenses, string colName, SortDirection sortDir)
         {
             var result = expenses;
             switch (colName)

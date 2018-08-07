@@ -5,6 +5,8 @@ using System.Web.Helpers;
 using AutoMapper;
 using System.Collections.Generic;
 using IncomeAndExpenses.BusinessLogic;
+using IncomeAndExpenses.BusinessLogic.Models;
+using System;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
@@ -45,22 +47,18 @@ namespace IncomeAndExpenses.Web.Controllers
         /// <param name="sortDir">Sorting direction</param>
         /// <returns>Partial view with list of expenses</returns>
         [HttpGet]
-        public PartialViewResult GetExpensesData(int pageNumber = 1, string searchValue = "", string sortCol = nameof(ExpenseViewModel.Date), SortDirection sortDir = SortDirection.Descending)
+        public PartialViewResult GetExpensesData(FilterViewModel filter)
         {
-            decimal searchValueDec;
-            if (decimal.TryParse(searchValue, out searchValueDec))
-            {
-                searchValue = searchValue.Replace(',', '.');
-            }
-            var expensesBL = _businessLogic.GetAllExpenses(UserId, PAGE_SIZE, pageNumber, searchValue, sortCol, sortDir);
-            var expensesPageInfo = new PageInfoViewModel { PageNumber = pageNumber, PageSize = PAGE_SIZE, TotalItems = expensesBL.Count };
-            var expenseSortInfo = new SortInfoViewModel { ColumnName = sortCol, Direction = sortDir };
+            FilterBLModel blFilter = CreateBLFilter(filter);
+            var expensesBL = _businessLogic.GetAllExpenses(blFilter);
+            var expensesPageInfo = new PageInfoViewModel { PageNumber = blFilter.PageNumber, PageSize = blFilter.PageSize, TotalItems = expensesBL.Count };
+            var expenseSortInfo = new SortInfoViewModel { ColumnName = blFilter.SortCol, Direction = blFilter.SortDir };
             var homeExpenseViewModel = new HomeExpenseViewModel
             {
                 Expenses = ViewModelsFromBLModels(expensesBL.Expenses),
                 PageInfo = expensesPageInfo,
                 SortInfo = expenseSortInfo,
-                SearchValue = searchValue
+                Filter = filter
             };
             return PartialView("ExpensesList", homeExpenseViewModel);
         }
@@ -74,24 +72,47 @@ namespace IncomeAndExpenses.Web.Controllers
         /// <param name="sortDir">Sorting direction</param>
         /// <returns>Partial view with list of incomes</returns>
         [HttpGet]
-        public PartialViewResult GetIncomesData(int pageNumber = 1, string searchValue = "", string sortCol = nameof(IncomeViewModel.Date), SortDirection sortDir = SortDirection.Descending)
+        public PartialViewResult GetIncomesData(FilterViewModel filter)
         {
-            decimal searchValueDec;
-            if (decimal.TryParse(searchValue, out searchValueDec))
-            {
-                searchValue = searchValue.Replace(',', '.');
-            }
-            var incomesBL = _businessLogic.GetAllIncomes(UserId, PAGE_SIZE, pageNumber, searchValue, sortCol, sortDir);
-            var incomesPageInfo = new PageInfoViewModel { PageNumber = pageNumber, PageSize = PAGE_SIZE, TotalItems = incomesBL.Count };
-            var incomesSortInfo = new SortInfoViewModel { ColumnName = sortCol, Direction = sortDir };
+            FilterBLModel blFilter = CreateBLFilter(filter);
+            var incomesBL = _businessLogic.GetAllIncomes(blFilter);
+            var incomesPageInfo = new PageInfoViewModel { PageNumber = blFilter.PageNumber, PageSize = blFilter.PageSize, TotalItems = incomesBL.Count };
+            var incomesSortInfo = new SortInfoViewModel { ColumnName = blFilter.SortCol, Direction = blFilter.SortDir };
             var homeIncomeViewModel = new HomeIncomeViewModel
             {
                 Incomes = ViewModelsFromBLModels(incomesBL.Incomes),
                 PageInfo = incomesPageInfo,
                 SortInfo = incomesSortInfo,
-                SearchValue = searchValue
+                Filter = filter
             };
             return PartialView("IncomesList", homeIncomeViewModel);
+        }
+
+        private FilterBLModel CreateBLFilter(FilterViewModel filter)
+        {
+            var result = new FilterBLModel();
+            result.FromDate = filter.FromDate.HasValue ? filter.FromDate.Value : result.FromDate;
+            result.ToDate = filter.ToDate.HasValue ? filter.ToDate.Value : result.ToDate;
+            result.FromAmount = filter.FromAmount.HasValue ? filter.FromAmount.Value : result.FromAmount;
+            result.ToAmount = filter.ToAmount.HasValue ? filter.ToAmount.Value : result.ToAmount;
+            result.UserId = UserId;
+            result.TypeName = filter.TypeName;
+            result.SortDir = filter.SortDir;
+            result.SortCol = filter.SortCol;
+            result.PageNumber = filter.PageNumber;
+            result.PageSize = filter.PageSize;
+            return result;
+        }
+
+        private SelectList CreateSizes(int currentSize)
+        {
+            var sizes = new List<int>();
+            sizes.Add(5);
+            sizes.Add(10);
+            sizes.Add(15);
+            sizes.Add(20);
+            sizes.Add(30);
+            return new SelectList(sizes, currentSize);
         }
 
         private IEnumerable<IncomeViewModel> ViewModelsFromBLModels(IEnumerable<IncomeBLModel> incomes)

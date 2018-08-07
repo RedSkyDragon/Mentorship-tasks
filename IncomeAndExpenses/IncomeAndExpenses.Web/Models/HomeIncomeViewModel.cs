@@ -23,8 +23,8 @@ namespace IncomeAndExpenses.Web.Models
         public SortInfoViewModel SortInfo { get; set; }
 
         /// <summary>
-        /// Value for search
+        /// Filter options
         /// </summary>
-        public string SearchValue { get; set; }
+        public FilterViewModel Filter { get; set; }
     }
 }

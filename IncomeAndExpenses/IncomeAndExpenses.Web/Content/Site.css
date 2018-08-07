@@ -23,7 +23,7 @@
 @media (min-width: 1264px)
 {
     .container{
-        max-width: 1264px;
+        max-width: 1380px;
     }
 }
 .body-content {
@@ -60,8 +60,8 @@ a:hover {
     border-color: #4D9500;
 }
 .btn:focus {
-    background-color: #4D9500;
-    border-color: #4D9500;
+    background-color: none;
+    border-color: none;
     box-shadow: none;
 }
 .navbar-light .navbar-nav .nav-link, .navbar-light .navbar-text {

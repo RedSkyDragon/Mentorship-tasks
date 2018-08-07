@@ -1,4 +1,5 @@
-﻿using IncomeAndExpenses.DataAccessInterface;
+﻿using IncomeAndExpenses.BusinessLogic.Models;
+using IncomeAndExpenses.DataAccessInterface;
 using System;
 using System.Collections.Generic;
 using System.Web.Helpers;
@@ -146,7 +147,7 @@ namespace IncomeAndExpenses.BusinessLogic
         /// <param name="sortCol">name of the sorting column</param>
         /// <param name="sortDir">name of the sorting direction</param>
         /// <returns>Filled ExpensesBLModel</returns>
-        ExpensesBLModel GetAllExpenses(string userId, int pageSize = 10, int pageNumber = 1, string searchValue = "", string sortCol = nameof(Expense.Date), SortDirection sortDir = SortDirection.Descending);
+        ExpensesBLModel GetAllExpenses(FilterBLModel filter);
 
         /// <summary>
         /// Gets all expense types for current user
@@ -165,7 +166,7 @@ namespace IncomeAndExpenses.BusinessLogic
         /// <param name="sortCol">name of the sorting column</param>
         /// <param name="sortDir">name of the sorting direction</param>
         /// <returns>Filled IncomesBLModel</returns>
-        IncomesBLModel GetAllIncomes(string userId, int pageSize = 10, int pageNumber = 1, string searchValue = "", string sortCol = nameof(Income.Date), SortDirection sortDir = SortDirection.Descending);
+        IncomesBLModel GetAllIncomes(FilterBLModel filter);
 
         /// <summary>
         /// Gets all income types for current user

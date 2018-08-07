@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="Models\ExpenseBLModel.cs" />
     <Compile Include="Models\ExpensesBLModel.cs" />
+    <Compile Include="Models\FilterBLModel.cs" />
     <Compile Include="Models\IncomeBLModel.cs" />
     <Compile Include="Models\IncomesBLModel.cs" />
     <Compile Include="Models\TotalsBLModel.cs" />
