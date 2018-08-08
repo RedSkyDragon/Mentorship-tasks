@@ -16,13 +16,15 @@ Category
 {
 	_id: CATEGORY_ID,
 	name: "Книги",
-	additional_info: "Bla-bla-bla"
+	additional_info: "Bla-bla-bla",
+	things: [id1, id2, ...] // не уверена, стоит ли. но для фильтрации по категориям вроде должно быть полезно
 }
 
 Thing
 {
 	_id: THING_ID,
 	name: "Книга Винни-Пух",
+	category: CATEGORY_ID,
 	additional_info: "Для детей, 1997г. выпуска"
 }
 
