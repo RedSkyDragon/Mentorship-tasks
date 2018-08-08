@@ -12,13 +12,13 @@ User
 			_id: THING_ID,
 			name: "Книга Винни-Пух",
 			additional_info: "Для детей, 1997г. выпуска",
-			lends:
-			[{
+			lend:
+			{
 				_id: LEND_ID,
 				friend_id: id1,
 				lend_date: 07.07.18,
 				comment: "На месяц. Обещал шоколадку по возвращению"
-			},...]				
+			}				
 		},...]
 	},...],
 	friends: 
