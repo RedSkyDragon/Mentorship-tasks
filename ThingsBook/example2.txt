@@ -3,29 +3,29 @@ User
 	_id: USER_ID,
 	name: "Вася Пупкин",
 	categories: 
+	[{
+		_id: CATEGORY_ID,
+		name: "Книги",
+		additional_info: "Bla-bla-bla",
+		things: 
 		[{
-			_id: CATEGORY_ID,
-			name: "Книги",
-			additional_info: "Bla-bla-bla",
-			things: [{
-						_id: THING_ID,
-						name: "Книга Винни-Пух",
-						additional_info: "Для детей, 1997г. выпуска"
-					},...]
-		},...],
-	friends: 
-		[{
-			_id: FRIEND_ID,
-			name: "Иван Иванов",
-			contacts: "тел: 123443534; vk: id123121314", //имеет смысл сделать вложенным объектом?
-		}, ...],
-	lends: 
-		[{
-			_id: LEND_ID,
-			friend_id: id1,
-			thind_id: id2,
-			lend_date: 07.07.18,
-			return_date: 12.03.19,
-			comment: "Обещал шоколадку по возвращению"
+			_id: THING_ID,
+			name: "Книга Винни-Пух",
+			additional_info: "Для детей, 1997г. выпуска",
+			lends:
+			[{
+				_id: LEND_ID,
+				friend_id: id1,
+				lend_date: 07.07.18,
+				return_date: 12.03.19,
+				comment: "Обещал шоколадку по возвращению"
+			},...]				
 		},...]
+	},...],
+	friends: 
+	[{
+		_id: FRIEND_ID,
+		name: "Иван Иванов",
+		contacts: "тел: 123443534; vk: id123121314", //имеет смысл сделать вложенным объектом?
+	}, ...]
 }
