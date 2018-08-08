@@ -17,8 +17,7 @@ User
 				_id: LEND_ID,
 				friend_id: id1,
 				lend_date: 07.07.18,
-				return_date: 12.03.19,
-				comment: "Обещал шоколадку по возвращению"
+				comment: "На месяц. Обещал шоколадку по возвращению"
 			},...]				
 		},...]
 	},...],
@@ -28,4 +27,15 @@ User
 		name: "Иван Иванов",
 		contacts: "тел: 123443534; vk: id123121314", //имеет смысл сделать вложенным объектом?
 	}, ...]
+}
+
+LendHistory
+{
+	_id: LENDHISTORY_ID,
+	user_id: id1,
+	thing_id: id2,
+	friend_id: id3,
+	lend_date: 07.07.18,
+	return_date: 12.03.19,
+	comment: "Вернул в хорошем состоянии"	
 }
