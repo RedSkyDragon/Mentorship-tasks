@@ -14,7 +14,7 @@ namespace IncomeAndExpenses.DataAccessInterface
         /// <typeparam name="T">Entity type</typeparam>
         /// <returns>IRepository interface</returns>
         IRepository<TId, T> Repository<TId, T>() 
-            where T: Entity<TId>;
+            where T: EntityDM<TId>;
 
         /// <summary>
         /// Represents repository for entities with integer Id field
@@ -22,7 +22,7 @@ namespace IncomeAndExpenses.DataAccessInterface
         /// <typeparam name="T">Entity type</typeparam>
         /// <returns>IRepository interface</returns>
         IRepository<int, T> Repository<T>()
-            where T : Entity<int>;
+            where T : EntityDM<int>;
 
         /// <summary>
         /// Saves changes in database

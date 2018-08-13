@@ -36,13 +36,13 @@
                         {
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="inputGroup-sizing-default">Do you want to delete all expenses with this type?</span>
-                                @Html.CheckBox("DeleteAll", new { @class = "form-control col-md-1", @id = "DeleteAll" })
+                                @Html.CheckBoxFor(model => model.DeleteAll, new { @class = "form-control col-md-1", @id = "DeleteAll" })
                             </div>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="inputGroup-sizing-default">Select a replacement type: </span>
                                 </div>
-                                @Html.DropDownList("ReplacementTypeId", Model.ReplacementTypes, new { @class = "form-control custom-select", @id = "Replace" })
+                                @Html.DropDownListFor(model => model.ReplacementTypeId, Model.ReplacementTypes, new { @class = "form-control custom-select", @id = "Replace" })
                             </div>
                         }
                         else

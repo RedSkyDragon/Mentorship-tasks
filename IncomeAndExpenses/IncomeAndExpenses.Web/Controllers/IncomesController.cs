@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.BusinessLogic;
 using IncomeAndExpenses.Web.Models;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,15 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class IncomesController : BaseController
     {
+        private IIncomesBL _incomesBL;
+
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with IIncomesBL instance
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public IncomesController(IUnitOfWork unitOfWork)
+        /// <param name="incomesBL">IIncomesBL implementation to work with data</param>
+        public IncomesController(IIncomesBL incomesBL)
         {
-            _unitOfWork = unitOfWork;
+            _incomesBL = incomesBL;
         }
 
         // GET: Incomes/Create
@@ -32,13 +35,12 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IncomeCUViewModel incomeVM)
         {
-            Income income = ModelFromViewModel(incomeVM.Income);
+            IncomeDM income = ModelFromViewModel(incomeVM.Income);
             if (ModelState.IsValid)
             {               
                 try
                 {
-                    _unitOfWork.Repository<Income>().Create(income);
-                    _unitOfWork.Save();
+                    _incomesBL.CreateIncome(income);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -66,13 +68,12 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IncomeCUViewModel incomeVM)
         {
-            Income income = ModelFromViewModel(incomeVM.Income);
+            IncomeDM income = ModelFromViewModel(incomeVM.Income);
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _unitOfWork.Repository<Income>().Update(income);
-                    _unitOfWork.Save();
+                    _incomesBL.UpdateIncome(income);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -93,14 +94,14 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Details(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
+            return View(ViewModelFromModel(_incomesBL.GetIncome(id)));
         }
 
         // GET: Incomes/Delete/1
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
+            return View(ViewModelFromModel(_incomesBL.GetIncome(id)));
         }
 
         // POST: Incomes/Delete/1
@@ -110,48 +111,50 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             try
             {
-                _unitOfWork.Repository<Income>().Delete(id);
-                _unitOfWork.Save();
+                _incomesBL.DeleteIncome(id);
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
                 ViewData["Error"] = ErrorMessage;
-                return View(ViewModelFromModel(_unitOfWork.Repository<Income>().Get(id)));
+                return View(ViewModelFromModel(_incomesBL.GetIncome(id)));
             }
         }
 
         private IncomeCUViewModel CreateIncomeCUViewModel(int id)
         {
-            Income income = _unitOfWork.Repository<Income>().Get(id);
+            IncomeDM income = _incomesBL.GetIncome(id);
             return CreateIncomeCUViewModel(income);
         }
 
-        private IncomeCUViewModel CreateIncomeCUViewModel(Income income)
+        private IncomeCUViewModel CreateIncomeCUViewModel(IncomeDM income)
         {            
             return new IncomeCUViewModel { Income = ViewModelFromModel(income), IncomeTypes = CreateTypesList(income) };
         }
 
-        private IEnumerable<SelectListItem> CreateTypesList(Income income)
+        private IEnumerable<SelectListItem> CreateTypesList(IncomeDM income)
         {
-            return _unitOfWork.Repository<IncomeType>().All()
-               .Where(t => t.UserId == UserId)
-               .OrderBy(t => t.Name)
-               .ToList()
-               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = income?.IncomeTypeId == t.Id });
+            return _incomesBL.GetAllIncomeTypes(UserId)
+               .Select(t => new SelectListItem {
+                   Value = t.Id.ToString(),
+                   Text = t.Name,
+                   Selected = income?.IncomeTypeId == t.Id
+               });
         }
 
-        private Income ModelFromViewModel(IncomeViewModel incomeVM)
+        private IncomeDM ModelFromViewModel(IncomeViewModel incomeVM)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeViewModel, Income>());
-            return config.CreateMapper().Map<IncomeViewModel, Income>(incomeVM);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeViewModel, IncomeDM>());
+            return config.CreateMapper().Map<IncomeViewModel, IncomeDM>(incomeVM);
         }
 
-        private IncomeViewModel ViewModelFromModel(Income income)
+        private IncomeViewModel ViewModelFromModel(IncomeDM income)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Income, IncomeViewModel>().ForMember(destination => destination.IncomeTypeName, opts => opts.MapFrom(source => source.IncomeType.Name)));
-            return config.CreateMapper().Map<Income, IncomeViewModel>(income);
+            var config = new MapperConfiguration(
+                cfg => cfg.CreateMap<IncomeDM, IncomeViewModel>()
+                .ForMember(destination => destination.IncomeTypeName, opts => opts.MapFrom(source => source.IncomeType.Name)));
+            return config.CreateMapper().Map<IncomeDM, IncomeViewModel>(income);
         }
     }
 }

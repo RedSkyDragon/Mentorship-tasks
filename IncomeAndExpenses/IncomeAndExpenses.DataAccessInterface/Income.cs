@@ -6,7 +6,7 @@ namespace IncomeAndExpenses.DataAccessInterface
     /// <summary>
     /// Represents Income entity
     /// </summary>
-    public class Income : Entity<int>
+    public class IncomeDM : EntityDM<int>
     {
         /// <summary>
         /// Gets or sets amount of income
@@ -31,6 +31,6 @@ namespace IncomeAndExpenses.DataAccessInterface
         /// <summary>
         /// Gets or sets Income type
         /// </summary>
-        public virtual IncomeType IncomeType { get; set; }
+        public virtual IncomeTypeDM IncomeType { get; set; }
     }
 }

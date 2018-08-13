@@ -34,7 +34,7 @@ namespace IncomeAndExpenses.DataAccessImplement
         /// <typeparam name="T">Entity type</typeparam>
         /// <returns>IRepository interface</returns>
         public IRepository<TId, T> Repository<TId, T>() 
-            where T : Entity<TId>
+            where T : EntityDM<TId>
         {
             return new Repository<TId, T>(_db);
         }
@@ -45,7 +45,7 @@ namespace IncomeAndExpenses.DataAccessImplement
         /// <typeparam name="T">Entity type</typeparam>
         /// <returns>IRepository interface</returns>
         public IRepository<int, T> Repository<T>()
-            where T : Entity<int>
+            where T : EntityDM<int>
         {
             return new Repository<int, T>(_db);
         }

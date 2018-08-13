@@ -5,7 +5,7 @@ namespace IncomeAndExpenses.DataAccessInterface
     /// <summary>
     /// Represents IncomeType entity
     /// </summary>
-    public class IncomeType : Entity<int>
+    public class IncomeTypeDM : EntityDM<int>
     {
         /// <summary>
         /// Gets or sets name of the type
@@ -25,11 +25,11 @@ namespace IncomeAndExpenses.DataAccessInterface
         /// <summary>
         /// Gets or sets User of this type
         /// </summary>
-        public virtual User User { get; set; }
+        public virtual UserDM User { get; set; }
 
         /// <summary>
         /// ICollection of incomes with this type
         /// </summary>
-        public virtual ICollection<Income> Incomes { get; set; } = new List<Income>();
+        public virtual ICollection<IncomeDM> Incomes { get; set; } = new List<IncomeDM>();
     }
 }

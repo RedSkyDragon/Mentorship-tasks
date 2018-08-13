@@ -1,16 +1,17 @@
 ﻿@model IncomeAndExpenses.Web.Models.HomeIndexViewModel
+@using IncomeAndExpenses.Web.Models;
 @{
     ViewBag.Title = "Home";
-    AjaxOptions expesesAjaxOptions = new AjaxOptions { UpdateTargetId = "expenses", HttpMethod = "GET", OnSuccess = "InsertAngles" };
-    AjaxOptions incomesAjaxOptions = new AjaxOptions { UpdateTargetId = "incomes", HttpMethod = "GET", OnSuccess = "InsertAngles" };
+    AjaxOptions expesesAjaxOptions = new AjaxOptions { UpdateTargetId = "expenses", HttpMethod = "GET", OnSuccess = "ExpenseSuccess" };
+    AjaxOptions incomesAjaxOptions = new AjaxOptions { UpdateTargetId = "incomes", HttpMethod = "GET", OnSuccess = "IncomeSuccess" };
 }
 
 <h3 class="text-right">Current balance: @Model.CurrentBalance</h3>
 
 <div class="row">
     <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
-        <h1>Expenses</h1>
-        @using (Ajax.BeginForm("GetExpensesData", expesesAjaxOptions))
+        <h1>Expenses</h1>    
+        @*@using (Ajax.BeginForm("GetExpensesData", expesesAjaxOptions))
         {
             <div class="input-group mb-3">
                 <input id="search" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="" name="searchValue">
@@ -18,32 +19,37 @@
                     <button class="btn btn-primary" type="submit" id="search-btn">Search</button>
                 </div>
             </div>
-        }
-        <div class="float-left">
-            @Html.ActionLink("Create New", "Create", "Expenses")
+        }*@
+        <div class="row">
+            <div class="col-12 d-flex justify-content-between">
+                @Html.ActionLink("Create New", "Create", "Expenses")
+                <a data-toggle="collapse" href="#expenseFilter" aria-expanded="false" aria-controls="expenseFilter" id="expense-collapse">
+                    Show filter
+                </a>
+                <div class="font-weight-bold">Total: @Model.ExpenseTotal</div>
+            </div>
         </div>
-        <div class="float-right font-weight-bold">Total: @Model.ExpenseTotal</div>
-        <div id="expenses">
-            @Html.Action("GetExpensesData", new { })
+        <div class="row">
+            <div class="col-12" id="expenses">
+                @Html.Action("GetExpensesData", new FilterViewModel())
+            </div>
         </div>
     </div>
     <div class="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
         <h1>Income</h1>
-        @using (Ajax.BeginForm("GetIncomesData", incomesAjaxOptions))
-        {
-            <div class="input-group mb-3">
-                <input id="search" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="" name="searchValue">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit" id="search-btn">Search</button>
-                </div>
+        <div class="row">
+            <div class="col-12 d-flex justify-content-between">
+                @Html.ActionLink("Create New", "Create", "Incomes")
+                <a data-toggle="collapse" href="#incomeFilter" aria-expanded="false" aria-controls="incomeFilter" id="income-collapse">
+                    Show filter
+                </a>
+                <div class="font-weight-bold">Total: @Model.IncomeTotal</div>
             </div>
-        }
-        <div class="float-left">
-            @Html.ActionLink("Create New", "Create", "Incomes")
         </div>
-        <div class="float-right font-weight-bold">Total: @Model.IncomeTotal</div>
-        <div id="incomes">
-            @Html.Action("GetIncomesData", new { })
+        <div class="row">
+            <div class="col-12" id="incomes">
+                @Html.Action("GetIncomesData", new FilterViewModel { })
+            </div>
         </div>
     </div>
 </div>
@@ -51,9 +57,43 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            InsertAngles();
+            ExpenseSuccess();
+            IncomeSuccess();
         });
-        
+
+        function Clearme(item)
+        {
+            $($(item).data('target')).val("");
+        }
+
+        function ClearAllInputs(selector)
+        {
+            $(selector + ' input').val("");
+        }
+
+        function ExpenseSuccess()
+        {
+            InsertAngles();
+            Collapse();
+            $('#expense-collapse').html('Show filter');
+        }
+
+        function IncomeSuccess() {
+            InsertAngles();
+            Collapse();
+            $('#income-collapse').html('Show filter');
+        }
+
+        function Collapse()
+        {
+            $('.collapse').on('show.bs.collapse', function () {
+                $($(this).data('btn')).html('Hide filter');
+            })
+            $('.collapse').on('hide.bs.collapse', function () {
+                $($(this).data('btn')).html('Show filter');
+            })
+        }
+
         function InsertAngles()
         {
             $(".asc").each(function () {
@@ -63,5 +103,6 @@
                 $(this).html("<i class='fas fa-angle-down'></i>")
             });
         }
+
     </script>    
 }

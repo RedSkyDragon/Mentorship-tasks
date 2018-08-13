@@ -231,6 +231,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\FilterViewModel.cs" />
     <Compile Include="Models\HomeExpenseViewModel.cs" />
     <Compile Include="Models\HomeIncomeViewModel.cs" />
     <Compile Include="Models\HomeIndexViewModel.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="Utils\AutofacConfig.cs" />
     <Compile Include="Utils\CustomExceptionFilter.cs" />
     <Compile Include="Utils\LoggerMiddleware.cs" />
+    <Compile Include="Utils\ViewUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="500.html" />
@@ -371,6 +373,10 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IncomeAndExpenses.BusinessLogic\IncomeAndExpenses.BusinessLogic.csproj">
+      <Project>{9228e498-9d85-4563-9b76-0ddc11b59fa0}</Project>
+      <Name>IncomeAndExpenses.BusinessLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IncomeAndExpenses.DataAccessImplement\IncomeAndExpenses.DataAccessImplement.csproj">
       <Project>{fa144432-7eac-464d-9d53-e1c95e305148}</Project>
       <Name>IncomeAndExpenses.DataAccessImplement</Name>
