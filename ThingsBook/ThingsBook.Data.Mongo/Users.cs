@@ -6,11 +6,11 @@ using ThingsBook.Data.Interface;
 
 namespace ThingsBook.Data.Mongo
 {
-    public class UsersBL : IUsersBL
+    public class Users : IUsers
     {
         private ThingsBookContext _db;
 
-        public UsersBL(ThingsBookContext db)
+        public Users(ThingsBookContext db)
         {
             _db = db;
         }
@@ -22,26 +22,24 @@ namespace ThingsBook.Data.Mongo
 
         public void DeleteUser(Guid id)
         {
-            var filter = new FilterDefinitionBuilder<User>().Eq(u => u.Id, id);
-            _db.Users.FindOneAndDelete(filter);
+            _db.Users.FindOneAndDelete(u => u.Id == id);
         }
 
         public User GetUser(Guid id)
         {
-            var filter = new FilterDefinitionBuilder<User>().Eq(u => u.Id, id);
-            return _db.Users.Find(filter).ToList().FirstOrDefault();
+            return _db.Users.Find(u => u.Id == id).FirstOrDefault();
         }
 
         public IEnumerable<User> GetUsers()
         {
             var filter = new FilterDefinitionBuilder<User>().Empty;
-            return _db.Users.Find(filter).ToList();
+            return _db.Users.Find(filter).ToEnumerable();
         }
 
         public void UpdateUser(User user)
         {
-            var filter = new FilterDefinitionBuilder<User>().Eq(u => u.Id, user.Id);
-            _db.Users.ReplaceOne(filter, user);
+            var update = Builders<User>.Update.Set(u=> u.Name, user.Name);
+            _db.Users.UpdateOne(u => u.Id == user.Id, update);
         }
     }
 }

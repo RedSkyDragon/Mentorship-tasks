@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ThingsBook.Data.Interface
 {
-    public interface IHistoryBL
+    public interface IHistory
     {
         IEnumerable<HistoricalLend> GetHistLends(Guid userId);
 

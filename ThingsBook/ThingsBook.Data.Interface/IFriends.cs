@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ThingsBook.Data.Interface
 {
-    public interface IFriendsBL
+    public interface IFriends
     {
         IEnumerable<Friend> GetFriends(Guid userId);
 

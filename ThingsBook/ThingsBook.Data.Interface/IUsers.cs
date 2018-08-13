@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ThingsBook.Data.Interface
 {
-    public interface IUsersBL
+    public interface IUsers
     {
         IEnumerable<User> GetUsers();
 

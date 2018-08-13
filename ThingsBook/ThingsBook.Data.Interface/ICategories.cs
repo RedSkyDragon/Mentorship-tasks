@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ThingsBook.Data.Interface
 {
-    public interface ICategoriesBL
+    public interface ICategories
     {
         IEnumerable<Category> GetCategories(Guid userId);
 

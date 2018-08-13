@@ -6,11 +6,11 @@ namespace ThingsBook.Data.Interface
     {
         public Guid Id { get; set; } = GuidUtils.NewGuid();
 
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
 
-        public string ThingId { get; set; }
+        public Guid ThingId { get; set; }
 
-        public string FriendId { get; set; }
+        public Guid FriendId { get; set; }
 
         public DateTime LendDate { get; set; }
 

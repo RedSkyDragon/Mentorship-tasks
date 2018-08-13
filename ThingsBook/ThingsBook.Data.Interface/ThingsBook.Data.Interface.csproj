@@ -7,8 +7,8 @@
     <ProjectGuid>{BD995C19-F811-400F-ACD7-1FF1FE72FB3E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ThingsBook.DataAccessInterface</RootNamespace>
-    <AssemblyName>ThingsBook.DataAccessInterface</AssemblyName>
+    <RootNamespace>ThingsBook.Data.Interface</RootNamespace>
+    <AssemblyName>ThingsBook.Data.Interface</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,6 +48,7 @@
     <Compile Include="ICategories.cs" />
     <Compile Include="IFriends.cs" />
     <Compile Include="IHistory.cs" />
+    <Compile Include="ILends.cs" />
     <Compile Include="IThings.cs" />
     <Compile Include="IUsers.cs" />
     <Compile Include="Lend.cs" />
