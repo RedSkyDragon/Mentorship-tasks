@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ThingsBook.DataAccessInterface
+namespace ThingsBook.Data.Interface
 {
     public class Friend
     {

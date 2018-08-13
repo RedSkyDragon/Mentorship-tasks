@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ThingsBook.DataAccessInterface
+namespace ThingsBook.Data.Interface
 {
     public class User
     {

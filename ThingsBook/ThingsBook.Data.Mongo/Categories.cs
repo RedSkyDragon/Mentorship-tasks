@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ThingsBook.DataAccessInterface;
 using MongoDB.Driver;
-using DataAccessImplement;
+using ThingsBook.Data.Interface;
 
-namespace BusinessLogic
+namespace ThingsBook.Data.Mongo
 {
     public class CategoriesBL : ICategoriesBL
     {

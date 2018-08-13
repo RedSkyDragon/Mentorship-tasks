@@ -60,16 +60,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Categories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThingsBookContext.cs" />
+    <Compile Include="Users.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThingsBook.DataAccessInterface\ThingsBook.DataAccessInterface.csproj">
+    <ProjectReference Include="..\ThingsBook.Data.Interface\ThingsBook.Data.Interface.csproj">
       <Project>{BD995C19-F811-400F-ACD7-1FF1FE72FB3E}</Project>
-      <Name>ThingsBook.DataAccessInterface</Name>
+      <Name>ThingsBook.Data.Interface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

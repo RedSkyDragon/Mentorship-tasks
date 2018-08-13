@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThingsBook.DataAccessInterface;
 
-namespace BusinessLogic
+namespace ThingsBook.Data.Interface
 {
     public interface ICategoriesBL
     {

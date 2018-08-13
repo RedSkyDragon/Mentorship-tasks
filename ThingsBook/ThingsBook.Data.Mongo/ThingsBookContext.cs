@@ -1,39 +1,34 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
+﻿using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThingsBook.DataAccessInterface;
+using ThingsBook.Data.Interface;
 
-namespace DataAccessImplement
+namespace ThingsBook.Data.Mongo
 {
     public class ThingsBookContext
     {
-        private IMongoDatabase _database;
+        public IMongoDatabase Database { get; }
 
         public ThingsBookContext()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString;
             var connection = new MongoUrlBuilder(connectionString);
             MongoClient client = new MongoClient(connectionString);
-            _database = client.GetDatabase(connection.DatabaseName);
+            Database = client.GetDatabase(connection.DatabaseName);
         }
 
         public IMongoCollection<HistoricalLend> History
         {
-            get { return _database.GetCollection<HistoricalLend>("HistoricalLend"); }
+            get { return Database.GetCollection<HistoricalLend>("HistoricalLend"); }
         }
 
         public IMongoCollection<User> Users
         {
-            get { return _database.GetCollection<User>("User"); }
+            get { return Database.GetCollection<User>("User"); }
         }
 
         public static void RegisterClassMaps()
