@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IncomeAndExpenses.DataAcces
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IncomeAndExpenses.DataAccessImplement", "IncomeAndExpenses.DataAccessImplement\IncomeAndExpenses.DataAccessImplement.csproj", "{FA144432-7EAC-464D-9D53-E1C95E305148}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IncomeAndExpenses.BusinessLogic", "IncomeAndExpenses.BusinessLogic\IncomeAndExpenses.BusinessLogic.csproj", "{9228E498-9D85-4563-9B76-0DDC11B59FA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FA144432-7EAC-464D-9D53-E1C95E305148}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA144432-7EAC-464D-9D53-E1C95E305148}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA144432-7EAC-464D-9D53-E1C95E305148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9228E498-9D85-4563-9B76-0DDC11B59FA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9228E498-9D85-4563-9B76-0DDC11B59FA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9228E498-9D85-4563-9B76-0DDC11B59FA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9228E498-9D85-4563-9B76-0DDC11B59FA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

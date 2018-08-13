@@ -1,24 +1,30 @@
-﻿using IncomeAndExpenses.DataAccessInterface;
-using IncomeAndExpenses.Web.Models;
-using System.Linq;
+﻿using IncomeAndExpenses.Web.Models;
 using System.Web.Mvc;
-using System.Web.Helpers;
+using AutoMapper;
+using System.Collections.Generic;
+using IncomeAndExpenses.BusinessLogic;
+using IncomeAndExpenses.BusinessLogic.Models;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
     [Authorize]
     public class HomeController : BaseController
     {
-        //Count of incomes or expenses per page
-        private const int PAGE_SIZE = 10;
+        private ITotalsBL _totalsBL;
+        private IExpensesBL _expensesBL;
+        private IIncomesBL _incomesBL;
 
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with ITotalsBL, IExpensesBL, IIncomesBL instances to connect with database
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public HomeController(IUnitOfWork unitOfWork)
+        /// <param name="totalsBL">ITotalsBL implementation to connect with database</param>
+        /// /// <param name="expensesBL">IExpensesBL implementation to connect with database</param>
+        /// /// <param name="incomesBL">IIncomesBL implementation to connect with database</param>
+        public HomeController(ITotalsBL totalsBL, IExpensesBL expensesBL, IIncomesBL incomesBL)
         {
-            _unitOfWork = unitOfWork;
+            _totalsBL = totalsBL;
+            _expensesBL = expensesBL;
+            _incomesBL = incomesBL;
         }
 
         /// <summary>
@@ -29,50 +35,39 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            var incomeTotal = _unitOfWork.Repository<IncomeType>().All()
-                .Where(t => t.UserId == UserId)
-                .Sum(t => t.Incomes.Sum(i => i.Amount));
-            var expenseTotal = _unitOfWork.Repository<ExpenseType>().All()
-                .Where(t => t.UserId == UserId)
-                .Sum(t => t.Expenses.Sum(e => e.Amount));
-            var currentBalance = incomeTotal - expenseTotal;
-            var homeViewModel = new HomeIndexViewModel { ExpenseTotal = expenseTotal, IncomeTotal = incomeTotal, CurrentBalance = currentBalance };
+            var totals = _totalsBL.GetTotals(UserId);
+            var homeViewModel = new MapperConfiguration(cfg => cfg.CreateMap<HomeIndexViewModel, Totals>())
+                .CreateMapper().Map<Totals, HomeIndexViewModel>(totals);
             return View(homeViewModel);
         }
 
         /// <summary>
         /// GET request GetExpensesData
         /// </summary>
-        /// <param name="pageNumber">Current page</param>
-        /// <param name="searchValue">Value for search</param>
-        /// <param name="sortCol">Name of the sorting column</param>
-        /// <param name="sortDir">Sorting direction</param>
+        /// <param name="filter">FilterViewModel for filtration</param>
         /// <returns>Partial view with list of expenses</returns>
         [HttpGet]
-        public PartialViewResult GetExpensesData(int pageNumber = 1, string searchValue = "", string sortCol = nameof(ExpenseViewModel.Date), SortDirection sortDir = SortDirection.Descending)
+        public PartialViewResult GetExpensesData(FilterViewModel filter)
         {
-            var expenses = _unitOfWork.Repository<ExpenseType>().All()
-                .Where(t => t.UserId == UserId)
-                .Join(_unitOfWork.Repository<Expense>().All(), t => t.Id, e => e.ExpenseTypeId,
-                    (t, e) => new ExpenseViewModel { Id = e.Id, Amount = e.Amount, Date = e.Date, ExpenseTypeName = t.Name });
-            decimal searchValueDec;
-            if (decimal.TryParse(searchValue, out searchValueDec))
+            FilterBL blFilter = CreateBLFilter(filter);
+            var expensesBL = _expensesBL.GetAllExpenses(blFilter);
+            var expensesPageInfo = new PageInfoViewModel
             {
-                searchValue = searchValue.Replace(',', '.');
-            }
-            if (!string.IsNullOrEmpty(searchValue))
+                PageNumber = blFilter.PageNumber,
+                PageSize = blFilter.PageSize,
+                TotalItems = expensesBL.TotalCount
+            };
+            var expenseSortInfo = new SortInfoViewModel
             {
-                expenses = expenses.Where(e => e.Amount.ToString().Contains(searchValue) || e.ExpenseTypeName.Contains(searchValue));
-            }
-            var expensesPageInfo = new PageInfoViewModel { PageNumber = pageNumber, PageSize = PAGE_SIZE, TotalItems = expenses.Count() };
-            expenses = SortExpenseViewModel(expenses, sortCol, sortDir).Skip((pageNumber - 1) * PAGE_SIZE).Take(PAGE_SIZE);
-            var expenseSortInfo = new SortInfoViewModel { ColumnName = sortCol, Direction = sortDir };
+                ColumnName = blFilter.SortCol,
+                Direction = blFilter.SortDir
+            };
             var homeExpenseViewModel = new HomeExpenseViewModel
             {
-                Expenses = expenses,
+                Expenses = ViewModelsFromBLModels(expensesBL.ExpensesList),
                 PageInfo = expensesPageInfo,
                 SortInfo = expenseSortInfo,
-                SearchValue = searchValue
+                Filter = filter
             };
             return PartialView("ExpensesList", homeExpenseViewModel);
         }
@@ -80,114 +75,70 @@ namespace IncomeAndExpenses.Web.Controllers
         /// <summary>
         /// GET request GetIncomesData
         /// </summary>
-        /// <param name="pageNumber">Current page</param>
-        /// <param name="searchValue">Value for search</param>
-        /// <param name="sortCol">Name of the sorting column</param>
-        /// <param name="sortDir">Sorting direction</param>
+        /// <param name="filter">FilterViewModel for filtration</param>
         /// <returns>Partial view with list of incomes</returns>
         [HttpGet]
-        public PartialViewResult GetIncomesData(int pageNumber = 1, string searchValue = "", string sortCol = nameof(IncomeViewModel.Date), SortDirection sortDir = SortDirection.Descending)
+        public PartialViewResult GetIncomesData(FilterViewModel filter)
         {
-            var incomes = _unitOfWork.Repository<IncomeType>().All()
-                .Where(t => t.UserId == UserId)
-                .Join(_unitOfWork.Repository<Income>().All(), t => t.Id, i => i.IncomeTypeId,
-                    (t, i) => new IncomeViewModel { Id = i.Id, Amount = i.Amount, Date = i.Date, IncomeTypeName = t.Name });
-            decimal searchValueDec;
-            if (decimal.TryParse(searchValue, out searchValueDec))
+            FilterBL blFilter = CreateBLFilter(filter);
+            var incomesBL = _incomesBL.GetAllIncomes(blFilter);
+            var incomesPageInfo = new PageInfoViewModel
             {
-                searchValue = searchValue.Replace(',', '.');
-            }
-            if (!string.IsNullOrEmpty(searchValue))
+                PageNumber = blFilter.PageNumber,
+                PageSize = blFilter.PageSize,
+                TotalItems = incomesBL.TotalCount
+            };
+            var incomesSortInfo = new SortInfoViewModel
             {
-                incomes = incomes.Where(i => i.Amount.ToString().Contains(searchValue) || i.IncomeTypeName.Contains(searchValue));
-            }
-            var incomesPageInfo = new PageInfoViewModel { PageNumber = pageNumber, PageSize = PAGE_SIZE, TotalItems = incomes.Count() };
-            incomes = SortIncomeViewModel(incomes, sortCol, sortDir).Skip((pageNumber - 1) * PAGE_SIZE).Take(PAGE_SIZE);
-            var incomesSortInfo = new SortInfoViewModel { ColumnName = sortCol, Direction = sortDir };
+                ColumnName = blFilter.SortCol,
+                Direction = blFilter.SortDir
+            };
             var homeIncomeViewModel = new HomeIncomeViewModel
             {
-                Incomes = incomes,
+                Incomes = ViewModelsFromBLModels(incomesBL.IncomesList),
                 PageInfo = incomesPageInfo,
                 SortInfo = incomesSortInfo,
-                SearchValue = searchValue
+                Filter = filter
             };
             return PartialView("IncomesList", homeIncomeViewModel);
         }
 
-        private IQueryable<ExpenseViewModel> SortExpenseViewModel(IQueryable<ExpenseViewModel> expenses, string colName, SortDirection sortDir)
+        private FilterBL CreateBLFilter(FilterViewModel filter)
         {
-            var result = expenses;
-            switch (colName)
+            var mapper = new MapperConfiguration(
+                cfg => cfg.CreateMap<FilterViewModel, FilterBL>())
+                .CreateMapper();
+            var result = mapper.Map<FilterViewModel, FilterBL>(filter);
+            result.UserId = UserId;
+            return result;
+        }
+
+        private IEnumerable<IncomeViewModel> ViewModelsFromBLModels(IEnumerable<Income> incomes)
+        {
+            var mapper = new MapperConfiguration(
+                cfg => cfg.CreateMap<Income, IncomeViewModel>()
+                .ForMember(dest => dest.IncomeTypeId, opts => opts.MapFrom(source => source.TypeId))
+                .ForMember(dest => dest.IncomeTypeName, opts => opts.MapFrom(source => source.TypeName)))
+                .CreateMapper() ;
+            var result = new List<IncomeViewModel>();
+            foreach (var income in incomes)
             {
-                case nameof(ExpenseViewModel.Amount):
-                    if (sortDir == SortDirection.Ascending)
-                    {
-                        result = result.OrderBy(r => r.Amount).ThenByDescending(r => r.Id);
-                    }
-                    else
-                    {
-                        result = result.OrderByDescending(r => r.Amount).ThenByDescending(r => r.Id);
-                    }
-                    break;
-                case nameof(ExpenseViewModel.Date):
-                    if (sortDir == SortDirection.Ascending)
-                    {
-                        result = result.OrderBy(r => r.Date).ThenByDescending(r => r.Id);
-                    }
-                    else
-                    {
-                        result = result.OrderByDescending(r => r.Date).ThenByDescending(r => r.Id);
-                    }
-                    break;
-                case nameof(ExpenseViewModel.ExpenseTypeName):
-                    if (sortDir == SortDirection.Ascending)
-                    {
-                        result = result.OrderBy(r => r.ExpenseTypeName).ThenByDescending(r => r.Id);
-                    }
-                    else
-                    {
-                        result = result.OrderByDescending(r => r.ExpenseTypeName).ThenByDescending(r => r.Id);
-                    }
-                    break;
+                result.Add(mapper.Map<Income, IncomeViewModel>(income));
             }
             return result;
         }
 
-        private IQueryable<IncomeViewModel> SortIncomeViewModel(IQueryable<IncomeViewModel> expenses, string colName, SortDirection sortDir)
+        private IEnumerable<ExpenseViewModel> ViewModelsFromBLModels(IEnumerable<Expense> expenses)
         {
-            var result = expenses;
-            switch (colName)
+            var mapper = new MapperConfiguration(
+                cfg => cfg.CreateMap<Expense, ExpenseViewModel > ()
+                .ForMember(dest => dest.ExpenseTypeId, opts => opts.MapFrom(source => source.TypeId))
+                .ForMember(dest => dest.ExpenseTypeName, opts => opts.MapFrom(source => source.TypeName)))
+                .CreateMapper();
+            var result = new List<ExpenseViewModel>();
+            foreach (var expense in expenses)
             {
-                case nameof(IncomeViewModel.Amount):
-                    if (sortDir == SortDirection.Ascending)
-                    {
-                        result = result.OrderBy(r => r.Amount).ThenByDescending(r => r.Id);
-                    }
-                    else
-                    {
-                        result = result.OrderByDescending(r => r.Amount).ThenByDescending(r => r.Id);
-                    }
-                    break;
-                case nameof(IncomeViewModel.Date):
-                    if (sortDir == SortDirection.Ascending)
-                    {
-                        result = result.OrderBy(r => r.Date).ThenByDescending(r => r.Id);
-                    }
-                    else
-                    {
-                        result = result.OrderByDescending(r => r.Date).ThenByDescending(r => r.Id);
-                    }
-                    break;
-                case nameof(IncomeViewModel.IncomeTypeName):
-                    if (sortDir == SortDirection.Ascending)
-                    {
-                        result = result.OrderBy(r => r.IncomeTypeName).ThenByDescending(r => r.Id);
-                    }
-                    else
-                    {
-                        result = result.OrderByDescending(r => r.IncomeTypeName).ThenByDescending(r => r.Id);
-                    }
-                    break;
+                result.Add(mapper.Map<Expense, ExpenseViewModel>(expense));
             }
             return result;
         }

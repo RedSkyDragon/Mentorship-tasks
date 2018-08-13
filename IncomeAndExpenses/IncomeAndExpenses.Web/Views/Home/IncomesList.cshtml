@@ -1,38 +1,137 @@
 ﻿@using IncomeAndExpenses.Web.Models
+@using IncomeAndExpenses.Web.Utils
 @model HomeIncomeViewModel
 @{
-    AjaxOptions AjaxOptions = new AjaxOptions { UpdateTargetId = "incomes", HttpMethod = "GET", OnSuccess = "InsertAngles" };
+    AjaxOptions AjaxOptions = new AjaxOptions { UpdateTargetId = "incomes", HttpMethod = "GET", OnSuccess = "IncomeSuccess" };
     int pagesAround = 2;
     int first = Model.PageInfo.PageNumber - pagesAround < 1 ? 1 : Model.PageInfo.PageNumber - pagesAround;
     int last = Model.PageInfo.PageNumber + pagesAround > Model.PageInfo.TotalPages ? Model.PageInfo.TotalPages : Model.PageInfo.PageNumber + pagesAround;
-    string colName = Model.SortInfo.ColumnName;
-    SortDirection direction = Model.SortInfo.Direction;
-    string search = Model.SearchValue;
+    var fromDate = Model.Filter.MinDate;
+    var toDate = Model.Filter.MaxDate;
+    var fromAmount = Model.Filter.MinAmount;
+    var toAmount = Model.Filter.MaxAmount;
+    var typeName = Model.Filter.TypeName;
+    var filter = Model.Filter;
+    var colName = Model.Filter.SortCol;
+    var direction = Model.Filter.SortDir;
     SortDirection asc = SortDirection.Ascending;
     SortDirection desc = SortDirection.Descending;
+    SelectList sizes = new SelectList(ViewUtils.ListForPagination(), Model.Filter.PageSize);
 }
+
+<div class="collapse filter" id="incomeFilter" data-btn="#income-collapse">
+    <div class="card card-body">
+        @using (Ajax.BeginForm("GetIncomesData", AjaxOptions))
+        {
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label for="incomeDateFilter">Date</label>
+                <div class="form-row" id="incomeDateFilter">
+                    <div class="col">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Min</span>
+                            </div>
+                            @Html.EditorFor(model => model.Filter.MinDate, new { htmlAttributes = new { @class = "form-control", id = "incomeDateMin", @Value = @Model.Filter.MinDate?.ToString("yyyy-MM-dd") } })
+                            @Html.ValidationMessageFor(model => model.Filter.MinDate, "", new { @class = "text-danger" })
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#incomeDateMin"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Max</span>
+                            </div>
+                            @Html.EditorFor(model => model.Filter.MaxDate, new { htmlAttributes = new { @class = "form-control", id = "incomeMaxDate", @Value = @Model.Filter.MaxDate?.ToString("yyyy-MM-dd") } })
+                            @Html.ValidationMessageFor(model => model.Filter.MaxDate, "", new { @class = "text-danger" })
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#incomeMaxDate"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="incomeAmountFilter">Amount</label>
+                <div class="form-row" id="incomeAmountFilter">
+                    <div class="col">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Min</span>
+                            </div>
+                            @Html.EditorFor(model => model.Filter.MinAmount, new { htmlAttributes = new { @class = "form-control", id = "incomeAmountMin" } })
+                            @Html.ValidationMessageFor(model => model.Filter.MinAmount, "", new { @class = "text-danger" })
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#incomeAmountMin"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Max</span>
+                            </div>
+                            @Html.EditorFor(model => model.Filter.MaxAmount, new { htmlAttributes = new { @class = "form-control", id = "incomeMaxAmount" } })
+                            @Html.ValidationMessageFor(model => model.Filter.MaxAmount, "", new { @class = "text-danger" })
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#incomeMaxAmount"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="incomeTypeFilter">Type</label>
+                <div class="input-group" id="incomeTypeFilter">
+                    @Html.EditorFor(model => model.Filter.TypeName, new { htmlAttributes = new { @class = "form-control col-12", placeholder = "Type name", id = "incomeType" } })
+                    @Html.ValidationMessageFor(model => model.Filter.TypeName, "", new { @class = "text-danger" })
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" onclick="Clearme(this)" type="button" data-target="#incomeType"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group d-flex justify-content-between">
+                <button class="btn btn-light col-auto" type="button" onclick="ClearAllInputs('#incomeFilter')">
+                    Clear
+                </button>
+                <div class="input-group w-auto">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Size</span>
+                    </div>
+                    @Html.DropDownListFor(model => model.Filter.PageSize, sizes, new { @class = "form-control custom-select " })
+                </div>
+                <button class="btn btn-primary col-auto" type="submit">
+                    Filter
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
 <table class="table">
     <thead>
         <tr>
             <th>
                 Amount&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.Amount), sortDir = asc, searchValue = search }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.Amount) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.Amount), sortDir = desc, searchValue = search }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.Amount) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = "Amount", SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == "Amount" && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = "Amount", SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == "Amount" && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th>
                 Date&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.Date), sortDir = asc, searchValue = search }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.Date) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.Date), sortDir = desc, searchValue = search }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.Date) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = "Date", SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == "Date" && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = "Date", SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == "Date" && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th>
                 Type&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.IncomeTypeName), sortDir = asc, searchValue = search }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.IncomeTypeName) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetIncomesData", new { sortCol = nameof(IncomeViewModel.IncomeTypeName), sortDir = desc, searchValue = search }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.IncomeTypeName) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = "TypeName", SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == "TypeName" && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = "TypeName", SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == "TypeName" && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th></th>
@@ -78,17 +177,17 @@
         }
         else
         {
-            @Ajax.ActionLink("Prev", "GetIncomesData", new { pageNumber = Model.PageInfo.PageNumber - 1, sortCol = colName, sortDir = direction, searchValue = search }, AjaxOptions, new { @class = "btn btn-light" })
+            @Ajax.ActionLink("Prev", "GetIncomesData", new FilterViewModel { PageNumber = Model.PageInfo.PageNumber - 1, SortCol = colName, SortDir = direction, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
         }
         for (int i = first; i <= last; i++)
         {
             if (i == Model.PageInfo.PageNumber)
             {
-                @Ajax.ActionLink(i.ToString(), "GetIncomesData", new { pageNumber = i, sortCol = colName, sortDir = direction, searchValue = search }, AjaxOptions, new { @class = "btn btn-primary selected" })
+                @Ajax.ActionLink(i.ToString(), "GetIncomesData", new FilterViewModel { PageNumber = i, SortCol = colName, SortDir = direction, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-primary selected" })
             }
             else
             {
-                @Ajax.ActionLink(i.ToString(), "GetIncomesData", new { pageNumber = i, sortCol = colName, sortDir = direction, searchValue = search }, AjaxOptions, new { @class = "btn btn-light" })
+                @Ajax.ActionLink(i.ToString(), "GetIncomesData", new FilterViewModel { PageNumber = i, SortCol = colName, SortDir = direction, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
             }
         }
         if (Model.PageInfo.PageNumber + 1 > Model.PageInfo.TotalPages)
@@ -97,7 +196,7 @@
         }
         else
         {
-            @Ajax.ActionLink("Next", "GetIncomesData", new { pageNumber = Model.PageInfo.PageNumber + 1, sortCol = colName, sortDir = direction, searchValue = search }, AjaxOptions, new { @class = "btn btn-light" })
+            @Ajax.ActionLink("Next", "GetIncomesData", new FilterViewModel { PageNumber = Model.PageInfo.PageNumber + 1, SortCol = colName, SortDir = direction, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "btn btn-light" })
         }
     }
 </div>

@@ -11,7 +11,7 @@ namespace IncomeAndExpenses.DataAccessImplement
     /// <typeparam name="TId">Type of Id field</typeparam>
     /// <typeparam name="T">Entity type</typeparam>
     public class Repository<TId, T> : IRepository<TId, T> 
-        where T: Entity<TId>
+        where T: EntityDM<TId>
     {
         private DbContext _db;
 

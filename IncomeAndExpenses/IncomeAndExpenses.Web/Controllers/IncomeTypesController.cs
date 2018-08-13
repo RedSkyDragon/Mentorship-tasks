@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.BusinessLogic;
 using IncomeAndExpenses.Web.Models;
 using System;
 using System.Linq;
@@ -10,20 +11,23 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class IncomeTypesController : BaseController
     {
+        private IIncomesBL _incomesBL;
+
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with IIncomesBL instance
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public IncomeTypesController(IUnitOfWork unitOfWork)
+        /// <param name="incomesBL">IIncomesBL implementation to work with data</param>
+        public IncomeTypesController(IIncomesBL incomesBL)
         {
-            _unitOfWork = unitOfWork;
+            _incomesBL = incomesBL;
         }
+
 
         // GET: IncomeTypes
         [HttpGet]
         public ActionResult Index()
         {
-            return View(_unitOfWork.Repository<IncomeType>().All().Where(t=>t.UserId == UserId).ToList().Select(t => ViewModelFromModel(t)).OrderBy(t => t.Name));
+            return View(_incomesBL.GetAllIncomeTypes(UserId).Select(t => ViewModelFromModel(t)));
         }
 
         // GET: IncomeTypes/Create
@@ -38,14 +42,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IncomeTypeViewModel typeVM)
         {
-            IncomeType type = ModelFromViewModel(typeVM);
+            IncomeTypeDM type = ModelFromViewModel(typeVM);
             type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _unitOfWork.Repository<IncomeType>().Create(type);
-                    _unitOfWork.Save();
+                    _incomesBL.CreateIncomeType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -65,7 +68,7 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Edit(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<IncomeType>().Get(id)));
+            return View(ViewModelFromModel(_incomesBL.GetIncomeType(id)));
         }
 
         // POST: IncomeTypes/Edit/1
@@ -73,14 +76,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IncomeTypeViewModel typeVM)
         {
-            IncomeType type = ModelFromViewModel(typeVM);
+            IncomeTypeDM type = ModelFromViewModel(typeVM);
             type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _unitOfWork.Repository<IncomeType>().Update(type);
-                    _unitOfWork.Save();
+                    _incomesBL.UpdateIncomeType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -106,32 +108,18 @@ namespace IncomeAndExpenses.Web.Controllers
         // POST: IncomeTypes//Delete/1
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, DeleteIncomeTypeViewModel model)
         {
             try
             {
-                var str = collection["DeleteAll"];
-                bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
-                var incomes = _unitOfWork.Repository<Income>().All().Where(ex => ex.IncomeTypeId == id);
-                if (delAll)
+                if (model.DeleteAll || !model.ReplacementTypeId.HasValue)
                 {
-                    foreach (var income in incomes)
-                    {
-                        _unitOfWork.Repository<Income>().Delete(income.Id);
-                    }
-                    _unitOfWork.Repository<IncomeType>().Delete(id);
+                    _incomesBL.DeleteIncomeType(id);
                 }
                 else
                 {
-                    int newTypeId = int.Parse(collection["ReplacementTypeId"]);
-                    foreach (var income in incomes)
-                    {
-                        var upd = new Income { Id = income.Id, Amount = income.Amount, Comment = income.Comment, Date = income.Date, IncomeTypeId = newTypeId };
-                        _unitOfWork.Repository<Income>().Update(upd);
-                    }
-                    _unitOfWork.Repository<IncomeType>().Delete(id);
+                    _incomesBL.DeleteAndReplaceIncomeType(id, model.ReplacementTypeId.Value);
                 }
-                _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -144,25 +132,27 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private DeleteIncomeTypeViewModel CreateDeleteViewModel(int id)
         {
-            var type = _unitOfWork.Repository<IncomeType>().Get(id);
-            var replace = _unitOfWork.Repository<IncomeType>().All()
-                .Where(t => t.UserId == type.UserId && t.Id != type.Id)
-                .OrderBy(t => t.Name)
-                .ToList()
-                .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });          
-            return new DeleteIncomeTypeViewModel { IncomeType = ViewModelFromModel(type), ReplacementTypes = replace };
+            var types = _incomesBL.GetAllIncomeTypes(UserId);
+            var replace = types.Where(t => t.Id != id)
+                .Select(t => new SelectListItem {
+                    Text = t.Name,
+                    Value = t.Id.ToString()
+                });
+            var type = types.Where(t => t.Id == id).FirstOrDefault();
+            var deleteAll = replace.Count() == 0;
+            return new DeleteIncomeTypeViewModel { IncomeType = ViewModelFromModel(type), ReplacementTypes = replace, DeleteAll = deleteAll, ReplacementTypeId = null };
         }
 
-        private IncomeType ModelFromViewModel(IncomeTypeViewModel typeVM)
+        private IncomeTypeDM ModelFromViewModel(IncomeTypeViewModel typeVM)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeTypeViewModel, IncomeType>());
-            return config.CreateMapper().Map<IncomeTypeViewModel, IncomeType>(typeVM);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeTypeViewModel, IncomeTypeDM>());
+            return config.CreateMapper().Map<IncomeTypeViewModel, IncomeTypeDM>(typeVM);
         }
 
-        private IncomeTypeViewModel ViewModelFromModel(IncomeType type)
+        private IncomeTypeViewModel ViewModelFromModel(IncomeTypeDM type)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeType, IncomeTypeViewModel>());
-            return config.CreateMapper().Map<IncomeType, IncomeTypeViewModel>(type);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeTypeDM, IncomeTypeViewModel>());
+            return config.CreateMapper().Map<IncomeTypeDM, IncomeTypeViewModel>(type);
         }
     }
 }

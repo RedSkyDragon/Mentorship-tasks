@@ -1,4 +1,5 @@
 ﻿using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.BusinessLogic;
 using IncomeAndExpenses.Web.Utils;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
@@ -15,13 +16,15 @@ namespace IncomeAndExpenses.Web.Controllers
     {
         private IAuthenticationManager AuthenticationManager { get { return HttpContext.GetOwinContext().Authentication; } }
 
+        private IUsersBL _usersBL;
+
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with IUserBL instance
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public AccountController(IUnitOfWork unitOfWork)
+        /// <param name="usersBL">IUserBL implementation to work with data</param>
+        public AccountController(IUsersBL usersBL)
         {
-            _unitOfWork = unitOfWork;
+            _usersBL = usersBL;
         }
 
         //GET Account
@@ -64,13 +67,7 @@ namespace IncomeAndExpenses.Web.Controllers
             }
             var userId = loginInfo.Login.ProviderKey;
             var name = loginInfo.ExternalIdentity.Name;
-            if (_unitOfWork.Repository<string, User>().Get(userId) == null)
-            {
-                _unitOfWork.Repository<string, User>().Create(new User { Id = userId, UserName = name });
-                _unitOfWork.Repository<IncomeType>().Create(new IncomeType { UserId = userId, Name = "Other", Description = "Income that are difficult to classify as specific type." });
-                _unitOfWork.Repository<ExpenseType>().Create(new ExpenseType { UserId = userId, Name = "Other", Description = "Expense that are difficult to classify as specific type." });
-                _unitOfWork.Save();
-            }
+            _usersBL.CreateOrUpdateUser(new UserDM { Id = userId, UserName = name });
             IdentitySignin(userId, name, isPersistent: true);
             return Redirect(returnUrl);
         }

@@ -18,5 +18,14 @@ namespace IncomeAndExpenses.Web.Models
         /// </summary>
         public IEnumerable<SelectListItem> ReplacementTypes { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether need to delete all incomes with type.
+        /// </summary>
+        public bool DeleteAll { get; set; }
+
+        /// <summary>
+        /// Gets or sets the replacement type identifier.
+        /// </summary>
+        public int? ReplacementTypeId { get; set; }
     }
 }

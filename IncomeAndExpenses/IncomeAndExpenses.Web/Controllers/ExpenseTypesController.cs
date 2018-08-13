@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IncomeAndExpenses.DataAccessInterface;
+using IncomeAndExpenses.BusinessLogic;
 using IncomeAndExpenses.Web.Models;
 using System;
 using System.Linq;
@@ -10,20 +11,22 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class ExpenseTypesController : BaseController
     {
+        private IExpensesBL _expensesBL;
+
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with IExpensesBL instance
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public ExpenseTypesController(IUnitOfWork unitOfWork)
+        /// <param name="expensesBL">IExpensesBL implementation to work with data</param>
+        public ExpenseTypesController(IExpensesBL expensesBL)
         {
-            _unitOfWork = unitOfWork;
+            _expensesBL = expensesBL;
         }
 
         // GET: ExpenseTypes
         [HttpGet]
         public ActionResult Index()
         {
-            return View(_unitOfWork.Repository<ExpenseType>().All().Where(t => t.UserId == UserId).ToList().Select(t=> ViewModelFromModel(t)).OrderBy(t => t.Name));
+            return View(_expensesBL.GetAllExpenseTypes(UserId).Select(t=> ViewModelFromModel(t)));
         }
 
         // GET: ExpenseTypes/Create
@@ -38,14 +41,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(ExpenseTypeViewModel typeVM)
         {
-            ExpenseType type = ModelFromViewModel(typeVM);
+            ExpenseTypeDM type = ModelFromViewModel(typeVM);
             type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _unitOfWork.Repository<ExpenseType>().Create(type);
-                    _unitOfWork.Save();
+                    _expensesBL.CreateExpenseType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -65,7 +67,7 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Edit(int id)
         {
-            return View(ViewModelFromModel(_unitOfWork.Repository<ExpenseType>().Get(id)));
+            return View(ViewModelFromModel(_expensesBL.GetExpenseType(id)));
         }
 
         // POST: ExpenseTypes/Edit/1
@@ -73,14 +75,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, ExpenseTypeViewModel typeVM)
         {
-            ExpenseType type = ModelFromViewModel(typeVM);
+            ExpenseTypeDM type = ModelFromViewModel(typeVM);
             type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _unitOfWork.Repository<ExpenseType>().Update(type);
-                    _unitOfWork.Save();
+                    _expensesBL.UpdateExpenseType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -106,32 +107,18 @@ namespace IncomeAndExpenses.Web.Controllers
         // POST: ExpenseTypes/Delete/1
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, DeleteExpenseTypeViewModel model)
         {
             try
             {
-                var str = collection["DeleteAll"];
-                bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
-                var expenses = _unitOfWork.Repository<Expense>().All().Where(ex => ex.ExpenseTypeId == id);
-                if (delAll)
+                if (model.DeleteAll || !model.ReplacementTypeId.HasValue)
                 {
-                    foreach (var expense in expenses)
-                    {
-                        _unitOfWork.Repository<Expense>().Delete(expense.Id);
-                    }
-                    _unitOfWork.Repository<ExpenseType>().Delete(id);
+                    _expensesBL.DeleteExpenseType(id);
                 }
                 else
                 {
-                    int newTypeId = int.Parse(collection["ReplacementTypeId"]);                    
-                    foreach(var expense in expenses)
-                    {
-                        var upd = new Expense { Id = expense.Id, Amount = expense.Amount, Comment = expense.Comment, Date = expense.Date, ExpenseTypeId = newTypeId };
-                        _unitOfWork.Repository<Expense>().Update(upd);
-                    }
-                    _unitOfWork.Repository<ExpenseType>().Delete(id);
+                    _expensesBL.DeleteAndReplaceExpenseType(id, model.ReplacementTypeId.Value);
                 }
-                _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -144,25 +131,28 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private DeleteExpenseTypeViewModel CreateDeleteViewModel(int id)
         {
-            var type = _unitOfWork.Repository<ExpenseType>().Get(id);
-            var replace = _unitOfWork.Repository<ExpenseType>().All()
-                .Where(t => t.UserId == type.UserId && t.Id != type.Id)
-                .OrderBy(t => t.Name)
-                .ToList()
-                .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });           
-            return new DeleteExpenseTypeViewModel { ExpenseType = ViewModelFromModel(type), ReplacementTypes = replace };
+            var types = _expensesBL.GetAllExpenseTypes(UserId);
+            var replace = types.Where(t => t.Id != id)
+                .Select(t => new SelectListItem
+                {
+                    Text = t.Name,
+                    Value = t.Id.ToString()
+                });
+            var type = types.Where(t => t.Id == id).FirstOrDefault();
+            var deleteAll = replace.Count() == 0;
+            return new DeleteExpenseTypeViewModel { ExpenseType = ViewModelFromModel(type), ReplacementTypes = replace, DeleteAll = deleteAll, ReplacementTypeId = null };
         }
 
-        private ExpenseType ModelFromViewModel(ExpenseTypeViewModel typeVM)
+        private ExpenseTypeDM ModelFromViewModel(ExpenseTypeViewModel typeVM)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseTypeViewModel, ExpenseType>());
-            return config.CreateMapper().Map<ExpenseTypeViewModel, ExpenseType>(typeVM);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseTypeViewModel, ExpenseTypeDM>());
+            return config.CreateMapper().Map<ExpenseTypeViewModel, ExpenseTypeDM>(typeVM);
         }
 
-        private ExpenseTypeViewModel ViewModelFromModel(ExpenseType type)
+        private ExpenseTypeViewModel ViewModelFromModel(ExpenseTypeDM type)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseType, ExpenseTypeViewModel>());
-            return config.CreateMapper().Map<ExpenseType, ExpenseTypeViewModel>(type);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseTypeDM, ExpenseTypeViewModel>());
+            return config.CreateMapper().Map<ExpenseTypeDM, ExpenseTypeViewModel>(type);
         }
     }
 }
