@@ -1,9 +1,9 @@
-﻿namespace IncomeAndExpenses.BusinessLogic
+﻿namespace IncomeAndExpenses.BusinessLogic.Models
 {
     /// <summary>
     /// BL model for totals
     /// </summary>
-    public class TotalsBLModel
+    public class Totals
     {
         /// <summary>
         /// Gets or sets the income total.
@@ -18,6 +18,6 @@
         /// <summary>
         /// Gets or sets the current balance.
         /// </summary>
-        public decimal CurrentBalance { get; set; }
+        public decimal CurrentBalance { get { return IncomeTotal - ExpenseTotal; } }
     }
 }

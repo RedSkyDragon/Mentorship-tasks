@@ -116,22 +116,22 @@
             <th>
                 Amount&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = nameof(IncomeViewModel.Amount), SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.Amount) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = nameof(IncomeViewModel.Amount), SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.Amount) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = "Amount", SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == "Amount" && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = "Amount", SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == "Amount" && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th>
                 Date&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = nameof(IncomeViewModel.Date), SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.Date) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = nameof(IncomeViewModel.Date), SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.Date) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = "Date", SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == "Date" && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = "Date", SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == "Date" && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th>
                 Type&nbsp;
                 <div class="btn-group">
-                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = nameof(IncomeViewModel.IncomeTypeName), SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == nameof(IncomeViewModel.IncomeTypeName) && direction == asc ? "btn-primary" : "btn-lignt") })
-                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = nameof(IncomeViewModel.IncomeTypeName), SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == nameof(IncomeViewModel.IncomeTypeName) && direction == desc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Asc", "GetIncomesData", new FilterViewModel { SortCol = "TypeName", SortDir = asc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "asc btn btn-sm " + (colName == "TypeName" && direction == asc ? "btn-primary" : "btn-lignt") })
+                    @Ajax.ActionLink("Desc", "GetIncomesData", new FilterViewModel { SortCol = "TypeName", SortDir = desc, MinDate = fromDate, MaxDate = toDate, MinAmount = fromAmount, MaxAmount = toAmount, TypeName = typeName }, AjaxOptions, new { @class = "desc btn btn-sm " + (colName == "TypeName" && direction == desc ? "btn-primary" : "btn-lignt") })
                 </div>
             </th>
             <th></th>

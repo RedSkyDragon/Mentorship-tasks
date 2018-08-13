@@ -1,25 +1,30 @@
 ﻿using IncomeAndExpenses.Web.Models;
-using System.Linq;
 using System.Web.Mvc;
-using System.Web.Helpers;
 using AutoMapper;
 using System.Collections.Generic;
 using IncomeAndExpenses.BusinessLogic;
 using IncomeAndExpenses.BusinessLogic.Models;
-using System;
 
 namespace IncomeAndExpenses.Web.Controllers
 {
     [Authorize]
     public class HomeController : BaseController
     {
+        private ITotalsBL _totalsBL;
+        private IExpensesBL _expensesBL;
+        private IIncomesBL _incomesBL;
+
         /// <summary>
-        /// Creates controller with UnitOfWork instance to connect with database
+        /// Creates controller with ITotalsBL, IExpensesBL, IIncomesBL instances to connect with database
         /// </summary>
-        /// <param name="unitOfWork">IUnitOfWork implementation to connect with database</param>
-        public HomeController(IBusinessLogic businessLogic)
+        /// <param name="totalsBL">ITotalsBL implementation to connect with database</param>
+        /// /// <param name="expensesBL">IExpensesBL implementation to connect with database</param>
+        /// /// <param name="incomesBL">IIncomesBL implementation to connect with database</param>
+        public HomeController(ITotalsBL totalsBL, IExpensesBL expensesBL, IIncomesBL incomesBL)
         {
-            _businessLogic = businessLogic;
+            _totalsBL = totalsBL;
+            _expensesBL = expensesBL;
+            _incomesBL = incomesBL;
         }
 
         /// <summary>
@@ -30,8 +35,9 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            var totals = _businessLogic.GetTotals(UserId);
-            var homeViewModel = new MapperConfiguration(cfg => cfg.CreateMap<HomeIndexViewModel, TotalsBLModel>()).CreateMapper().Map<TotalsBLModel, HomeIndexViewModel>(totals);
+            var totals = _totalsBL.GetTotals(UserId);
+            var homeViewModel = new MapperConfiguration(cfg => cfg.CreateMap<HomeIndexViewModel, Totals>())
+                .CreateMapper().Map<Totals, HomeIndexViewModel>(totals);
             return View(homeViewModel);
         }
 
@@ -43,13 +49,22 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public PartialViewResult GetExpensesData(FilterViewModel filter)
         {
-            FilterBLModel blFilter = CreateBLFilter(filter);
-            var expensesBL = _businessLogic.GetAllExpenses(blFilter);
-            var expensesPageInfo = new PageInfoViewModel { PageNumber = blFilter.PageNumber, PageSize = blFilter.PageSize, TotalItems = expensesBL.Count };
-            var expenseSortInfo = new SortInfoViewModel { ColumnName = blFilter.SortCol, Direction = blFilter.SortDir };
+            FilterBL blFilter = CreateBLFilter(filter);
+            var expensesBL = _expensesBL.GetAllExpenses(blFilter);
+            var expensesPageInfo = new PageInfoViewModel
+            {
+                PageNumber = blFilter.PageNumber,
+                PageSize = blFilter.PageSize,
+                TotalItems = expensesBL.TotalCount
+            };
+            var expenseSortInfo = new SortInfoViewModel
+            {
+                ColumnName = blFilter.SortCol,
+                Direction = blFilter.SortDir
+            };
             var homeExpenseViewModel = new HomeExpenseViewModel
             {
-                Expenses = ViewModelsFromBLModels(expensesBL.Expenses),
+                Expenses = ViewModelsFromBLModels(expensesBL.ExpensesList),
                 PageInfo = expensesPageInfo,
                 SortInfo = expenseSortInfo,
                 Filter = filter
@@ -65,13 +80,22 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public PartialViewResult GetIncomesData(FilterViewModel filter)
         {
-            FilterBLModel blFilter = CreateBLFilter(filter);
-            var incomesBL = _businessLogic.GetAllIncomes(blFilter);
-            var incomesPageInfo = new PageInfoViewModel { PageNumber = blFilter.PageNumber, PageSize = blFilter.PageSize, TotalItems = incomesBL.Count };
-            var incomesSortInfo = new SortInfoViewModel { ColumnName = blFilter.SortCol, Direction = blFilter.SortDir };
+            FilterBL blFilter = CreateBLFilter(filter);
+            var incomesBL = _incomesBL.GetAllIncomes(blFilter);
+            var incomesPageInfo = new PageInfoViewModel
+            {
+                PageNumber = blFilter.PageNumber,
+                PageSize = blFilter.PageSize,
+                TotalItems = incomesBL.TotalCount
+            };
+            var incomesSortInfo = new SortInfoViewModel
+            {
+                ColumnName = blFilter.SortCol,
+                Direction = blFilter.SortDir
+            };
             var homeIncomeViewModel = new HomeIncomeViewModel
             {
-                Incomes = ViewModelsFromBLModels(incomesBL.Incomes),
+                Incomes = ViewModelsFromBLModels(incomesBL.IncomesList),
                 PageInfo = incomesPageInfo,
                 SortInfo = incomesSortInfo,
                 Filter = filter
@@ -79,51 +103,42 @@ namespace IncomeAndExpenses.Web.Controllers
             return PartialView("IncomesList", homeIncomeViewModel);
         }
 
-        private FilterBLModel CreateBLFilter(FilterViewModel filter)
+        private FilterBL CreateBLFilter(FilterViewModel filter)
         {
-            var result = new FilterBLModel();
-            result.MinDate = filter.MinDate.HasValue ? filter.MinDate.Value : result.MinDate;
-            result.MaxDate = filter.MaxDate.HasValue ? filter.MaxDate.Value : result.MaxDate;
-            result.MinAmount = filter.MinAmount.HasValue ? filter.MinAmount.Value : result.MinAmount;
-            result.MaxAmount = filter.MaxAmount.HasValue ? filter.MaxAmount.Value : result.MaxAmount;
+            var mapper = new MapperConfiguration(
+                cfg => cfg.CreateMap<FilterViewModel, FilterBL>())
+                .CreateMapper();
+            var result = mapper.Map<FilterViewModel, FilterBL>(filter);
             result.UserId = UserId;
-            result.TypeName = filter.TypeName;
-            result.SortDir = filter.SortDir;
-            result.SortCol = filter.SortCol;
-            result.PageNumber = filter.PageNumber;
-            result.PageSize = filter.PageSize;
             return result;
         }
 
-        private SelectList CreateSizes(int currentSize)
+        private IEnumerable<IncomeViewModel> ViewModelsFromBLModels(IEnumerable<Income> incomes)
         {
-            var sizes = new List<int>();
-            sizes.Add(5);
-            sizes.Add(10);
-            sizes.Add(15);
-            sizes.Add(20);
-            sizes.Add(30);
-            return new SelectList(sizes, currentSize);
-        }
-
-        private IEnumerable<IncomeViewModel> ViewModelsFromBLModels(IEnumerable<IncomeBLModel> incomes)
-        {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<IncomeViewModel, IncomeBLModel>()).CreateMapper();
+            var mapper = new MapperConfiguration(
+                cfg => cfg.CreateMap<Income, IncomeViewModel>()
+                .ForMember(dest => dest.IncomeTypeId, opts => opts.MapFrom(source => source.TypeId))
+                .ForMember(dest => dest.IncomeTypeName, opts => opts.MapFrom(source => source.TypeName)))
+                .CreateMapper() ;
             var result = new List<IncomeViewModel>();
             foreach (var income in incomes)
             {
-                result.Add(mapper.Map<IncomeBLModel, IncomeViewModel>(income));
+                result.Add(mapper.Map<Income, IncomeViewModel>(income));
             }
             return result;
         }
 
-        private IEnumerable<ExpenseViewModel> ViewModelsFromBLModels(IEnumerable<ExpenseBLModel> expenses)
+        private IEnumerable<ExpenseViewModel> ViewModelsFromBLModels(IEnumerable<Expense> expenses)
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseViewModel, ExpenseBLModel>()).CreateMapper();
+            var mapper = new MapperConfiguration(
+                cfg => cfg.CreateMap<Expense, ExpenseViewModel > ()
+                .ForMember(dest => dest.ExpenseTypeId, opts => opts.MapFrom(source => source.TypeId))
+                .ForMember(dest => dest.ExpenseTypeName, opts => opts.MapFrom(source => source.TypeName)))
+                .CreateMapper();
             var result = new List<ExpenseViewModel>();
             foreach (var expense in expenses)
             {
-                result.Add(mapper.Map<ExpenseBLModel, ExpenseViewModel>(expense));
+                result.Add(mapper.Map<Expense, ExpenseViewModel>(expense));
             }
             return result;
         }

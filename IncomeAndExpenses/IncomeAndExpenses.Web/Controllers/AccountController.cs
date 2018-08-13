@@ -16,13 +16,15 @@ namespace IncomeAndExpenses.Web.Controllers
     {
         private IAuthenticationManager AuthenticationManager { get { return HttpContext.GetOwinContext().Authentication; } }
 
+        private IUsersBL _usersBL;
+
         /// <summary>
-        /// Creates controller with IBusinessLogic instance
+        /// Creates controller with IUserBL instance
         /// </summary>
-        /// <param name="businessLogic">IBusinessLogic implementation to work with data</param>
-        public AccountController(IBusinessLogic businessLogic)
+        /// <param name="usersBL">IUserBL implementation to work with data</param>
+        public AccountController(IUsersBL usersBL)
         {
-            _businessLogic = businessLogic;
+            _usersBL = usersBL;
         }
 
         //GET Account
@@ -65,14 +67,7 @@ namespace IncomeAndExpenses.Web.Controllers
             }
             var userId = loginInfo.Login.ProviderKey;
             var name = loginInfo.ExternalIdentity.Name;
-            if (_businessLogic.GetUser(userId) == null)
-            {
-                _businessLogic.CreateUser(new User { Id = userId, UserName = name });
-            }
-            else
-            {
-                _businessLogic.UpdateUser(new User { Id = userId, UserName = name });
-            }
+            _usersBL.CreateOrUpdateUser(new UserDM { Id = userId, UserName = name });
             IdentitySignin(userId, name, isPersistent: true);
             return Redirect(returnUrl);
         }

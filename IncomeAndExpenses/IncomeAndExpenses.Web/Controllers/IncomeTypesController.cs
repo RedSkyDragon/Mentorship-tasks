@@ -11,20 +11,23 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class IncomeTypesController : BaseController
     {
+        private IIncomesBL _incomesBL;
+
         /// <summary>
-        /// Creates controller with IBusinessLogic instance
+        /// Creates controller with IIncomesBL instance
         /// </summary>
-        /// <param name="businessLogic">IBusinessLogic implementation to work with data</param>
-        public IncomeTypesController(IBusinessLogic businessLogic)
+        /// <param name="incomesBL">IIncomesBL implementation to work with data</param>
+        public IncomeTypesController(IIncomesBL incomesBL)
         {
-            _businessLogic = businessLogic;
+            _incomesBL = incomesBL;
         }
+
 
         // GET: IncomeTypes
         [HttpGet]
         public ActionResult Index()
         {
-            return View(_businessLogic.GetAllIncomeTypes(UserId).Select(t => ViewModelFromModel(t)));
+            return View(_incomesBL.GetAllIncomeTypes(UserId).Select(t => ViewModelFromModel(t)));
         }
 
         // GET: IncomeTypes/Create
@@ -39,13 +42,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IncomeTypeViewModel typeVM)
         {
-            IncomeType type = ModelFromViewModel(typeVM);
+            IncomeTypeDM type = ModelFromViewModel(typeVM);
             type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _businessLogic.CreateIncomeType(type);
+                    _incomesBL.CreateIncomeType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -65,7 +68,7 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Edit(int id)
         {
-            return View(ViewModelFromModel(_businessLogic.GetIncomeType(id)));
+            return View(ViewModelFromModel(_incomesBL.GetIncomeType(id)));
         }
 
         // POST: IncomeTypes/Edit/1
@@ -73,13 +76,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IncomeTypeViewModel typeVM)
         {
-            IncomeType type = ModelFromViewModel(typeVM);
+            IncomeTypeDM type = ModelFromViewModel(typeVM);
             type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _businessLogic.UpdateIncomeType(type);
+                    _incomesBL.UpdateIncomeType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -105,20 +108,17 @@ namespace IncomeAndExpenses.Web.Controllers
         // POST: IncomeTypes//Delete/1
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, DeleteIncomeTypeViewModel model)
         {
             try
             {
-                var str = collection["DeleteAll"];
-                bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
-                if (delAll)
+                if (model.DeleteAll || !model.ReplacementTypeId.HasValue)
                 {
-                    _businessLogic.DeleteIncomeType(id);
+                    _incomesBL.DeleteIncomeType(id);
                 }
                 else
                 {
-                    int newTypeId = int.Parse(collection["ReplacementTypeId"]);
-                    _businessLogic.DeleteAndReplaceIncomeType(id, newTypeId);
+                    _incomesBL.DeleteAndReplaceIncomeType(id, model.ReplacementTypeId.Value);
                 }
                 return RedirectToAction("Index");
             }
@@ -132,23 +132,27 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private DeleteIncomeTypeViewModel CreateDeleteViewModel(int id)
         {
-            var type = _businessLogic.GetIncomeType(id);
-            var replace = _businessLogic.GetAllIncomeTypes(UserId)
-                .Where(t => t.Id != type.Id)
-                .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });          
-            return new DeleteIncomeTypeViewModel { IncomeType = ViewModelFromModel(type), ReplacementTypes = replace };
+            var types = _incomesBL.GetAllIncomeTypes(UserId);
+            var replace = types.Where(t => t.Id != id)
+                .Select(t => new SelectListItem {
+                    Text = t.Name,
+                    Value = t.Id.ToString()
+                });
+            var type = types.Where(t => t.Id == id).FirstOrDefault();
+            var deleteAll = replace.Count() == 0;
+            return new DeleteIncomeTypeViewModel { IncomeType = ViewModelFromModel(type), ReplacementTypes = replace, DeleteAll = deleteAll, ReplacementTypeId = null };
         }
 
-        private IncomeType ModelFromViewModel(IncomeTypeViewModel typeVM)
+        private IncomeTypeDM ModelFromViewModel(IncomeTypeViewModel typeVM)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeTypeViewModel, IncomeType>());
-            return config.CreateMapper().Map<IncomeTypeViewModel, IncomeType>(typeVM);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeTypeViewModel, IncomeTypeDM>());
+            return config.CreateMapper().Map<IncomeTypeViewModel, IncomeTypeDM>(typeVM);
         }
 
-        private IncomeTypeViewModel ViewModelFromModel(IncomeType type)
+        private IncomeTypeViewModel ViewModelFromModel(IncomeTypeDM type)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeType, IncomeTypeViewModel>());
-            return config.CreateMapper().Map<IncomeType, IncomeTypeViewModel>(type);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeTypeDM, IncomeTypeViewModel>());
+            return config.CreateMapper().Map<IncomeTypeDM, IncomeTypeViewModel>(type);
         }
     }
 }

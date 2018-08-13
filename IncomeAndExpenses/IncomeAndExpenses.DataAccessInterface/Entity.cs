@@ -4,7 +4,7 @@
     /// Represents base entity from database
     /// </summary>
     /// <typeparam name="TId"></typeparam>
-    public abstract class Entity<TId>
+    public abstract class EntityDM<TId>
     {
         /// <summary>
         /// Gets or sets Id field

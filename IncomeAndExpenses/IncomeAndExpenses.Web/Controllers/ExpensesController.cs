@@ -13,13 +13,15 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class ExpensesController : BaseController
     {
+        private IExpensesBL _expensesBL;
+
         /// <summary>
-        /// Creates controller with IBusinessLogic instance
+        /// Creates controller with IExpensesBL instance
         /// </summary>
-        /// <param name="businessLogic">IBusinessLogic implementation to work with data</param>
-        public ExpensesController(IBusinessLogic businessLogic)
+        /// <param name="expensesBL">IExpensesBL implementation to work with data</param>
+        public ExpensesController(IExpensesBL expensesBL)
         {
-            _businessLogic = businessLogic;
+            _expensesBL = expensesBL;
         }
 
         // GET: Expenses/Create
@@ -39,7 +41,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _businessLogic.CreateExpense(expense);
+                    _expensesBL.CreateExpense(expense);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -72,7 +74,7 @@ namespace IncomeAndExpenses.Web.Controllers
             {
                 try
                 {
-                    _businessLogic.UpdateExpense(expense);
+                    _expensesBL.UpdateExpense(expense);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -93,14 +95,14 @@ namespace IncomeAndExpenses.Web.Controllers
         public ActionResult Details(int id)
         {
 
-            return View(ViewModelFromModel(_businessLogic.GetExpense(id)));
+            return View(ViewModelFromModel(_expensesBL.GetExpense(id)));
         }
 
         // GET: Expenses/Delete/1
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            return View(ViewModelFromModel(_businessLogic.GetExpense(id)));
+            return View(ViewModelFromModel(_expensesBL.GetExpense(id)));
         }
 
         // POST: Expenses/Delete/1
@@ -110,44 +112,54 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             try
             {
-                _businessLogic.DeleteExpense(id);
+                _expensesBL.DeleteExpense(id);
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
                 ViewData["Error"] = ErrorMessage;
-                return View(ViewModelFromModel(_businessLogic.GetExpense(id)));
+                return View(ViewModelFromModel(_expensesBL.GetExpense(id)));
             }
         }
 
         private ExpenseCUViewModel CreateExpenseCUViewModel(int id)
         {
-            Expense expense = _businessLogic.GetExpense(id);
+            ExpenseDM expense = _expensesBL.GetExpense(id);
             return CreateExpenseCUViewModel(expense);
         }
 
-        private ExpenseCUViewModel CreateExpenseCUViewModel(Expense expense)
+        private ExpenseCUViewModel CreateExpenseCUViewModel(ExpenseDM expense)
         {
             return new ExpenseCUViewModel { Expense = ViewModelFromModel(expense), ExpenseTypes = CreateTypesList(expense) };
         }
 
-        private IEnumerable<SelectListItem> CreateTypesList(Expense expense)
+        private IEnumerable<SelectListItem> CreateTypesList(ExpenseDM expense)
         {
-            return _businessLogic.GetAllExpenseTypes(UserId)
-               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = expense?.ExpenseTypeId == t.Id });
+            return _expensesBL.GetAllExpenseTypes(UserId)
+               .Select(t => new SelectListItem {
+                   Value = t.Id.ToString(),
+                   Text = t.Name,
+                   Selected = expense?.ExpenseTypeId == t.Id
+               });
         }
 
-        private Expense ModelFromViewModel(ExpenseViewModel expenseVM)
+        private ExpenseDM ModelFromViewModel(ExpenseViewModel expenseVM)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseViewModel, Expense>());
-            return config.CreateMapper().Map<ExpenseViewModel, Expense>(expenseVM);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseViewModel, ExpenseDM>());
+            return config.CreateMapper().Map<ExpenseViewModel, ExpenseDM>(expenseVM);
         }
 
-        private ExpenseViewModel ViewModelFromModel(Expense expense)
+        private ExpenseViewModel ViewModelFromModel(ExpenseDM expense)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Expense, ExpenseViewModel>().ForMember(destination => destination.ExpenseTypeName, opts => opts.MapFrom(source => source.ExpenseType.Name)));
-            return config.CreateMapper().Map<Expense, ExpenseViewModel>(expense);
+            var config = new MapperConfiguration(
+                cfg => cfg.CreateMap<ExpenseDM, ExpenseViewModel>()
+                .ForMember(
+                    destination => destination.ExpenseTypeName, 
+                    opts => opts.MapFrom(source => source.ExpenseType.Name)
+                    )
+            );
+            return config.CreateMapper().Map<ExpenseDM, ExpenseViewModel>(expense);
         }
     }
 }

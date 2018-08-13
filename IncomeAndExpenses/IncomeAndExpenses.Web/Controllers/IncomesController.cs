@@ -12,13 +12,15 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class IncomesController : BaseController
     {
+        private IIncomesBL _incomesBL;
+
         /// <summary>
-        /// Creates controller with IBusinessLogic instance
+        /// Creates controller with IIncomesBL instance
         /// </summary>
-        /// <param name="businessLogic">IBusinessLogic implementation to work with data</param>
-        public IncomesController(IBusinessLogic businessLogic)
+        /// <param name="incomesBL">IIncomesBL implementation to work with data</param>
+        public IncomesController(IIncomesBL incomesBL)
         {
-            _businessLogic = businessLogic;
+            _incomesBL = incomesBL;
         }
 
         // GET: Incomes/Create
@@ -33,12 +35,12 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IncomeCUViewModel incomeVM)
         {
-            Income income = ModelFromViewModel(incomeVM.Income);
+            IncomeDM income = ModelFromViewModel(incomeVM.Income);
             if (ModelState.IsValid)
             {               
                 try
                 {
-                    _businessLogic.CreateIncome(income);
+                    _incomesBL.CreateIncome(income);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -66,12 +68,12 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IncomeCUViewModel incomeVM)
         {
-            Income income = ModelFromViewModel(incomeVM.Income);
+            IncomeDM income = ModelFromViewModel(incomeVM.Income);
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _businessLogic.UpdateIncome(income);
+                    _incomesBL.UpdateIncome(income);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
@@ -92,14 +94,14 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Details(int id)
         {
-            return View(ViewModelFromModel(_businessLogic.GetIncome(id)));
+            return View(ViewModelFromModel(_incomesBL.GetIncome(id)));
         }
 
         // GET: Incomes/Delete/1
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            return View(ViewModelFromModel(_businessLogic.GetIncome(id)));
+            return View(ViewModelFromModel(_incomesBL.GetIncome(id)));
         }
 
         // POST: Incomes/Delete/1
@@ -109,44 +111,50 @@ namespace IncomeAndExpenses.Web.Controllers
         {
             try
             {
-                _businessLogic.DeleteIncome(id);
+                _incomesBL.DeleteIncome(id);
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
                 ViewData["Error"] = ErrorMessage;
-                return View(ViewModelFromModel(_businessLogic.GetIncome(id)));
+                return View(ViewModelFromModel(_incomesBL.GetIncome(id)));
             }
         }
 
         private IncomeCUViewModel CreateIncomeCUViewModel(int id)
         {
-            Income income = _businessLogic.GetIncome(id);
+            IncomeDM income = _incomesBL.GetIncome(id);
             return CreateIncomeCUViewModel(income);
         }
 
-        private IncomeCUViewModel CreateIncomeCUViewModel(Income income)
+        private IncomeCUViewModel CreateIncomeCUViewModel(IncomeDM income)
         {            
             return new IncomeCUViewModel { Income = ViewModelFromModel(income), IncomeTypes = CreateTypesList(income) };
         }
 
-        private IEnumerable<SelectListItem> CreateTypesList(Income income)
+        private IEnumerable<SelectListItem> CreateTypesList(IncomeDM income)
         {
-            return _businessLogic.GetAllIncomeTypes(UserId)
-               .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name, Selected = income?.IncomeTypeId == t.Id });
+            return _incomesBL.GetAllIncomeTypes(UserId)
+               .Select(t => new SelectListItem {
+                   Value = t.Id.ToString(),
+                   Text = t.Name,
+                   Selected = income?.IncomeTypeId == t.Id
+               });
         }
 
-        private Income ModelFromViewModel(IncomeViewModel incomeVM)
+        private IncomeDM ModelFromViewModel(IncomeViewModel incomeVM)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeViewModel, Income>());
-            return config.CreateMapper().Map<IncomeViewModel, Income>(incomeVM);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<IncomeViewModel, IncomeDM>());
+            return config.CreateMapper().Map<IncomeViewModel, IncomeDM>(incomeVM);
         }
 
-        private IncomeViewModel ViewModelFromModel(Income income)
+        private IncomeViewModel ViewModelFromModel(IncomeDM income)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Income, IncomeViewModel>().ForMember(destination => destination.IncomeTypeName, opts => opts.MapFrom(source => source.IncomeType.Name)));
-            return config.CreateMapper().Map<Income, IncomeViewModel>(income);
+            var config = new MapperConfiguration(
+                cfg => cfg.CreateMap<IncomeDM, IncomeViewModel>()
+                .ForMember(destination => destination.IncomeTypeName, opts => opts.MapFrom(source => source.IncomeType.Name)));
+            return config.CreateMapper().Map<IncomeDM, IncomeViewModel>(income);
         }
     }
 }

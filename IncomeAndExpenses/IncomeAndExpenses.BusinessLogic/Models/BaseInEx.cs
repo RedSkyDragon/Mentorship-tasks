@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace IncomeAndExpenses.BusinessLogic
+namespace IncomeAndExpenses.BusinessLogic.Models
 {
     /// <summary>
-    /// BL model for income
+    /// Base model for incomes and expenses
     /// </summary>
-    public class IncomeBLModel
+    public class BaseInEx
     {
         /// <summary>
         /// Gets or sets the identifier.
@@ -28,13 +28,13 @@ namespace IncomeAndExpenses.BusinessLogic
         public string Comment { get; set; }
 
         /// <summary>
-        /// Gets or sets the income type identifier.
+        /// Gets or sets the type identifier.
         /// </summary>
-        public int IncomeTypeId { get; set; }
+        public int TypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the income type.
+        /// Gets or sets the name of the type.
         /// </summary>
-        public string IncomeTypeName { get; set; }
+        public string TypeName { get; set; }
     }
 }

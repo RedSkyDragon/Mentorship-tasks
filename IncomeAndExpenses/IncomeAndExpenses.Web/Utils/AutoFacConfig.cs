@@ -22,7 +22,10 @@ namespace IncomeAndExpenses.Web.Utils
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.Register(c => new InAndExDbContext()).As<DbContext>().InstancePerRequest();
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
-            builder.RegisterType<InAndExpBL>().As<IBusinessLogic>().InstancePerRequest();
+            builder.RegisterType<IncomesBL>().As<IIncomesBL>().InstancePerRequest();
+            builder.RegisterType<ExpensesBL>().As<IExpensesBL>().InstancePerRequest();
+            builder.RegisterType<UsersBL>().As<IUsersBL>().InstancePerRequest();
+            builder.RegisterType<TotalsBL>().As<ITotalsBL>().InstancePerRequest();
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }

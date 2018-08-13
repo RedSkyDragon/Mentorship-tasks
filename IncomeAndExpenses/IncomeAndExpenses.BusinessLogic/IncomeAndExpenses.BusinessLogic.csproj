@@ -36,15 +36,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\ExpenseBLModel.cs" />
-    <Compile Include="Models\ExpensesBLModel.cs" />
-    <Compile Include="Models\FilterBLModel.cs" />
-    <Compile Include="Models\IncomeBLModel.cs" />
-    <Compile Include="Models\IncomesBLModel.cs" />
-    <Compile Include="Models\TotalsBLModel.cs" />
-    <Compile Include="InAndExpBL.cs" />
-    <Compile Include="IBusinessLogic.cs" />
+    <Compile Include="ExpensesBL.cs" />
+    <Compile Include="IExpensesBL.cs" />
+    <Compile Include="ITotalsBL.cs" />
+    <Compile Include="IUsersBL.cs" />
+    <Compile Include="Models\BaseInEx.cs" />
+    <Compile Include="Models\Expense.cs" />
+    <Compile Include="Models\Expenses.cs" />
+    <Compile Include="Models\FilterBL.cs" />
+    <Compile Include="Models\Income.cs" />
+    <Compile Include="Models\Incomes.cs" />
+    <Compile Include="Models\Totals.cs" />
+    <Compile Include="IncomesBL.cs" />
+    <Compile Include="IIncomesBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TotalsBL.cs" />
+    <Compile Include="UsersBL.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IncomeAndExpenses.DataAccessInterface\IncomeAndExpenses.DataAccessInterface.csproj">

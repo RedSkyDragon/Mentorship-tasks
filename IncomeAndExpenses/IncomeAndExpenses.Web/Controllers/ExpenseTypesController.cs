@@ -11,20 +11,22 @@ namespace IncomeAndExpenses.Web.Controllers
     [Authorize]
     public class ExpenseTypesController : BaseController
     {
+        private IExpensesBL _expensesBL;
+
         /// <summary>
-        /// Creates controller with IBusinessLogic instance
+        /// Creates controller with IExpensesBL instance
         /// </summary>
-        /// <param name="businessLogic">IBusinessLogic implementation to work with data</param>
-        public ExpenseTypesController(IBusinessLogic businessLogic)
+        /// <param name="expensesBL">IExpensesBL implementation to work with data</param>
+        public ExpenseTypesController(IExpensesBL expensesBL)
         {
-            _businessLogic = businessLogic;
+            _expensesBL = expensesBL;
         }
 
         // GET: ExpenseTypes
         [HttpGet]
         public ActionResult Index()
         {
-            return View(_businessLogic.GetAllExpenseTypes(UserId).Select(t=> ViewModelFromModel(t)));
+            return View(_expensesBL.GetAllExpenseTypes(UserId).Select(t=> ViewModelFromModel(t)));
         }
 
         // GET: ExpenseTypes/Create
@@ -39,13 +41,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(ExpenseTypeViewModel typeVM)
         {
-            ExpenseType type = ModelFromViewModel(typeVM);
+            ExpenseTypeDM type = ModelFromViewModel(typeVM);
             type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _businessLogic.CreateExpenseType(type);
+                    _expensesBL.CreateExpenseType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -65,7 +67,7 @@ namespace IncomeAndExpenses.Web.Controllers
         [HttpGet]
         public ActionResult Edit(int id)
         {
-            return View(ViewModelFromModel(_businessLogic.GetExpenseType(id)));
+            return View(ViewModelFromModel(_expensesBL.GetExpenseType(id)));
         }
 
         // POST: ExpenseTypes/Edit/1
@@ -73,13 +75,13 @@ namespace IncomeAndExpenses.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, ExpenseTypeViewModel typeVM)
         {
-            ExpenseType type = ModelFromViewModel(typeVM);
+            ExpenseTypeDM type = ModelFromViewModel(typeVM);
             type.UserId = UserId;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _businessLogic.UpdateExpenseType(type);
+                    _expensesBL.UpdateExpenseType(type);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -105,20 +107,17 @@ namespace IncomeAndExpenses.Web.Controllers
         // POST: ExpenseTypes/Delete/1
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, DeleteExpenseTypeViewModel model)
         {
             try
             {
-                var str = collection["DeleteAll"];
-                bool delAll = bool.Parse(collection["DeleteAll"].Split(',')[0]);
-                if (delAll)
+                if (model.DeleteAll || !model.ReplacementTypeId.HasValue)
                 {
-                    _businessLogic.DeleteExpenseType(id);
+                    _expensesBL.DeleteExpenseType(id);
                 }
                 else
                 {
-                    int newTypeId = int.Parse(collection["ReplacementTypeId"]);
-                    _businessLogic.DeleteAndReplaceExpenseType(id, newTypeId);
+                    _expensesBL.DeleteAndReplaceExpenseType(id, model.ReplacementTypeId.Value);
                 }
                 return RedirectToAction("Index");
             }
@@ -132,23 +131,28 @@ namespace IncomeAndExpenses.Web.Controllers
 
         private DeleteExpenseTypeViewModel CreateDeleteViewModel(int id)
         {
-            var type = _businessLogic.GetExpenseType(id);
-            var replace = _businessLogic.GetAllExpenseTypes(UserId)
-                .Where(t => t.Id != type.Id)
-                .Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });           
-            return new DeleteExpenseTypeViewModel { ExpenseType = ViewModelFromModel(type), ReplacementTypes = replace };
+            var types = _expensesBL.GetAllExpenseTypes(UserId);
+            var replace = types.Where(t => t.Id != id)
+                .Select(t => new SelectListItem
+                {
+                    Text = t.Name,
+                    Value = t.Id.ToString()
+                });
+            var type = types.Where(t => t.Id == id).FirstOrDefault();
+            var deleteAll = replace.Count() == 0;
+            return new DeleteExpenseTypeViewModel { ExpenseType = ViewModelFromModel(type), ReplacementTypes = replace, DeleteAll = deleteAll, ReplacementTypeId = null };
         }
 
-        private ExpenseType ModelFromViewModel(ExpenseTypeViewModel typeVM)
+        private ExpenseTypeDM ModelFromViewModel(ExpenseTypeViewModel typeVM)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseTypeViewModel, ExpenseType>());
-            return config.CreateMapper().Map<ExpenseTypeViewModel, ExpenseType>(typeVM);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseTypeViewModel, ExpenseTypeDM>());
+            return config.CreateMapper().Map<ExpenseTypeViewModel, ExpenseTypeDM>(typeVM);
         }
 
-        private ExpenseTypeViewModel ViewModelFromModel(ExpenseType type)
+        private ExpenseTypeViewModel ViewModelFromModel(ExpenseTypeDM type)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseType, ExpenseTypeViewModel>());
-            return config.CreateMapper().Map<ExpenseType, ExpenseTypeViewModel>(type);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExpenseTypeDM, ExpenseTypeViewModel>());
+            return config.CreateMapper().Map<ExpenseTypeDM, ExpenseTypeViewModel>(type);
         }
     }
 }

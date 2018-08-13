@@ -6,7 +6,7 @@ namespace IncomeAndExpenses.BusinessLogic.Models
     /// <summary>
     /// BL model for filtration
     /// </summary>
-    public class FilterBLModel
+    public class FilterBL
     {
         /// <summary>
         /// Gets or sets the user identifier.
@@ -16,22 +16,22 @@ namespace IncomeAndExpenses.BusinessLogic.Models
         /// <summary>
         /// Gets or sets min date.
         /// </summary>
-        public DateTime MinDate { get; set; } = DateTime.MinValue;
+        public DateTime? MinDate { get; set; }
 
         /// <summary>
         /// Gets or sets max date.
         /// </summary>
-        public DateTime MaxDate { get; set; } = DateTime.MaxValue;
+        public DateTime? MaxDate { get; set; }
 
         /// <summary>
         /// Gets or sets min amount.
         /// </summary>
-        public decimal MinAmount { get; set; } = 0m;
+        public decimal? MinAmount { get; set; }
 
         /// <summary>
         /// Gets or sets max amount.
         /// </summary>
-        public decimal MaxAmount { get; set; } = 99999999.99m;
+        public decimal? MaxAmount { get; set; } 
 
         /// <summary>
         /// Gets or sets the name of the type.
@@ -41,7 +41,7 @@ namespace IncomeAndExpenses.BusinessLogic.Models
         /// <summary>
         /// Gets or sets the name of the sorting column.
         /// </summary>
-        public string SortCol { get; set; } = nameof(ExpenseBLModel.Date);
+        public string SortCol { get; set; } = nameof(BaseInEx.Date);
 
         /// <summary>
         /// Gets or sets the sorting direction.

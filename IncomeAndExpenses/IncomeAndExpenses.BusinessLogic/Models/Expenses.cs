@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 
-namespace IncomeAndExpenses.BusinessLogic
+namespace IncomeAndExpenses.BusinessLogic.Models
 {
     /// <summary>
     /// BL model for expenses list
     /// </summary>
-    public class ExpensesBLModel
+    public class Expenses
     {
         /// <summary>
         /// Gets or sets the expenses.
         /// </summary>
-        public IEnumerable<ExpenseBLModel> Expenses { get; set; }
+        public IEnumerable<Expense> ExpensesList { get; set; }
 
         /// <summary>
-        /// Gets or sets the count for pagination.
+        /// Gets or sets the total count for pagination.
         /// </summary>
-        public int Count { get; set; }
+        public int TotalCount { get; set; }
     }
 }

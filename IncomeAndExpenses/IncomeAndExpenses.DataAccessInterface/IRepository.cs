@@ -9,7 +9,7 @@ namespace IncomeAndExpenses.DataAccessInterface
     /// <typeparam name="TId">Type of Id field</typeparam>
     /// <typeparam name="T">Entity type</typeparam>
     public interface IRepository<TId, T> 
-        where T : Entity<TId>
+        where T : EntityDM<TId>
     {
         /// <summary>
         /// Returns IQueryable interface for creating database queries
