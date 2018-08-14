@@ -2,28 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace ThingsBook.Data.Interface
 {
-    public class GuidUtils
+    internal static class SequentialGuidUtils
     {
-        private static BigInteger _count = 0;
-
-        public static Guid NewGuid()
+        public static Guid CreateGuid()
         {
-            var a = _count.ToByteArray();
-            var array = new List<byte>(a);
-            for (int i = a.Length; i < 16; i++)
+            Guid guid;
+            int result = NativeMethods.UuidCreateSequential(out guid);
+            if (result == 0)
             {
-                array.Add(0x00);
+                var bytes = guid.ToByteArray();
+                var indexes = new int[] { 3, 2, 1, 0, 5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 };
+                return new Guid(indexes.Select(i => bytes[i]).ToArray());
             }
-            if (array.Count > 16)
-            {
-                array = array.Take(16).ToList();
-                _count = 0;
-            }
-            _count++;
-            return new Guid(array.ToArray());
+            else
+                throw new Exception("Error generating sequential GUID");
         }
+    }
+
+    internal static class NativeMethods
+    {
+        [DllImport("rpcrt4.dll", SetLastError = true)]
+        public static extern int UuidCreateSequential(out Guid guid);
     }
 }

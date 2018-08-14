@@ -4,7 +4,7 @@ namespace ThingsBook.Data.Interface
 {
     public class HistoricalLend
     {
-        public Guid Id { get; set; } = GuidUtils.NewGuid();
+        public Guid Id { get; set; } = SequentialGuidUtils.CreateGuid();
 
         public Guid UserId { get; set; }
 
