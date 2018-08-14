@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
 
 namespace ThingsBook.Data.Mongo
@@ -15,35 +16,35 @@ namespace ThingsBook.Data.Mongo
             _db = db;
         }
 
-        public void CreateFriend(Guid userId, Friend friend)
+        public async Task CreateFriend(Friend friend)
         {
-            var update = Builders<User>.Update.Push(u => u.Friends, friend);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            await _db.Friends.InsertOneAsync(friend);
         }
 
-        public void DeleteFriend(Guid userId, Guid id)
+        public async Task DeleteFriend(Guid id)
         {
-            var filter = Builders<Friend>.Filter.Where(c => c.Id == id);
-            var update = Builders<User>.Update.PullFilter(u => u.Friends, filter);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            await _db.Friends.DeleteOneAsync(f => f.Id == id);
         }
 
-        public Friend GetFriend(Guid userId, Guid id)
+        public async Task<Friend> GetFriend(Guid id)
         {
-            return _db.Users.Find(u => u.Id == userId).FirstOrDefault().Friends.Where(c => c.Id == id).FirstOrDefault();
-            
+            var result = await _db.Friends.FindAsync(f => f.Id == id);
+            return result.FirstOrDefault();
         }
 
-        public IEnumerable<Friend> GetFriends(Guid userId)
+        public async Task<IEnumerable<Friend>> GetFriends(Guid userId)
         {
-            return _db.Users.Find(u => u.Id == userId).FirstOrDefault().Friends;
+            var result = await _db.Friends.FindAsync(f => f.UserId == userId);
+            return result.ToEnumerable();
         }
 
-        public void UpdateFriend(Guid userId, Friend friend)
+        public async Task UpdateFriend(Friend friend)
         {
-            var update = Builders<User>.Update.Set(u => u.Friends.ElementAt(-1).Name, friend.Name)
-               .Set(u => u.Friends.ElementAt(-1).Contacts, friend.Contacts);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId && u.Friends.Any(f => f.Id == friend.Id), update);
+            var update = Builders<Friend>.Update
+                .Set(f => f.Name, friend.Name)
+                .Set(f => f.Contacts, friend.Contacts)
+                .Set(f => f.UserId, friend.UserId);
+            await _db.Friends.UpdateOneAsync(f => f.Id == friend.Id, update);
         }
     }
 }

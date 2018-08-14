@@ -3,14 +3,8 @@ using System.Collections.Generic;
 
 namespace ThingsBook.Data.Interface
 {
-    public class User
+    public class User: Entity
     {
-        public Guid Id { get; set; } = SequentialGuidUtils.CreateGuid();
-
         public string Name { get; set; }
-
-        public IEnumerable<Category> Categories { get; set; }
-
-        public IEnumerable<Friend> Friends { get; set; }
     }
 }

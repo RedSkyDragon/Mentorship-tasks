@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Interface
 {
     public interface IThings
     {
-        IEnumerable<Thing> GetThings(Guid userId);
+        Task<IEnumerable<Thing>> GetThings(Guid userId);
 
-        IEnumerable<Thing> GetThings(Guid userId, Guid categoryId);
+        Task<IEnumerable<Thing>> GetThings(Guid userId, Guid categoryId);
 
-        Thing GetThing(Guid userId, Guid categoryId, Guid id);
+        Task<Thing> GetThing(Guid id);
 
-        void UpdateThing(Guid userId, Guid categoryId, Thing thing);
+        Task UpdateThing(Thing thing);
 
-        void DeleteThing(Guid userId, Guid categoryId, Guid id);
+        Task DeleteThing(Guid id);
 
-        void CreateThing(Guid userId, Guid categoryId, Thing thing);
+        Task CreateThing(Thing thing);
     }
 }

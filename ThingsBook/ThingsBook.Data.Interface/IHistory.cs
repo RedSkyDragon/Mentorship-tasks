@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Interface
 {
     public interface IHistory
     {
-        IEnumerable<HistoricalLend> GetHistLends(Guid userId);
+        Task<IEnumerable<HistoricalLend>> GetHistLends(Guid userId);
 
-        HistoricalLend GetHistLend(Guid id);
+        Task<HistoricalLend> GetHistLend(Guid id);
 
-        void UpdateHistLend(HistoricalLend lend);
+        Task UpdateHistLend(HistoricalLend lend);
 
-        void DeleteHistLend(Guid id);
+        Task DeleteHistLend(Guid id);
 
-        void CreateHistLend(HistoricalLend lend);
-
+        Task CreateHistLend(HistoricalLend lend);
     }
 }

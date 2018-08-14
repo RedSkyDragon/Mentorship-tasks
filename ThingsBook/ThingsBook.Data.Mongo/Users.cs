@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
 
 namespace ThingsBook.Data.Mongo
@@ -15,31 +16,33 @@ namespace ThingsBook.Data.Mongo
             _db = db;
         }
 
-        public void CreateUser(User user)
+        public async Task CreateUser(User user)
         {
-            _db.Users.InsertOne(user);
+            await _db.Users.InsertOneAsync(user);
         }
 
-        public void DeleteUser(Guid id)
+        public async Task DeleteUser(Guid id)
         {
-            _db.Users.FindOneAndDelete(u => u.Id == id);
+            await _db.Users.DeleteOneAsync(u => u.Id == id);
         }
 
-        public User GetUser(Guid id)
+        public async Task<User> GetUser(Guid id)
         {
-            return _db.Users.Find(u => u.Id == id).FirstOrDefault();
+            var result = await _db.Users.FindAsync(u => u.Id == id);
+            return result.FirstOrDefault();
         }
 
-        public IEnumerable<User> GetUsers()
+        public async Task<IEnumerable<User>> GetUsers()
         {
             var filter = new FilterDefinitionBuilder<User>().Empty;
-            return _db.Users.Find(filter).ToEnumerable();
+            var result = await _db.Users.FindAsync(filter);
+            return result.ToEnumerable();
         }
 
-        public void UpdateUser(User user)
+        public async Task UpdateUser(User user)
         {
             var update = Builders<User>.Update.Set(u=> u.Name, user.Name);
-            _db.Users.UpdateOne(u => u.Id == user.Id, update);
+            await _db.Users.UpdateOneAsync(u => u.Id == user.Id, update);
         }
     }
 }

@@ -2,9 +2,11 @@
 
 namespace ThingsBook.Data.Interface
 {
-    public class Thing
+    public class Thing : Entity
     {
-        public Guid Id { get; set; } = SequentialGuidUtils.CreateGuid();
+        public Guid CategoryId { get; set; }
+
+        public Guid UserId { get; set; }
 
         public string Name { get; set; }
 

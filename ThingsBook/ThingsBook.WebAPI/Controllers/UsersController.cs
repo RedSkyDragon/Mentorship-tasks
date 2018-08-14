@@ -4,15 +4,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using ThingsBook.Data.Mongo;
 
 namespace ThingsBook.WebAPI.Controllers
 {
     public class UsersController : ApiController
     {
         // GET: api/Users
-        public IEnumerable<string> Get()
+        public IHttpActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var users = new Users(new ThingsBookContext());
+            return Ok(users.GetUsers());
         }
 
         // GET: api/Users/5

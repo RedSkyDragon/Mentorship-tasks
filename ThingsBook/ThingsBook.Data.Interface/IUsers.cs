@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Interface
 {
     public interface IUsers
     {
-        IEnumerable<User> GetUsers();
+        Task<IEnumerable<User>> GetUsers();
 
-        User GetUser(Guid id);
+        Task<User> GetUser(Guid id);
 
-        void UpdateUser(User user);
+        Task UpdateUser(User user);
 
-        void DeleteUser(Guid id);
+        Task DeleteUser(Guid id);
 
-        void CreateUser(User user);
-
+        Task CreateUser(User user);
     }
 }

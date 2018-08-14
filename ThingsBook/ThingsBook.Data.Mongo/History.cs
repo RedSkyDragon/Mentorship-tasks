@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MongoDB.Driver;
 using ThingsBook.Data.Interface;
+using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Mongo
 {
@@ -14,27 +15,29 @@ namespace ThingsBook.Data.Mongo
             _db = db;
         }
 
-        public void CreateHistLend(HistoricalLend lend)
+        public async Task CreateHistLend(HistoricalLend lend)
         {
-            _db.History.InsertOne(lend);
+            await _db.History.InsertOneAsync(lend);
         }
 
-        public void DeleteHistLend(Guid id)
+        public async Task DeleteHistLend(Guid id)
         {
-            _db.History.FindOneAndDelete(h => h.Id == id);
+            await _db.History.DeleteOneAsync(h => h.Id == id);
         }
 
-        public HistoricalLend GetHistLend(Guid id)
+        public async Task<HistoricalLend> GetHistLend(Guid id)
         {
-            return _db.History.Find(h => h.Id == id).FirstOrDefault();
+            var result = await _db.History.FindAsync(h => h.Id == id);
+            return result.FirstOrDefault();
         }
 
-        public IEnumerable<HistoricalLend> GetHistLends(Guid userId)
+        public async Task<IEnumerable<HistoricalLend>> GetHistLends(Guid userId)
         {
-            return _db.History.Find(h => h.UserId == userId).ToEnumerable();
+            var result = await _db.History.FindAsync(h => h.UserId == userId);
+            return result.ToEnumerable();
         }
 
-        public void UpdateHistLend(HistoricalLend lend)
+        public async Task UpdateHistLend(HistoricalLend lend)
         {
             var update = Builders<HistoricalLend>.Update
                 .Set(h => h.UserId, lend.UserId)
@@ -43,7 +46,7 @@ namespace ThingsBook.Data.Mongo
                 .Set(h => h.LendDate, lend.LendDate)
                 .Set(h => h.ReturnDate, lend.ReturnDate)
                 .Set(h => h.Comment, lend.Comment);
-            _db.History.UpdateOne(h => h.Id == lend.Id, update);
+            await _db.History.UpdateOneAsync(h => h.Id == lend.Id, update);
         }
     }
 }

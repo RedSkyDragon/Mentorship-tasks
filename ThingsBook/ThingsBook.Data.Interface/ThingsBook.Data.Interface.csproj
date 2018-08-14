@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Category.cs" />
+    <Compile Include="Entity.cs" />
     <Compile Include="Friend.cs" />
     <Compile Include="GuidUtils.cs" />
     <Compile Include="HistoricalLend.cs" />

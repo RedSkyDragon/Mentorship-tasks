@@ -2,9 +2,9 @@
 
 namespace ThingsBook.Data.Interface
 {
-    public class Friend
+    public class Friend : Entity
     {
-        public Guid Id { get; set; } = SequentialGuidUtils.CreateGuid();
+        public Guid UserId { get; set; }
 
         public string Name { get; set; }
 

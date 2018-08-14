@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Interface
 {
     public interface ILends
     {
-        IEnumerable<Lend> GetLends(Guid userId);
+        Task<Lend> GetLend(Guid thingId);
 
-        Lend GetLend(Guid userId, Guid categoryId, Guid thingId);
+        Task UpdateLend(Guid thingId, Lend lend);
 
-        void UpdateLend(Guid userId, Guid categoryId, Guid thingId, Lend lend);
+        Task DeleteLend(Guid thingId);
 
-        void DeleteLend(Guid userId, Guid categoryId, Guid thingId);
-
-        void CreateLend(Guid userId, Guid categoryId, Guid thingId, Lend lend);
+        Task CreateLend(Guid thingId, Lend lend);
     }
 }

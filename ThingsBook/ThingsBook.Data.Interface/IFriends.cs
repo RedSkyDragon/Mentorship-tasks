@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Interface
 {
     public interface IFriends
     {
-        IEnumerable<Friend> GetFriends(Guid userId);
+        Task<IEnumerable<Friend>> GetFriends(Guid userId);
 
-        Friend GetFriend(Guid userId, Guid id);
+        Task<Friend> GetFriend(Guid id);
 
-        void UpdateFriend(Guid userId, Friend friend);
+        Task UpdateFriend(Friend friend);
 
-        void DeleteFriend(Guid userId, Guid id);
+        Task DeleteFriend(Guid id);
 
-        void CreateFriend(Guid userId, Friend friend);
-
+        Task CreateFriend(Friend friend);
     }
 }

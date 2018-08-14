@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MongoDB.Driver;
 using ThingsBook.Data.Interface;
+using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Mongo
 {
@@ -15,34 +16,35 @@ namespace ThingsBook.Data.Mongo
             _db = db;
         }
 
-        public void CreateCategory(Guid userId, Category category)
+        public async Task CreateCategory(Category category)
         {
-            var update = Builders<User>.Update.Push(u => u.Categories, category);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            await _db.Categories.InsertOneAsync(category);
         }
 
-        public void DeleteCategory(Guid userId, Guid id)
+        public async Task DeleteCategory(Guid id)
         {
-            var filter = Builders<Category>.Filter.Where(c => c.Id == id);
-            var update = Builders<User>.Update.PullFilter(u => u.Categories, filter);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            await _db.Categories.DeleteOneAsync(c => c.Id == id);
         }
 
-        public IEnumerable<Category> GetCategories(Guid userId)
+        public async Task<IEnumerable<Category>> GetCategories(Guid userId)
         {
-            return _db.Users.Find(u => u.Id == userId).FirstOrDefault().Categories;
+            var result = await _db.Categories.FindAsync(c => c.UserId == userId);
+            return result.ToEnumerable();
         }
 
-        public Category GetCategory(Guid userId, Guid id)
+        public async Task<Category> GetCategory(Guid id)
         {
-            return _db.Users.Find(u => u.Id == userId).FirstOrDefault().Categories.Where(c => c.Id == id).FirstOrDefault();
+            var result = await _db.Categories.FindAsync(c => c.Id == id);
+            return result.FirstOrDefault();
         }
 
-        public void UpdateCategory(Guid userId, Category category)
+        public async Task UpdateCategory(Category category)
         {
-            var update = Builders<User>.Update.Set(u => u.Categories.ElementAt(-1).Name, category.Name)
-                .Set(u => u.Categories.ElementAt(-1).About, category.About);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId && u.Categories.Any(cat => cat.Id == category.Id), update);
+            var update = Builders<Category>.Update
+                .Set(c => c.Name, category.Name)
+                .Set(c => c.About, category.About)
+                .Set(c => c.UserId, category.UserId);
+            await _db.Categories.UpdateOneAsync(c => c.Id == category.Id, update);
         }
     }
 }
