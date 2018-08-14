@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +18,26 @@ namespace ThingsBook.Data.Mongo
 
         public void CreateLend(Guid userId, Guid categoryId, Guid thingId, Lend lend)
         {
-            var update = Builders<User>.Update.Set(u => u.Categories.Where(c => c.Id == categoryId).FirstOrDefault().Things.Where(t => t.Id == thingId).FirstOrDefault().Lend, lend);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            var update = Builders<User>.Update.Set("categories.$[cat].things.$[thing].lend", lend);
+            var arrayFilters = new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<User>(new BsonDocument("cat._id", categoryId)),
+                new BsonDocumentArrayFilterDefinition<User>(new BsonDocument("thing._id", thingId))
+            };
+            var updateOptions = new UpdateOptions { ArrayFilters = arrayFilters };
+            _db.Users.UpdateOne(u => u.Id == userId, update, options: updateOptions);
         }
 
         public void DeleteLend(Guid userId, Guid categoryId, Guid thingId)
         {
-            var update = Builders<User>.Update.Set(u => u.Categories.Where(c => c.Id == categoryId).FirstOrDefault().Things.Where(t => t.Id == thingId).FirstOrDefault().Lend, null);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            var update = Builders<User>.Update.Set<Lend>("categories.$[cat].things.$[thing].lend", null);
+            var arrayFilters = new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<User>(new BsonDocument("cat._id", categoryId)),
+                new BsonDocumentArrayFilterDefinition<User>(new BsonDocument("thing._id", thingId))
+            };
+            var updateOptions = new UpdateOptions { ArrayFilters = arrayFilters };
+            _db.Users.UpdateOne(u => u.Id == userId, update, options: updateOptions);
         }
 
         public Lend GetLend(Guid userId, Guid categoryId, Guid thingId)
@@ -50,8 +63,14 @@ namespace ThingsBook.Data.Mongo
 
         public void UpdateLend(Guid userId, Guid categoryId, Guid thingId, Lend lend)
         {
-            var update = Builders<User>.Update.Set(u => u.Categories.Where(c => c.Id == categoryId).FirstOrDefault().Things.Where(t => t.Id == thingId).FirstOrDefault().Lend, lend);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            var update = Builders<User>.Update.Set("categories.$[cat].things.$[thing].lend", lend);
+            var arrayFilters = new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<User>(new BsonDocument("cat._id", categoryId)),
+                new BsonDocumentArrayFilterDefinition<User>(new BsonDocument("thing._id", thingId))
+            };
+            var updateOptions = new UpdateOptions { ArrayFilters = arrayFilters };
+            _db.Users.UpdateOne(u => u.Id == userId, update, options: updateOptions);
         }
     }
 }

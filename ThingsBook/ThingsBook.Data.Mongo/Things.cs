@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +18,14 @@ namespace ThingsBook.Data.Mongo
 
         public void CreateThing(Guid userId, Guid categoryId, Thing thing)
         {
-            var update = Builders<User>.Update.Push(u => u.Categories.Where(c => c.Id == categoryId).FirstOrDefault().Things, thing);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            var update = Builders<User>.Update.AddToSet(u => u.Categories.ElementAt(-1).Things, thing);
+            _db.Users.FindOneAndUpdate(u => u.Id == userId && u.Categories.Any(cat => cat.Id == categoryId), update);
         }
 
         public void DeleteThing(Guid userId, Guid categoryId, Guid id)
         {
-            var update = Builders<User>.Update.PullFilter(u => u.Categories.Where(c => c.Id == categoryId).FirstOrDefault().Things, t => t.Id == id);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId, update);
+            var update = Builders<User>.Update.PullFilter(u => u.Categories.ElementAt(-1).Things, t => t.Id == id);
+            _db.Users.FindOneAndUpdate(u => u.Id == userId && u.Categories.Any(cat => cat.Id == categoryId), update);
         }
 
         public Thing GetThing(Guid userId, Guid categoryId, Guid id)
@@ -50,9 +51,16 @@ namespace ThingsBook.Data.Mongo
 
         public void UpdateThing(Guid userId, Guid categoryId, Thing thing)
         {
-            var update = Builders<User>.Update.Set(u => u.Categories.ElementAt(-1).Things.ElementAt(-1).Name, thing.Name)
-                .Set(u => u.Categories.ElementAt(-1).Things.ElementAt(-1).About, thing.About);
-            _db.Users.FindOneAndUpdate(u => u.Id == userId && u.Categories.Any(cat => cat.Id == categoryId) && u.Categories.Any(cat => cat.Things.Any(t => t.Id == thing.Id)), update);
+            var update = Builders<User>.Update
+                .Set("categories.$[cat].things.$[thing].name", thing.Name)
+                .Set("categories.$[cat].things.$[thing].about", thing.About);
+            var arrayFilters = new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<User>(new BsonDocument("cat._id", categoryId)),
+                new BsonDocumentArrayFilterDefinition<User>(new BsonDocument("thing._id", thing.Id))
+            };
+            var updateOptions = new UpdateOptions { ArrayFilters = arrayFilters };
+            _db.Users.UpdateOne(u => u.Id == userId, update, options: updateOptions);
         }
     }
 }

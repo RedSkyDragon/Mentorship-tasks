@@ -4,6 +4,7 @@ using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using ThingsBook.Data.Interface;
 
@@ -36,11 +37,12 @@ namespace ThingsBook.Data.Mongo
             var conventionPack = new ConventionPack();
             conventionPack.Add(new CamelCaseElementNameConvention());
             ConventionRegistry.Register("camelCase", conventionPack, t => true);
-            BsonSerializer.RegisterIdGenerator(typeof(Guid), GuidGenerator.Instance);
             BsonClassMap.RegisterClassMap<User>(cm =>
             {
                 cm.AutoMap();
                 cm.GetMemberMap(c => c.Name).SetIsRequired(true);
+                cm.GetMemberMap(c => c.Categories).SetDefaultValue(new List<Category>());
+                cm.GetMemberMap(c => c.Friends).SetDefaultValue(new List<Friend>());
             });
             BsonClassMap.RegisterClassMap<HistoricalLend>(cm =>
             {
