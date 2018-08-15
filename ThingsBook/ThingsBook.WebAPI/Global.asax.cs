@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
+using ThingsBook.WebAPI.Utils;
 
 namespace ThingsBook.WebAPI
 {
@@ -11,6 +12,7 @@ namespace ThingsBook.WebAPI
     {
         protected void Application_Start()
         {
+            AutofacConfig.ConfigureContainer();
             GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }

@@ -1,41 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
-using ThingsBook.Data.Mongo;
+using ThingsBook.BusinessLogic;
+using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
-    public class UsersController : ApiController
+    public class UsersController : BaseController
     {
-        // GET: api/Users
-        public IHttpActionResult Get()
+        private IUsersBL _users;
+
+        public UsersController(IUsersBL users)
         {
-            var users = new Users(new ThingsBookContext());
-            return Ok(users.GetUsers());
+            _users = users;
+        }
+
+        // GET: api/Users
+        [HttpGet]
+        public async Task<IHttpActionResult> Get()
+        {
+            return Ok(await _users.GetAll());
         }
 
         // GET: api/Users/5
-        public string Get(int id)
+        [HttpGet]
+        public async Task<IHttpActionResult> Get(Guid id)
         {
-            return "value";
+            return Ok(await _users.Get(id));
         }
 
         // POST: api/Users
-        public void Post([FromBody]string value)
+        [HttpPost]
+        public async Task<IHttpActionResult> Post(User user)
         {
+            await _users.CreateOrUpdate(user);
+            return Ok();
         }
 
         // PUT: api/Users/5
-        public void Put(int id, [FromBody]string value)
+        [HttpPut]
+        public async Task<IHttpActionResult> Put(User user)
         {
+            await _users.CreateOrUpdate(user);
+            return Ok();
         }
 
         // DELETE: api/Users/5
-        public void Delete(int id)
+        [HttpDelete]
+        public async Task<IHttpActionResult> Delete(Guid id)
         {
+            await _users.Delete(id);
+            return Ok();
         }
     }
 }
