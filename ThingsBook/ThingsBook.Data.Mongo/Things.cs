@@ -21,14 +21,30 @@ namespace ThingsBook.Data.Mongo
             await _db.Things.InsertOneAsync(thing);
         }
 
-        public async Task DeleteThing( Guid id)
+        public async Task DeleteThing(Guid id)
         {
             await _db.Things.DeleteOneAsync(t => t.Id == id);
+        }
+
+        public async Task DeleteThings(Guid userId)
+        {
+            await _db.Things.DeleteManyAsync(t => t.UserId == userId);
+        }
+
+        public async Task DeleteThingsForCategory(Guid categoryId)
+        {
+            await _db.Things.DeleteManyAsync(t => t.CategoryId == categoryId);
         }
 
         public async Task<Thing> GetThing(Guid id)
         {
             var result = await _db.Things.FindAsync(t => t.Id == id);
+            return result.FirstOrDefault();
+        }
+
+        public async Task<Thing> GetThingForLend(Guid lendId)
+        {
+            var result = await _db.Things.FindAsync(t => t.Lend.Id == lendId);
             return result.FirstOrDefault();
         }
 
@@ -38,9 +54,9 @@ namespace ThingsBook.Data.Mongo
             return result.ToEnumerable();
         }
 
-        public async Task<IEnumerable<Thing>> GetThings(Guid userId, Guid categoryId)
+        public async Task<IEnumerable<Thing>> GetThingsForCategory(Guid categoryId)
         {
-            var result = await _db.Things.FindAsync(t => t.UserId == userId && t.CategoryId == categoryId);
+            var result = await _db.Things.FindAsync(t => t.CategoryId == categoryId);
             return result.ToEnumerable();
         }
 
@@ -50,8 +66,7 @@ namespace ThingsBook.Data.Mongo
                 .Set(t => t.Name, thing.Name)
                 .Set(t => t.About, thing.About)
                 .Set(t => t.CategoryId, thing.CategoryId)
-                .Set(t => t.UserId, thing.UserId);
-            
+                .Set(t => t.UserId, thing.UserId);  
             await _db.Things.UpdateOneAsync(t => t.Id == thing.Id, update);
         }
     }

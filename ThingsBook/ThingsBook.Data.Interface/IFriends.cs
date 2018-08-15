@@ -14,6 +14,8 @@ namespace ThingsBook.Data.Interface
 
         Task DeleteFriend(Guid id);
 
+        Task DeleteFriends(Guid userId);
+
         Task CreateFriend(Friend friend);
     }
 }

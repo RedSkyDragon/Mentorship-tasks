@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ThingsBook.BusinessLogic.Models;
 using ThingsBook.Data.Interface;
 
 namespace ThingsBook.BusinessLogic
@@ -11,10 +12,12 @@ namespace ThingsBook.BusinessLogic
 
         Task Update(Friend friend);
 
-        Task Delete(Friend friend);
+        Task Delete(Guid id);
 
         Task<Friend> GetOne(Guid id);
 
         Task<IEnumerable<Friend>> GetAll(Guid userId);
+
+        Task<FilteredLends> GetFriendLends(Guid userId, Guid friendId);
     }
 }

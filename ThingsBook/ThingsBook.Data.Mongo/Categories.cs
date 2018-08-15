@@ -26,6 +26,11 @@ namespace ThingsBook.Data.Mongo
             await _db.Categories.DeleteOneAsync(c => c.Id == id);
         }
 
+        public async Task DeleteCategories(Guid userId)
+        {
+            await _db.Categories.DeleteManyAsync(c => c.UserId == userId);
+        }
+
         public async Task<IEnumerable<Category>> GetCategories(Guid userId)
         {
             var result = await _db.Categories.FindAsync(c => c.UserId == userId);

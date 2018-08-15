@@ -5,8 +5,8 @@ namespace ThingsBook.BusinessLogic.Models
 {
     public class FilteredLends
     {
-        public IEnumerable<Lend> ActiveLends { get; set; }
+        public IEnumerable<LendBL> ActiveLends { get; set; }
 
-        public IEnumerable<HistoricalLend> History { get; set; }
+        public IEnumerable<HistLendBL> History { get; set; }
     }
 }

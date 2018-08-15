@@ -14,6 +14,8 @@ namespace ThingsBook.Data.Interface
 
         Task DeleteCategory(Guid id);
 
+        Task DeleteCategories(Guid userId);
+
         Task CreateCategory(Category category);
 
     }

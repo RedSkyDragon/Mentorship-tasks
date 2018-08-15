@@ -8,13 +8,19 @@ namespace ThingsBook.Data.Interface
     {
         Task<IEnumerable<Thing>> GetThings(Guid userId);
 
-        Task<IEnumerable<Thing>> GetThings(Guid userId, Guid categoryId);
+        Task<IEnumerable<Thing>> GetThingsForCategory(Guid categoryId);
 
         Task<Thing> GetThing(Guid id);
+
+        Task<Thing> GetThingForLend(Guid lendId);
 
         Task UpdateThing(Thing thing);
 
         Task DeleteThing(Guid id);
+
+        Task DeleteThings(Guid userId);
+
+        Task DeleteThingsForCategory(Guid categoryId);
 
         Task CreateThing(Thing thing);
     }
