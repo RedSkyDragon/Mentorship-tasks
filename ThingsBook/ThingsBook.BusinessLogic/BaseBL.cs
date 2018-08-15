@@ -4,6 +4,11 @@ namespace ThingsBook.BusinessLogic
 {
     public class BaseBL
     {
-        protected CommonDAL _data;
+        protected CommonDAL Data { get; }
+
+        public BaseBL(CommonDAL data)
+        {
+            Data = data;
+        }
     }
 }
