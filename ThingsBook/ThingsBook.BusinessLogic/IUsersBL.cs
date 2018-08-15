@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
 
@@ -11,6 +12,8 @@ namespace ThingsBook.BusinessLogic
         Task Delete(Guid id);
 
         Task<User> Get(Guid id);
+
+        Task<IEnumerable<User>> GetAll();
 
         Task CreateOrUpdate(User user);
 

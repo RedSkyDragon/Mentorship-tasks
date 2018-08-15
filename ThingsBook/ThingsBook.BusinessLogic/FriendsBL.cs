@@ -35,20 +35,10 @@ namespace ThingsBook.BusinessLogic
 
         public async Task<FilteredLends> GetFriendLends(Guid userId, Guid friendId)
         {
-            Task<IEnumerable<LendBL>> lends = Task.Run(async () =>
-            {
-                var activeLends = (await _data.Lends.GetFriendLends(userId, friendId))
-                    .Select(t => LendBLFromModel(t));
-                return activeLends;
-            });
-            Task<IEnumerable<HistLendBL>> hist = Task.Run(async () =>
-            {
-                var histLends = (await _data.History.GetFriendHistLends(friendId))
-                    .Select(t => HistLendBLFromModel(t));
-                return histLends;
-            });
+            Task<IEnumerable<Lend>> lends = _data.Lends.GetFriendLends(userId, friendId);
+            Task<IEnumerable<HistoricalLend>> hist = _data.History.GetFriendHistLends(friendId);
             await Task.WhenAll(lends, hist);
-            return new FilteredLends { ActiveLends = lends.Result, History = hist.Result };
+            return new FilteredLends { ActiveLends = lends.Result.Select(t => LendBLFromModel(t)), History = hist.Result.Select(t => HistLendBLFromModel(t)) };
         }
 
         private HistLendBL HistLendBLFromModel(HistoricalLend hist)

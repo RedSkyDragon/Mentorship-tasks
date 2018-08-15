@@ -25,22 +25,9 @@ namespace ThingsBook.BusinessLogic
         {
             var thing = await _data.Things.GetThing(thingId);
             var delLend = _data.Lends.DeleteLend(thingId);
-            var createHist = Task.Run(async () =>
-            {
-                var hist = MakeLendHistorical(thing, returnDate);
-                await _data.History.CreateHistLend(hist);
-            });
+            var hist = MakeLendHistorical(thing, returnDate);
+            var createHist = _data.History.CreateHistLend(hist);
             await Task.WhenAll(delLend, createHist);
-        }
-
-        private HistoricalLend MakeLendHistorical(Thing thing, DateTime returnDate)
-        {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, HistoricalLend>());
-            var hist = config.CreateMapper().Map<Lend, HistoricalLend>(thing.Lend);
-            hist.ReturnDate = returnDate;
-            hist.UserId = thing.UserId;
-            hist.ThingId = thing.Id;
-            return hist;
         }
 
         public async Task DeleteHistoricalLend(Guid id)
@@ -60,24 +47,15 @@ namespace ThingsBook.BusinessLogic
 
         public async Task<FilteredLends> GetThingLends(Guid userId, Guid thingId)
         {
-            Task<List<LendBL>> lends = Task.Run(async () =>
+            var activeLends = new List<LendBL>();
+            var thing = _data.Things.GetThing(thingId);            
+            var hist = _data.History.GetThingHistLends(thingId));
+            await Task.WhenAll(thing, hist);
+            if (thing.Result.Lend != null)
             {
-                var activeLends = new List<LendBL>();
-                var lend = LendBLFromThing((await _data.Things.GetThing(thingId)));
-                if (lend != null)
-                {
-                    activeLends.Add(lend);
-                }
-                return activeLends;
-            });
-            Task<IEnumerable<HistLendBL>> hist = Task.Run(async () =>
-            {
-                var histLends = (await _data.History.GetThingHistLends(thingId))
-                    .Select(t => HistLendBLFromModel(t));
-                return histLends;
-            });
-            await Task.WhenAll(lends, hist);
-            return new FilteredLends { ActiveLends = lends.Result, History = hist.Result };
+                activeLends.Add(LendBLFromThing(thing.Result));
+            }
+            return new FilteredLends { ActiveLends = activeLends, History = hist.Result.Select(t => HistLendBLFromModel(t)) };
         }
 
         public async Task Update(Guid thingId, Lend lend)
@@ -100,10 +78,6 @@ namespace ThingsBook.BusinessLogic
 
         private LendBL LendBLFromThing(Thing thing)
         {
-            if (thing.Lend == null)
-            {
-                return null;
-            }
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, LendBL>());
             var lendBL = config.CreateMapper().Map<Lend, LendBL>(thing.Lend);
             var friend = _data.Friends.GetFriend(thing.Lend.FriendId);
@@ -112,6 +86,16 @@ namespace ThingsBook.BusinessLogic
             lendBL.ThingId = thing.Id;
             lendBL.ThingName = thing.Name;
             return lendBL;
+        }
+
+        private HistoricalLend MakeLendHistorical(Thing thing, DateTime returnDate)
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, HistoricalLend>());
+            var hist = config.CreateMapper().Map<Lend, HistoricalLend>(thing.Lend);
+            hist.ReturnDate = returnDate;
+            hist.UserId = thing.UserId;
+            hist.ThingId = thing.Id;
+            return hist;
         }
     }
 }

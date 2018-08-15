@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
 
@@ -43,6 +44,11 @@ namespace ThingsBook.BusinessLogic
         public async Task<User> Get(Guid id)
         {
             return await _data.Users.GetUser(id);
+        }
+
+        public async Task<IEnumerable<User>> GetAll()
+        {
+            return await _data.Users.GetUsers();
         }
 
         public async Task Update(User user)
