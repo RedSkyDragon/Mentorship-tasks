@@ -16,14 +16,17 @@ namespace ThingsBook.Data.Mongo
             _db = db;
         }
 
-        public async Task CreateCategory(Category category)
+        public async Task CreateCategory(Guid userId, Category category)
         {
-            await _db.Categories.InsertOneAsync(category);
+            if (userId == category.UserId)
+            {
+                await _db.Categories.InsertOneAsync(category);
+            }
         }
 
-        public async Task DeleteCategory(Guid id)
+        public async Task DeleteCategory(Guid userId, Guid id)
         {
-            await _db.Categories.DeleteOneAsync(c => c.Id == id);
+            await _db.Categories.DeleteOneAsync(c => c.UserId == userId && c.Id == id);
         }
 
         public async Task DeleteCategories(Guid userId)
@@ -37,19 +40,18 @@ namespace ThingsBook.Data.Mongo
             return result.ToEnumerable();
         }
 
-        public async Task<Category> GetCategory(Guid id)
+        public async Task<Category> GetCategory(Guid userId, Guid id)
         {
-            var result = await _db.Categories.FindAsync(c => c.Id == id);
+            var result = await _db.Categories.FindAsync(c => c.UserId == userId && c.Id == id);
             return result.FirstOrDefault();
         }
 
-        public async Task UpdateCategory(Category category)
+        public async Task UpdateCategory(Guid userId, Category category)
         {
             var update = Builders<Category>.Update
                 .Set(c => c.Name, category.Name)
-                .Set(c => c.About, category.About)
-                .Set(c => c.UserId, category.UserId);
-            await _db.Categories.UpdateOneAsync(c => c.Id == category.Id, update);
+                .Set(c => c.About, category.About);
+            await _db.Categories.UpdateOneAsync(c => c.UserId == userId && c.Id == category.Id, update);
         }
     }
 }

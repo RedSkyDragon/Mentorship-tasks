@@ -8,14 +8,14 @@ namespace ThingsBook.Data.Interface
     {
         Task<IEnumerable<Friend>> GetFriends(Guid userId);
 
-        Task<Friend> GetFriend(Guid id);
+        Task<Friend> GetFriend(Guid userId, Guid id);
 
-        Task UpdateFriend(Friend friend);
+        Task UpdateFriend(Guid userId, Friend friend);
 
-        Task DeleteFriend(Guid id);
+        Task DeleteFriend(Guid userId, Guid id);
 
         Task DeleteFriends(Guid userId);
 
-        Task CreateFriend(Friend friend);
+        Task CreateFriend(Guid userId, Friend friend);
     }
 }

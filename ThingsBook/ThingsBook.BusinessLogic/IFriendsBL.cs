@@ -8,13 +8,13 @@ namespace ThingsBook.BusinessLogic
 {
     public interface IFriendsBL
     {
-        Task Create(Friend friend);
+        Task Create(Guid userId, Friend friend);
 
-        Task Update(Friend friend);
+        Task Update(Guid userId, Friend friend);
 
-        Task Delete(Guid id);
+        Task Delete(Guid userId, Guid id);
 
-        Task<Friend> GetOne(Guid id);
+        Task<Friend> GetOne(Guid userId, Guid id);
 
         Task<IEnumerable<Friend>> GetAll(Guid userId);
 

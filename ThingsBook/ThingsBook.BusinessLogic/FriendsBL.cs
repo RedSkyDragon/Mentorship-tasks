@@ -12,16 +12,16 @@ namespace ThingsBook.BusinessLogic
     {
         public FriendsBL(CommonDAL data): base(data) { }
 
-        public async Task Create(Friend friend)
+        public async Task Create(Guid userId, Friend friend)
         {
-            await Data.Friends.CreateFriend(friend);
+            await Data.Friends.CreateFriend(userId, friend);
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(Guid userId, Guid id)
         {
-            var delFriend = Data.Friends.DeleteFriend(id);
-            var delLends = Data.Lends.DeleteFriendLends(id);
-            var delHist = Data.History.DeleteFriendHistory(id);
+            var delFriend = Data.Friends.DeleteFriend(userId, id);
+            var delLends = Data.Lends.DeleteFriendLends(userId, id);
+            var delHist = Data.History.DeleteFriendHistory(userId, id);
             await Task.WhenAll(delFriend, delLends, delHist);
         }
 
@@ -33,17 +33,17 @@ namespace ThingsBook.BusinessLogic
         public async Task<FilteredLends> GetFriendLends(Guid userId, Guid friendId)
         {
             Task<IEnumerable<Lend>> lends = Data.Lends.GetFriendLends(userId, friendId);
-            Task<IEnumerable<HistoricalLend>> hist = Data.History.GetFriendHistLends(friendId);
+            Task<IEnumerable<HistoricalLend>> hist = Data.History.GetFriendHistLends(userId, friendId);
             await Task.WhenAll(lends, hist);
-            return new FilteredLends { ActiveLends = lends.Result.Select(t => LendBLFromModel(t)), History = hist.Result.Select(t => HistLendBLFromModel(t)) };
+            return new FilteredLends { ActiveLends = lends.Result.Select(t => LendBLFromModel(userId, t)), History = hist.Result.Select(t => HistLendBLFromModel(userId, t)) };
         }
 
-        private HistLendBL HistLendBLFromModel(HistoricalLend hist)
+        private HistLendBL HistLendBLFromModel(Guid userId, HistoricalLend hist)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLendBL>());
             var histBL = config.CreateMapper().Map<HistoricalLend, HistLendBL>(hist);
-            var friend = Data.Friends.GetFriend(hist.FriendId);
-            var thing = Data.Things.GetThing(hist.ThingId);
+            var friend = Data.Friends.GetFriend(userId, hist.FriendId);
+            var thing = Data.Things.GetThing(userId, hist.ThingId);
             Task.WhenAll(friend, thing).Wait();
             histBL.FriendName = friend.Result.Name;
             histBL.ThingId = thing.Result.Id;
@@ -51,12 +51,12 @@ namespace ThingsBook.BusinessLogic
             return histBL;
         }
 
-        private LendBL LendBLFromModel(Lend lend)
+        private LendBL LendBLFromModel(Guid userId, Lend lend)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, LendBL>());
             var lendBL = config.CreateMapper().Map<Lend, LendBL>(lend);
-            var friend = Data.Friends.GetFriend(lend.FriendId);
-            var thing = Data.Things.GetThingForLend(lend.Id);
+            var friend = Data.Friends.GetFriend(userId, lend.FriendId);
+            var thing = Data.Things.GetThingForLend(userId, lend.Id);
             Task.WhenAll(friend, thing).Wait();
             lendBL.FriendName = friend.Result.Name;
             lendBL.ThingId = thing.Result.Id;
@@ -64,14 +64,14 @@ namespace ThingsBook.BusinessLogic
             return lendBL;
         }
 
-        public async Task<Friend> GetOne(Guid id)
+        public async Task<Friend> GetOne(Guid userId, Guid id)
         {
-            return await Data.Friends.GetFriend(id);
+            return await Data.Friends.GetFriend(userId, id);
         }
 
-        public async Task Update(Friend friend)
+        public async Task Update(Guid userId, Friend friend)
         {
-            await Data.Friends.UpdateFriend(friend);
+            await Data.Friends.UpdateFriend(userId, friend);
         }
     }
 }

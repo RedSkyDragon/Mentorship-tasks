@@ -6,16 +6,16 @@ namespace ThingsBook.Data.Interface
 {
     public interface ILends
     {
-        Task<Lend> GetLend(Guid thingId);
+        Task<Lend> GetLend(Guid userId, Guid thingId);
 
         Task<IEnumerable<Lend>> GetFriendLends(Guid userId, Guid friendId);
 
-        Task UpdateLend(Guid thingId, Lend lend);
+        Task UpdateLend(Guid userId, Guid thingId, Lend lend);
 
-        Task DeleteLend(Guid thingId);
+        Task DeleteLend(Guid userId, Guid thingId);
 
-        Task DeleteFriendLends(Guid friendId);
+        Task DeleteFriendLends(Guid userId, Guid friendId);
 
-        Task CreateLend(Guid thingId, Lend lend);
+        Task CreateLend(Guid userId, Guid thingId, Lend lend);
     }
 }

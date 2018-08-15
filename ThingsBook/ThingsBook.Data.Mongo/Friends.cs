@@ -16,14 +16,17 @@ namespace ThingsBook.Data.Mongo
             _db = db;
         }
 
-        public async Task CreateFriend(Friend friend)
+        public async Task CreateFriend(Guid userId, Friend friend)
         {
-            await _db.Friends.InsertOneAsync(friend);
+            if (userId == friend.UserId)
+            {
+                await _db.Friends.InsertOneAsync(friend);
+            }
         }
 
-        public async Task DeleteFriend(Guid id)
+        public async Task DeleteFriend(Guid userId, Guid id)
         {
-            await _db.Friends.DeleteOneAsync(f => f.Id == id);
+            await _db.Friends.DeleteOneAsync(f => f.UserId == userId && f.Id == id);
         }
 
         public async Task DeleteFriends(Guid userId)
@@ -31,9 +34,9 @@ namespace ThingsBook.Data.Mongo
             await _db.Friends.DeleteManyAsync(f => f.UserId == userId);
         }
 
-        public async Task<Friend> GetFriend(Guid id)
+        public async Task<Friend> GetFriend(Guid userId, Guid id)
         {
-            var result = await _db.Friends.FindAsync(f => f.Id == id);
+            var result = await _db.Friends.FindAsync(f => f.UserId == userId && f.Id == id);
             return result.FirstOrDefault();
         }
 
@@ -43,13 +46,12 @@ namespace ThingsBook.Data.Mongo
             return result.ToEnumerable();
         }
 
-        public async Task UpdateFriend(Friend friend)
+        public async Task UpdateFriend(Guid userId, Friend friend)
         {
             var update = Builders<Friend>.Update
                 .Set(f => f.Name, friend.Name)
-                .Set(f => f.Contacts, friend.Contacts)
-                .Set(f => f.UserId, friend.UserId);
-            await _db.Friends.UpdateOneAsync(f => f.Id == friend.Id, update);
+                .Set(f => f.Contacts, friend.Contacts);
+            await _db.Friends.UpdateOneAsync(f => f.UserId == userId && f.Id == friend.Id, update);
         }
     }
 }

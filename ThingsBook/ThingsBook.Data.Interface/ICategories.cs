@@ -8,15 +8,15 @@ namespace ThingsBook.Data.Interface
     {
         Task<IEnumerable<Category>> GetCategories(Guid userId);
 
-        Task<Category> GetCategory(Guid id);
+        Task<Category> GetCategory(Guid userId, Guid id);
 
-        Task UpdateCategory(Category category);
+        Task UpdateCategory(Guid userId, Category category);
 
-        Task DeleteCategory(Guid id);
+        Task DeleteCategory(Guid userId, Guid id);
 
         Task DeleteCategories(Guid userId);
 
-        Task CreateCategory(Category category);
+        Task CreateCategory(Guid userId, Category category);
 
     }
 }

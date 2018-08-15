@@ -8,22 +8,22 @@ namespace ThingsBook.Data.Interface
     {
         Task<IEnumerable<HistoricalLend>> GetHistLends(Guid userId);
 
-        Task<IEnumerable<HistoricalLend>> GetFriendHistLends(Guid friendId);
+        Task<IEnumerable<HistoricalLend>> GetFriendHistLends(Guid userId, Guid friendId);
 
-        Task<IEnumerable<HistoricalLend>> GetThingHistLends(Guid thingId);
+        Task<IEnumerable<HistoricalLend>> GetThingHistLends(Guid userId, Guid thingId);
 
-        Task<HistoricalLend> GetHistLend(Guid id);
+        Task<HistoricalLend> GetHistLend(Guid userId, Guid id);
 
-        Task UpdateHistLend(HistoricalLend lend);
+        Task UpdateHistLend(Guid userId, HistoricalLend lend);
 
-        Task DeleteHistLend(Guid id);
+        Task DeleteHistLend(Guid userId, Guid id);
 
         Task DeleteUserHistory(Guid userId);
 
-        Task DeleteFriendHistory(Guid friendId);
+        Task DeleteFriendHistory(Guid userId, Guid friendId);
 
-        Task DeleteThingHistory(Guid thingId);
+        Task DeleteThingHistory(Guid userId, Guid thingId);
 
-        Task CreateHistLend(HistoricalLend lend);
+        Task CreateHistLend(Guid userId, HistoricalLend lend);
     }
 }

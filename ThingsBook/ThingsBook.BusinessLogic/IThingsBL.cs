@@ -7,27 +7,27 @@ namespace ThingsBook.BusinessLogic
 {
     public interface IThingsBL
     {
-        Task CreateThing(Thing thing);
+        Task CreateThing(Guid userId, Thing thing);
 
-        Task UpdateThing(Thing thing);
+        Task UpdateThing(Guid userId, Thing thing);
 
-        Task DeleteThing(Guid id);
+        Task DeleteThing(Guid userId, Guid id);
 
-        Task<Thing> GetThing(Guid id);
+        Task<Thing> GetThing(Guid userId, Guid id);
 
         Task<IEnumerable<Thing>> GetThings(Guid userId);
 
-        Task<IEnumerable<Thing>> GetThingsForCategory(Guid categoryId);
+        Task<IEnumerable<Thing>> GetThingsForCategory(Guid userId, Guid categoryId);
 
-        Task CreateCategory(Category category);
+        Task CreateCategory(Guid userId, Category category);
 
-        Task UpdateCategory(Category category);
+        Task UpdateCategory(Guid userId, Category category);
 
-        Task DeleteCategoryWithThings(Guid id);
+        Task DeleteCategoryWithThings(Guid userId, Guid id);
 
-        Task DeleteCategoryWithReplacement(Guid categoryId, Guid replacementId);
+        Task DeleteCategoryWithReplacement(Guid userId, Guid categoryId, Guid replacementId);
 
-        Task<Category> GetCategory(Guid id);
+        Task<Category> GetCategory(Guid userId, Guid id);
 
         Task<IEnumerable<Category>> GetCategories(Guid userId);
     }
