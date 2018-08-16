@@ -1,4 +1,5 @@
 ﻿using System;
+using ThingsBook.Data.Interface;
 
 namespace ThingsBook.BusinessLogic.Models
 {
@@ -8,13 +9,9 @@ namespace ThingsBook.BusinessLogic.Models
 
         public Guid UserId { get; set; }
 
-        public Guid ThingId { get; set; }
+        public Thing Thing { get; set; }
 
-        public string ThingName { get; set; }
-
-        public Guid FriendId { get; set; }
-
-        public string FriendName { get; set; }
+        public Friend Friend { get; set; }
 
         public DateTime LendDate { get; set; }
 

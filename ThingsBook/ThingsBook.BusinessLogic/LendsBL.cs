@@ -12,23 +12,22 @@ namespace ThingsBook.BusinessLogic
     {
         public LendsBL(CommonDAL data) : base(data) { }
 
-        public async Task Create(Guid userId, Guid thingId, Lend lend)
+        public Task Create(Guid userId, Guid thingId, Lend lend)
         {
-            await Data.Lends.CreateLend(userId, thingId, lend);
+            return Data.Lends.CreateLend(userId, thingId, lend);
         }
 
         public async Task Delete(Guid userId, Guid thingId, DateTime returnDate)
         {
             var thing = await Data.Things.GetThing(userId, thingId);
-            var delLend = Data.Lends.DeleteLend(userId, thingId);
-            var hist = MakeLendHistorical(thing, returnDate);
-            var createHist = Data.History.CreateHistLend(userId, hist);
-            await Task.WhenAll(delLend, createHist);
+            var historyLend = ReturnThing(thing, returnDate);
+            await Data.History.CreateHistLend(userId, historyLend);
+            await Data.Lends.DeleteLend(userId, thingId);
         }
 
-        public async Task DeleteHistoricalLend(Guid userId, Guid id)
+        public Task DeleteHistoricalLend(Guid userId, Guid id)
         {
-            await Data.History.DeleteHistLend(userId, id);
+            return Data.History.DeleteHistLend(userId, id);
         }
 
         public async Task<HistLend> GetHistoricalLend(Guid userId, Guid id)
@@ -38,8 +37,8 @@ namespace ThingsBook.BusinessLogic
             var histLend = mapper.Map<HistoricalLend, HistLend>(hist);
             var friend = await Data.Friends.GetFriend(userId, hist.FriendId);
             var thing = await Data.Things.GetThing(userId, hist.ThingId);
-            histLend.FriendName = friend.Name;
-            histLend.ThingName = thing.Name;
+            histLend.Friend = friend;
+            histLend.Thing = thing;
             return histLend;
         }
 
@@ -50,20 +49,20 @@ namespace ThingsBook.BusinessLogic
             var histLends = hists.Select(h => mapper.Map<HistoricalLend, HistLend>(h));
             foreach (var hist in histLends)
             {
-                var friend = await Data.Friends.GetFriend(userId, hist.FriendId);
-                var thing = await Data.Things.GetThing(userId, hist.ThingId);
-                hist.FriendName = friend.Name;
-                hist.ThingName = thing.Name;
+                var friend = await Data.Friends.GetFriend(userId, hist.Friend.Id);
+                var thing = await Data.Things.GetThing(userId, hist.Thing.Id);
+                hist.Friend = friend;
+                hist.Thing = thing;
             }
             return histLends;
         }
 
-        public async Task Update(Guid userId, Guid thingId, Lend lend)
+        public Task Update(Guid userId, Guid thingId, Lend lend)
         {
-            await Data.Lends.UpdateLend(userId, thingId, lend);
+            return Data.Lends.UpdateLend(userId, thingId, lend);
         }
 
-        private HistoricalLend MakeLendHistorical(Thing thing, DateTime returnDate)
+        private HistoricalLend ReturnThing(Thing thing, DateTime returnDate)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, HistoricalLend>());
             var hist = config.CreateMapper().Map<Lend, HistoricalLend>(thing.Lend);

@@ -11,9 +11,8 @@ namespace ThingsBook.BusinessLogic
 
         public async Task Create(User user)
         {
-            var createUser = Data.Users.CreateUser(user);
-            var createCat = Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
-            await Task.WhenAll(createUser, createCat);
+            await Data.Users.CreateUser(user);
+            await Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
         }
 
         public async Task CreateOrUpdate(User user)
@@ -31,26 +30,25 @@ namespace ThingsBook.BusinessLogic
 
         public async Task Delete(Guid id)
         {
-            var delUser = Data.Users.DeleteUser(id);
-            var delCats = Data.Categories.DeleteCategories(id);
-            var delFriends = Data.Friends.DeleteFriends(id);
-            var delThings = Data.Things.DeleteThings(id);
-            await Task.WhenAll(delUser, delCats, delFriends, delThings);
+            await Data.Things.DeleteThings(id);
+            await Data.Friends.DeleteFriends(id);
+            await Data.Categories.DeleteCategories(id);
+            await Data.Users.DeleteUser(id);
         }
 
-        public async Task<User> Get(Guid id)
+        public Task<User> Get(Guid id)
         {
-            return await Data.Users.GetUser(id);
+            return Data.Users.GetUser(id);
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public Task<IEnumerable<User>> GetAll()
         {
-            return await Data.Users.GetUsers();
+            return Data.Users.GetUsers();
         }
 
-        public async Task Update(User user)
+        public Task Update(User user)
         {
-            await Data.Users.UpdateUser(user);
+            return Data.Users.UpdateUser(user);
         }
     }
 }
