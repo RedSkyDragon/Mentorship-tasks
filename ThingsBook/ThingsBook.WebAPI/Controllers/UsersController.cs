@@ -7,7 +7,7 @@ using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
-    [RoutePrefix("users")]
+    [RoutePrefix("user")]
     public class UsersController : BaseController
     {
         private IUsersBL _users;
@@ -18,38 +18,42 @@ namespace ThingsBook.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("")]
-        public async Task<IEnumerable<User>> Get()
+        [Route("~/users")]
+        public Task<IEnumerable<User>> Get()
         {
-            return await _users.GetAll();
+            return _users.GetAll();
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public async Task<User> Get(Guid id)
+        [Route("{userId:guid}")]
+        public Task<User> Get(Guid userId)
         {
-            return await _users.Get(id);
+            return _users.Get(userId);
         }
 
         [HttpPost]
         [Route("")]
-        public async Task Post(User user)
+        public async Task<User> Post([FromBody]Models.User user)
         {
-            await _users.CreateOrUpdate(user);
+            User userDM = new User { Name = user.Name };
+            await _users.CreateOrUpdate(userDM);
+            return await _users.Get(userDM.Id);
         }
 
         [HttpPut]
-        [Route("")]
-        public async Task Put(User user)
+        [Route("{userId:guid}")]
+        public async Task<User> Put([FromUri]Guid userId, [FromBody]Models.User user)
         {
-            await _users.CreateOrUpdate(user);
+            User userDM = new User { Id = userId, Name = user.Name };
+            await _users.CreateOrUpdate(userDM);
+            return await _users.Get(userId);
         }
 
         [HttpDelete]
-        [Route("{id}")]
-        public async Task Delete(Guid id)
+        [Route("{userId:guid}")]
+        public Task Delete([FromUri]Guid userId)
         {
-            await _users.Delete(id);
+            return _users.Delete(userId);
         }
     }
 }

@@ -51,12 +51,6 @@ namespace ThingsBook.Data.Mongo
             return result.FirstOrDefault();
         }
 
-        public async Task<Thing> GetThingForLend(Guid userId, Guid lendId)
-        {
-            var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Lend.Id == lendId);
-            return result.FirstOrDefault();
-        }
-
         public async Task<IEnumerable<Thing>> GetThings(Guid userId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId);

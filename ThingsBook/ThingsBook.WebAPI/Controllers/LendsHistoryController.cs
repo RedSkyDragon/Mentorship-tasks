@@ -18,24 +18,24 @@ namespace ThingsBook.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{userId}")]
-        public async Task<IEnumerable<HistLend>> Get(Guid userId)
+        [Route("")]
+        public Task<IEnumerable<HistLend>> Get([FromUri]Guid userId)
         {
-            return await _lends.GetHistoricalLends(userId);
+            return _lends.GetHistoricalLends(userId);
         }
 
         [HttpGet]
-        [Route("{userId}/{lendId}")]
-        public async Task<HistLend> Get(Guid userId, Guid lendId)
+        [Route("{lendId:guid}")]
+        public Task<HistLend> Get([FromUri]Guid userId, [FromUri]Guid lendId)
         {
-            return await _lends.GetHistoricalLend(userId, lendId);
+            return _lends.GetHistoricalLend(userId, lendId);
         }
 
         [HttpDelete]
-        [Route("{userId}/{lendId}")]
-        public async Task Delete(Guid userId, Guid lendId)
+        [Route("{lendId:guid}")]
+        public Task Delete([FromUri]Guid userId, [FromUri]Guid lendId)
         {
-            await _lends.DeleteHistoricalLend(userId, lendId);
+            return _lends.DeleteHistoricalLend(userId, lendId);
         }
     }
 }

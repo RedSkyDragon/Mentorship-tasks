@@ -2,7 +2,7 @@
 
 namespace ThingsBook.Data.Interface
 {
-    public class Lend : Entity
+    public class Lend
     {
         public Guid FriendId { get; set; }
 

@@ -8,7 +8,7 @@ using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
-    [RoutePrefix("friends")]
+    [RoutePrefix("friend")]
     public class FriendsController : BaseController
     {
         private IFriendsBL _friends;
@@ -19,45 +19,49 @@ namespace ThingsBook.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{userId}")]
-        public async Task<IEnumerable<Friend>> Get(Guid userId)
+        [Route("~/friends")]
+        public Task<IEnumerable<Friend>> Get([FromUri]Guid userId)
         {
-            return await _friends.GetAll(userId);
+            return _friends.GetAll(userId);
         }
 
         [HttpGet]
-        [Route("{userId}/{friendId}")]
-        public async Task<Friend> Get(Guid userId, Guid friendId)
+        [Route("{friendId:guid}")]
+        public Task<Friend> Get([FromUri]Guid userId, [FromUri]Guid friendId)
         {
-            return await _friends.GetOne(userId,friendId);
+            return _friends.GetOne(userId,friendId);
         }
 
         [HttpGet]
-        [Route("{userId}/{friendId}/lends")]
-        public async Task<FilteredLends> GetLends(Guid userId, Guid friendId)
+        [Route("{friendId:guid}/lends")]
+        public Task<FilteredLends> GetLends([FromUri]Guid userId, [FromUri]Guid friendId)
         {
-            return await _friends.GetFriendLends(userId, friendId);
+            return _friends.GetFriendLends(userId, friendId);
         }
 
         [HttpPost]
-        [Route("{userId}")]
-        public async Task Post(Guid userId, Friend friend)
+        [Route("")]
+        public async Task<Friend> Post([FromUri]Guid userId, [FromBody]Models.Friend friend)
         {
-            await _friends.Create(userId, friend);
+            Friend friendDM = new Friend { Name = friend.Name, Contacts = friend.Contacts, UserId = userId };
+            await _friends.Create(userId, friendDM);
+            return await _friends.GetOne(userId, friendDM.Id);
         }
 
         [HttpPut]
-        [Route("{userId}")]
-        public async Task Put(Guid userId, Friend friend)
+        [Route("{friendId:guid}")]
+        public async Task<Friend> Put([FromUri]Guid userId, [FromUri]Guid friendId, [FromBody]Models.Friend friend)
         {
-            await _friends.Update(userId, friend);
+            Friend friendDM = new Friend { Id = friendId, Name = friend.Name, Contacts = friend.Contacts, UserId = userId };
+            await _friends.Update(userId, friendDM);
+            return await _friends.GetOne(userId, friendDM.Id);
         }
 
         [HttpDelete]
-        [Route("{userId}/{friendId}")]
-        public async Task Delete(Guid userId, Guid friendId)
+        [Route("{friendId:guid}")]
+        public Task Delete([FromUri]Guid userId, [FromUri]Guid friendId)
         {
-            await _friends.Delete(userId, friendId);
+            return _friends.Delete(userId, friendId);
         }
     }
 }

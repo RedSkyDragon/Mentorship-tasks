@@ -12,8 +12,6 @@ namespace ThingsBook.Data.Interface
 
         Task<Thing> GetThing(Guid userId, Guid id);
 
-        Task<Thing> GetThingForLend(Guid userId, Guid lendId);
-
         Task<IEnumerable<Thing>> GetThingsForFriend(Guid userId, Guid friedId);
 
         Task UpdateThing(Guid userId, Thing thing);

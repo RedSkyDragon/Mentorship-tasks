@@ -8,7 +8,7 @@ using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
-    [RoutePrefix("things")]
+    [RoutePrefix("thing")]
     public class ThingsController : ApiController
     {
         private IThingsBL _things;
@@ -19,52 +19,49 @@ namespace ThingsBook.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{userId}")]
-        public async Task<IEnumerable<Thing>> Get(Guid userId)
+        [Route("~/things")]
+        public Task<IEnumerable<Thing>> Get([FromUri]Guid userId)
         {
-            return await _things.GetThings(userId);
+            return _things.GetThings(userId);
         }
 
         [HttpGet]
-        [Route("{userId}/category/{categoryId}")]
-        public async Task<IEnumerable<Thing>> GetForCategory(Guid userId, Guid categoryId)
+        [Route("{thingId:guid}")]
+        public Task<Thing> Get([FromUri]Guid userId, [FromUri]Guid thingId)
         {
-            return await _things.GetThingsForCategory(userId, categoryId);
+            return _things.GetThing(userId, thingId);
         }
 
         [HttpGet]
-        [Route("{userId}/{thingId}")]
-        public async Task<Thing> Get(Guid userId, Guid thingId)
+        [Route("{thingId:guid}/lends")]
+        public Task<FilteredLends> GetLends([FromUri]Guid userId, [FromUri]Guid thingId)
         {
-            return await _things.GetThing(userId, thingId);
-        }
-
-        [HttpGet]
-        [Route("{userId}/{thingId}/lends")]
-        public async Task<FilteredLends> GetLends(Guid userId, Guid thingId)
-        {
-            return await _things.GetThingLends(userId, thingId);
+            return _things.GetThingLends(userId, thingId);
         }
 
         [HttpPost]
-        [Route("{userId}")]
-        public async Task Post(Guid userId, Thing thing)
+        [Route("")]
+        public async Task<Thing> Post([FromUri]Guid userId, [FromBody]Models.Thing thing)
         {
-            await _things.CreateThing(userId, thing);
+            var thingDM = new Thing { Name = thing.Name, About = thing.About, CategoryId = thing.CategoryId, UserId = userId };
+            await _things.CreateThing(userId, thingDM);
+            return await _things.GetThing(userId, thingDM.Id);
         }
 
         [HttpPut]
-        [Route("{userId}")]
-        public async Task Put(Guid userId, Thing thing)
+        [Route("{thingId:guid}")]
+        public async Task<Thing> Put([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Models.Thing thing)
         {
-            await _things.UpdateThing(userId, thing);
+            var thingDM = new Thing { Id = thingId, Name = thing.Name, About = thing.About, CategoryId = thing.CategoryId, UserId = userId };
+            await _things.UpdateThing(userId, thingDM);
+            return await _things.GetThing(userId, thingDM.Id);
         }
 
         [HttpDelete]
-        [Route("{userId}/{thingId}")]
-        public async Task Delete(Guid userId, Guid thingId)
+        [Route("{thingId:guid}")]
+        public Task Delete([FromUri]Guid userId, [FromUri]Guid thingId)
         {
-            await _things.DeleteThing(userId, thingId);
+            return _things.DeleteThing(userId, thingId);
         }
     }
 }

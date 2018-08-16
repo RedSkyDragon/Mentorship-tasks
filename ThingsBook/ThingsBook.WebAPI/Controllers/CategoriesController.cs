@@ -7,7 +7,7 @@ using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
-    [RoutePrefix("categories")]
+    [RoutePrefix("category")]
     public class CategoriesController : BaseController
     {
         private IThingsBL _things;
@@ -18,45 +18,57 @@ namespace ThingsBook.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{userId}")]
-        public async Task<IEnumerable<Category>> Get(Guid userId)
+        [Route("~/categories")]
+        public Task<IEnumerable<Category>> Get([FromUri]Guid userId)
         {
-            return await _things.GetCategories(userId);
+            return _things.GetCategories(userId);
         }
 
         [HttpGet]
-        [Route("{userId}/{categoryId}")]
-        public async Task<Category> Get(Guid userId, Guid categoryId)
+        [Route("{categoryId:guid}")]
+        public Task<Category> Get([FromUri]Guid userId, [FromUri]Guid categoryId)
         {
-            return await _things.GetCategory(userId, categoryId);
+            return _things.GetCategory(userId, categoryId);
+        }
+
+
+        [HttpGet]
+        [Route("{categoryId:guid}/things")]
+        public Task<IEnumerable<Thing>> GetForCategory([FromUri]Guid userId, [FromUri]Guid categoryId)
+        {
+            return _things.GetThingsForCategory(userId, categoryId);
         }
 
         [HttpPost]
-        [Route("{userId}")]
-        public async Task Post(Guid userId, Category category)
+        [Route("")]
+        public async Task<Category> Post([FromUri]Guid userId, [FromBody]Models.Category category)
         {
-            await _things.CreateCategory(userId, category);
+            Category categoryDM = new Category { UserId = userId, Name = category.Name, About = category.About };
+            await _things.CreateCategory(userId, categoryDM);
+            return await _things.GetCategory(userId, categoryDM.Id);
         }
 
         [HttpPut]
-        [Route("{userId}")]
-        public async Task Put(Guid userId, Category category)
+        [Route("{categoryId:guid}")]
+        public async Task<Category> Put([FromUri]Guid userId, [FromUri]Guid categoryId, [FromBody]Models.Category category)
         {
-            await _things.UpdateCategory(userId, category);
+            Category categoryDM = new Category { Id = categoryId, UserId = userId, Name = category.Name, About = category.About };
+            await _things.UpdateCategory(userId, categoryDM);
+            return await _things.GetCategory(userId, categoryDM.Id);
         }
 
         [HttpDelete]
-        [Route("{userId}/{categoryId}")]
-        public async Task Delete(Guid userId, Guid categoryId)
+        [Route("{categoryId:guid}")]
+        public Task Delete([FromUri]Guid userId, [FromUri]Guid categoryId)
         {
-            await _things.DeleteCategoryWithThings(userId, categoryId);
+            return _things.DeleteCategoryWithThings(userId, categoryId);
         }
         
         [HttpDelete]
-        [Route("{userId}/{categoryId}/{replacementId}")]
-        public async Task DeleteAndReplace(Guid userId, Guid categoryId, Guid replacementId)
+        [Route("{categoryId:guid}")]
+        public Task DeleteAndReplace([FromUri]Guid userId, [FromUri]Guid categoryId, [FromUri]Guid replacementId)
         {
-            await _things.DeleteCategoryWithReplacement(userId, categoryId, replacementId);
+            return _things.DeleteCategoryWithReplacement(userId, categoryId, replacementId);
         }
     }
 }

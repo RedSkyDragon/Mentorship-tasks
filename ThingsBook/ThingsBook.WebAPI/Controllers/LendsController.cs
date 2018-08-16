@@ -6,35 +6,43 @@ using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
-    [RoutePrefix("lends")]
+    [RoutePrefix("lend")]
     public class LendsController : ApiController
     {
         private ILendsBL _lends;
+        private IThingsBL _things;
 
-        public LendsController(ILendsBL lends)
+        public LendsController(ILendsBL lends, IThingsBL things)
         {
             _lends = lends;
+            _things = things;
         }
 
         [HttpPost]
-        [Route("{userId}/{thingId}")]
-        public async Task Post(Guid userId, Guid thingId, Lend lend)
+        [Route("{thingId:guid}")]
+        public async Task<Thing> Post([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Lend lend)
         {
             await _lends.Create(userId, thingId, lend);
+            return await _things.GetThing(userId, thingId);
         }
 
         [HttpPut]
-        [Route("{userId}/{thingId}")]
-        public async Task Put(Guid userId, Guid thingId, Lend lend)
+        [Route("{thingId:guid}")]
+        public async Task<Thing> Put([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Lend lend)
         {
             await _lends.Update(userId, thingId, lend);
+            return await _things.GetThing(userId, thingId);
         }
 
         [HttpDelete]
-        [Route("{userId}/{thingId}")]
-        public async Task Delete(Guid userId, Guid thingId, DateTime returnDate)
+        [Route("{thingId:guid}")]
+        public Task Delete([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]DateTime? returnDate)
         {
-            await _lends.Delete(userId, thingId, returnDate);
+            if (!returnDate.HasValue)
+            {
+                returnDate = DateTime.Now;
+            }
+            return _lends.Delete(userId, thingId, returnDate.Value);
         }
     }
 }
