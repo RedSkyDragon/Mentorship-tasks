@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
+using ThingsBook.BusinessLogic.Models;
 using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
@@ -19,33 +17,40 @@ namespace ThingsBook.WebAPI.Controllers
             _friends = friends;
         }
 
-        // GET: api/Friends
         [HttpGet]
-        public async Task<IHttpActionResult> Get(Guid userId)
+        public async Task<IEnumerable<Friend>> Get(Guid userId)
         {
-            return Ok(await _friends.GetAll(userId));
+            return await _friends.GetAll(userId);
         }
 
-        // GET: api/Friends/5
         [HttpGet]
-        public async Task<IHttpActionResult> Get(Guid id)
+        public async Task<Friend> Get(Guid userId, Guid friendId)
         {
-            return Ok(await _friends.GetOne(id));
+            return await _friends.GetOne(userId,friendId);
         }
 
-        // POST: api/Friends
-        public async Task<IHttpActionResult> Post(Friend friend)
+        [HttpGet]
+        public async Task<FilteredLends> GetLends(Guid userId, Guid friendId)
         {
+            return await _friends.GetFriendLends(userId, friendId);
         }
 
-        // PUT: api/Friends/5
-        public async Task<IHttpActionResult> Put(int id, [FromBody]string value)
+        [HttpPost]
+        public async Task Post(Guid userId, Friend friend)
         {
+            await _friends.Create(userId, friend);
         }
 
-        // DELETE: api/Friends/5
-        public async Task<IHttpActionResult> Delete(int id)
+        [HttpPut]
+        public async Task Put(Guid userId, Friend friend)
         {
+            await _friends.Update(userId, friend);
+        }
+
+        [HttpDelete]
+        public async Task Delete(Guid userId, Guid friendId)
+        {
+            await _friends.Delete(userId, friendId);
         }
     }
 }

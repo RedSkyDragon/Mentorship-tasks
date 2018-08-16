@@ -14,11 +14,9 @@ namespace ThingsBook.BusinessLogic
 
         Task Update(Guid userId, Guid thingId, Lend lend);
 
-        Task<HistoricalLend> GetHistoricalLend(Guid userId, Guid id);
+        Task<HistLend> GetHistoricalLend(Guid userId, Guid id);
 
-        Task<IEnumerable<HistoricalLend>> GetHistoricalLends(Guid userId);
-
-        Task<FilteredLends> GetThingLends(Guid userId, Guid thingId);
+        Task<IEnumerable<HistLend>> GetHistoricalLends(Guid userId);
 
         Task DeleteHistoricalLend(Guid userId, Guid id);
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ThingsBook.BusinessLogic.Models;
 using ThingsBook.Data.Interface;
 
 namespace ThingsBook.BusinessLogic
@@ -18,6 +19,8 @@ namespace ThingsBook.BusinessLogic
         Task<IEnumerable<Thing>> GetThings(Guid userId);
 
         Task<IEnumerable<Thing>> GetThingsForCategory(Guid userId, Guid categoryId);
+
+        Task<FilteredLends> GetThingLends(Guid userId, Guid thingId);
 
         Task CreateCategory(Guid userId, Category category);
 

@@ -1,39 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using ThingsBook.BusinessLogic;
+using ThingsBook.BusinessLogic.Models;
+using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
     public class ThingsController : ApiController
     {
-        // GET: api/Things
-        public IEnumerable<string> Get()
+        private IThingsBL _things;
+
+        public ThingsController(IThingsBL things)
         {
-            return new string[] { "value1", "value2" };
+            _things = things;
         }
 
-        // GET: api/Things/5
-        public string Get(int id)
+        [HttpGet]
+        public async Task<IEnumerable<Thing>> Get(Guid userId)
         {
-            return "value";
+            return await _things.GetThings(userId);
         }
 
-        // POST: api/Things
-        public void Post([FromBody]string value)
+        [HttpGet]
+        public async Task<IEnumerable<Thing>> GetForCategory(Guid userId, Guid categoryId)
         {
+            return await _things.GetThingsForCategory(userId, categoryId);
         }
 
-        // PUT: api/Things/5
-        public void Put(int id, [FromBody]string value)
+        [HttpGet]
+        public async Task<Thing> Get(Guid userId, Guid thingId)
         {
+            return await _things.GetThing(userId, thingId);
         }
 
-        // DELETE: api/Things/5
-        public void Delete(int id)
+        [HttpGet]
+        public async Task<FilteredLends> GetLends(Guid userId, Guid thingId)
         {
+            return await _things.GetThingLends(userId, thingId);
+        }
+
+        [HttpPost]
+        public async Task Post(Guid userId, Thing thing)
+        {
+            await _things.CreateThing(userId, thing);
+        }
+
+        [HttpPut]
+        public async Task Put(Guid userId, Thing thing)
+        {
+            await _things.UpdateThing(userId, thing);
+        }
+
+        [HttpDelete]
+        public async Task Delete(Guid userId, Guid thingId)
+        {
+            await _things.DeleteThing(userId, thingId);
         }
     }
 }

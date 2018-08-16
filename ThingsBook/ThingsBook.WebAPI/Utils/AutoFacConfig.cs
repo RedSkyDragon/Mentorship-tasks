@@ -36,6 +36,7 @@ namespace ThingsBook.WebAPI.Utils
             buider.RegisterType<Things>().As<IThings>();
             buider.RegisterType<Lends>().As<ILends>();
             buider.RegisterType<History>().As<IHistory>();
+            buider.RegisterType<CommonDAL>().As<CommonDAL>();
         }
 
         private static void RegisterBL(ContainerBuilder buider)

@@ -15,21 +15,18 @@ namespace ThingsBook.WebAPI.Controllers
             _users = users;
         }
 
-        // GET: api/Users
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
             return Ok(await _users.GetAll());
         }
 
-        // GET: api/Users/5
         [HttpGet]
         public async Task<IHttpActionResult> Get(Guid id)
         {
             return Ok(await _users.Get(id));
         }
 
-        // POST: api/Users
         [HttpPost]
         public async Task<IHttpActionResult> Post(User user)
         {
@@ -37,7 +34,6 @@ namespace ThingsBook.WebAPI.Controllers
             return Ok();
         }
 
-        // PUT: api/Users/5
         [HttpPut]
         public async Task<IHttpActionResult> Put(User user)
         {
@@ -45,7 +41,6 @@ namespace ThingsBook.WebAPI.Controllers
             return Ok();
         }
 
-        // DELETE: api/Users/5
         [HttpDelete]
         public async Task<IHttpActionResult> Delete(Guid id)
         {

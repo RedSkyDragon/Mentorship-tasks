@@ -1,39 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using ThingsBook.BusinessLogic;
+using ThingsBook.BusinessLogic.Models;
 
 namespace ThingsBook.WebAPI.Controllers
 {
     public class LendsHistoryController : ApiController
     {
-        // GET: api/LendsHistory
-        public IEnumerable<string> Get()
+        private ILendsBL _lends;
+
+        public LendsHistoryController(ILendsBL lends)
         {
-            return new string[] { "value1", "value2" };
+            _lends = lends;
         }
 
-        // GET: api/LendsHistory/5
-        public string Get(int id)
+        [HttpGet]
+        public async Task<IEnumerable<HistLend>> Get(Guid userId)
         {
-            return "value";
+            return await _lends.GetHistoricalLends(userId);
         }
 
-        // POST: api/LendsHistory
-        public void Post([FromBody]string value)
+        [HttpGet]
+        public async Task<HistLend> Get(Guid userId, Guid lendId)
         {
+            return await _lends.GetHistoricalLend(userId, lendId);
         }
 
-        // PUT: api/LendsHistory/5
-        public void Put(int id, [FromBody]string value)
+        [HttpDelete]
+        public async Task Delete(Guid userId, Guid lendId)
         {
-        }
-
-        // DELETE: api/LendsHistory/5
-        public void Delete(int id)
-        {
+            await _lends.DeleteHistoricalLend(userId, lendId);
         }
     }
 }
