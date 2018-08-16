@@ -16,14 +16,14 @@ namespace ThingsBook.Data.Mongo
             _db = db;
         }
 
-        public async Task CreateUser(User user)
+        public Task CreateUser(User user)
         {
-            await _db.Users.InsertOneAsync(user);
+            return _db.Users.InsertOneAsync(user);
         }
 
-        public async Task DeleteUser(Guid id)
+        public Task DeleteUser(Guid id)
         {
-            await _db.Users.DeleteOneAsync(u => u.Id == id);
+            return _db.Users.DeleteOneAsync(u => u.Id == id);
         }
 
         public async Task<User> GetUser(Guid id)
@@ -39,10 +39,10 @@ namespace ThingsBook.Data.Mongo
             return result.ToEnumerable();
         }
 
-        public async Task UpdateUser(User user)
+        public Task UpdateUser(User user)
         {
             var update = Builders<User>.Update.Set(u=> u.Name, user.Name);
-            await _db.Users.UpdateOneAsync(u => u.Id == user.Id, update);
+            return _db.Users.UpdateOneAsync(u => u.Id == user.Id, update);
         }
     }
 }

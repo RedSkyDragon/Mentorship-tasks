@@ -16,22 +16,22 @@ namespace ThingsBook.Data.Mongo
             _db = db;
         }
 
-        public async Task CreateLend(Guid userId, Guid thingId, Lend lend)
+        public Task CreateLend(Guid userId, Guid thingId, Lend lend)
         {
             var update = Builders<Thing>.Update.Set(t => t.Lend, lend);
-            await _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
+            return _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
         }
 
-        public async Task DeleteFriendLends(Guid userId, Guid friendId)
+        public Task DeleteFriendLends(Guid userId, Guid friendId)
         {
             var update = Builders<Thing>.Update.Set(t => t.Lend, null);
-            await _db.Things.UpdateManyAsync(t => t.UserId == userId && t.Lend.FriendId == friendId, update);
+            return _db.Things.UpdateManyAsync(t => t.UserId == userId && t.Lend.FriendId == friendId, update);
         }
 
-        public async Task DeleteLend(Guid userId, Guid thingId)
+        public Task DeleteLend(Guid userId, Guid thingId)
         {
             var update = Builders<Thing>.Update.Set(t => t.Lend, null);
-            await _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
+            return _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
         }
 
         public async Task<Lend> GetLend(Guid userId, Guid thingId)
@@ -40,13 +40,13 @@ namespace ThingsBook.Data.Mongo
             return result.FirstOrDefault().Lend;
         }
 
-        public async Task UpdateLend(Guid userId, Guid thingId, Lend lend)
+        public Task UpdateLend(Guid userId, Guid thingId, Lend lend)
         {
             var update = Builders<Thing>.Update
                 .Set(t => t.Lend.FriendId, lend.FriendId)
                 .Set(t => t.Lend.LendDate, lend.LendDate)
                 .Set(t => t.Lend.Comment, lend.Comment);
-            await _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
+            return _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
         }
     }
 }

@@ -23,30 +23,42 @@ namespace ThingsBook.Data.Mongo
             }
         }
 
-        public async Task DeleteFriendHistory(Guid userId, Guid friendId)
+        public Task DeleteFriendHistory(Guid userId, Guid friendId)
         {
-            await _db.History.DeleteManyAsync(h => h.UserId == userId && h.FriendId == friendId);
+            return _db.History.DeleteManyAsync(h => h.UserId == userId && h.FriendId == friendId);
         }
 
-        public async Task DeleteHistLend(Guid userId, Guid id)
+        public Task DeleteHistLend(Guid userId, Guid id)
         {
-            await _db.History.DeleteOneAsync(h => h.UserId == userId && h.Id == id);
+            return _db.History.DeleteOneAsync(h => h.UserId == userId && h.Id == id);
         }
 
-        public async Task DeleteThingHistory(Guid userId, Guid thingId)
+        public Task DeleteThingHistory(Guid userId, Guid thingId)
         {
-            await _db.History.DeleteManyAsync(h => h.UserId == userId && h.ThingId == thingId);
+            return _db.History.DeleteManyAsync(h => h.UserId == userId && h.ThingId == thingId);
         }
 
-        public async Task DeleteUserHistory(Guid userId)
+        public Task DeleteUserHistory(Guid userId)
         {
-            await _db.History.DeleteManyAsync(h => h.UserId == userId); 
+            return _db.History.DeleteManyAsync(h => h.UserId == userId); 
         }
 
-        public async Task<IEnumerable<HistoricalLend>> GetFriendHistLends(Guid userId, Guid friendId)
+        public async Task<IDictionary<HistoricalLend, Thing>> GetFriendHistLends(Guid userId, Guid friendId)
         {
-            var result = await _db.History.FindAsync(h => h.UserId == userId && h.FriendId == friendId);
-            return result.ToEnumerable();
+            var result = new Dictionary<HistoricalLend, Thing>();
+            using (var cursor = await _db.History.FindAsync(h => h.UserId == userId && h.FriendId == friendId))
+            {
+                while (await cursor.MoveNextAsync())
+                {
+                    var lends = cursor.Current;
+                    foreach (var lend in lends)
+                    {
+                        var thing = await _db.Things.FindAsync(t => t.Id == lend.ThingId);
+                        result.Add(lend, thing.FirstOrDefault());
+                    }
+                }
+            }
+            return result;
         }
 
         public async Task<HistoricalLend> GetHistLend(Guid userId, Guid id)
@@ -61,13 +73,25 @@ namespace ThingsBook.Data.Mongo
             return result.ToEnumerable();
         }
 
-        public async Task<IEnumerable<HistoricalLend>> GetThingHistLends(Guid userId, Guid thingId)
+        public async Task<IDictionary<HistoricalLend, Friend>> GetThingHistLends(Guid userId, Guid thingId)
         {
-            var result = await _db.History.FindAsync(h => h.UserId == userId && h.ThingId == thingId);
-            return result.ToEnumerable();
+            var result = new Dictionary<HistoricalLend, Friend>();
+            using (var cursor = await _db.History.FindAsync(h => h.UserId == userId && h.ThingId == thingId))
+            {
+                while (await cursor.MoveNextAsync())
+                {
+                    var lends = cursor.Current;
+                    foreach (var lend in lends)
+                    {
+                        var friend = await _db.Friends.FindAsync(t => t.Id == lend.FriendId);
+                        result.Add(lend, friend.FirstOrDefault());
+                    }
+                }
+            }
+            return result;
         }
 
-        public async Task UpdateHistLend(Guid userId, HistoricalLend lend)
+        public Task UpdateHistLend(Guid userId, HistoricalLend lend)
         {
             var update = Builders<HistoricalLend>.Update
                 .Set(h => h.FriendId, lend.FriendId)
@@ -75,7 +99,7 @@ namespace ThingsBook.Data.Mongo
                 .Set(h => h.LendDate, lend.LendDate)
                 .Set(h => h.ReturnDate, lend.ReturnDate)
                 .Set(h => h.Comment, lend.Comment);
-            await _db.History.UpdateOneAsync(h => h.UserId == userId && h.Id == lend.Id, update);
+            return _db.History.UpdateOneAsync(h => h.UserId == userId && h.Id == lend.Id, update);
         }
     }
 }

@@ -8,9 +8,9 @@ namespace ThingsBook.Data.Interface
     {
         Task<IEnumerable<HistoricalLend>> GetHistLends(Guid userId);
 
-        Task<IEnumerable<HistoricalLend>> GetFriendHistLends(Guid userId, Guid friendId);
+        Task<IDictionary<HistoricalLend, Thing>> GetFriendHistLends(Guid userId, Guid friendId);
 
-        Task<IEnumerable<HistoricalLend>> GetThingHistLends(Guid userId, Guid thingId);
+        Task<IDictionary<HistoricalLend, Friend>> GetThingHistLends(Guid userId, Guid thingId);
 
         Task<HistoricalLend> GetHistLend(Guid userId, Guid id);
 

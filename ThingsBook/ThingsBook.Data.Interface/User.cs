@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ThingsBook.Data.Interface
+﻿namespace ThingsBook.Data.Interface
 {
     public class User: Entity
     {

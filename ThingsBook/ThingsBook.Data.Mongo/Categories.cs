@@ -24,14 +24,14 @@ namespace ThingsBook.Data.Mongo
             }
         }
 
-        public async Task DeleteCategory(Guid userId, Guid id)
+        public Task DeleteCategory(Guid userId, Guid id)
         {
-            await _db.Categories.DeleteOneAsync(c => c.UserId == userId && c.Id == id);
+            return _db.Categories.DeleteOneAsync(c => c.UserId == userId && c.Id == id);
         }
 
-        public async Task DeleteCategories(Guid userId)
+        public Task DeleteCategories(Guid userId)
         {
-            await _db.Categories.DeleteManyAsync(c => c.UserId == userId);
+            return _db.Categories.DeleteManyAsync(c => c.UserId == userId);
         }
 
         public async Task<IEnumerable<Category>> GetCategories(Guid userId)
@@ -46,12 +46,12 @@ namespace ThingsBook.Data.Mongo
             return result.FirstOrDefault();
         }
 
-        public async Task UpdateCategory(Guid userId, Category category)
+        public Task UpdateCategory(Guid userId, Category category)
         {
             var update = Builders<Category>.Update
                 .Set(c => c.Name, category.Name)
                 .Set(c => c.About, category.About);
-            await _db.Categories.UpdateOneAsync(c => c.UserId == userId && c.Id == category.Id, update);
+            return _db.Categories.UpdateOneAsync(c => c.UserId == userId && c.Id == category.Id, update);
         }
     }
 }

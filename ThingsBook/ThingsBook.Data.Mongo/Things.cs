@@ -24,22 +24,22 @@ namespace ThingsBook.Data.Mongo
             }
         }
 
-        public async Task DeleteThing(Guid userId, Guid id)
+        public Task DeleteThing(Guid userId, Guid id)
         {
-            await _db.Things.DeleteOneAsync(t => t.UserId == userId && t.Id == id);
+            return _db.Things.DeleteOneAsync(t => t.UserId == userId && t.Id == id);
         }
 
-        public async Task DeleteThings(Guid userId)
+        public Task DeleteThings(Guid userId)
         {
-            await _db.Things.DeleteManyAsync(t => t.UserId == userId);
+            return _db.Things.DeleteManyAsync(t => t.UserId == userId);
         }
 
-        public async Task DeleteThingsForCategory(Guid userId, Guid categoryId)
+        public Task DeleteThingsForCategory(Guid userId, Guid categoryId)
         {
-            await _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);
+            return _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);
         }
 
-        public async Task<IEnumerable<Thing>> GetThindsForFriend(Guid userId, Guid friedId)
+        public async Task<IEnumerable<Thing>> GetThingsForFriend(Guid userId, Guid friedId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Lend.FriendId == friedId);
             return result.ToEnumerable();
@@ -69,20 +69,20 @@ namespace ThingsBook.Data.Mongo
             return result.ToEnumerable();
         }
 
-        public async Task UpdateThing(Guid userId, Thing thing)
+        public Task UpdateThing(Guid userId, Thing thing)
         {
             var update = Builders<Thing>.Update
                 .Set(t => t.Name, thing.Name)
                 .Set(t => t.About, thing.About)
-                .Set(t => t.CategoryId, thing.CategoryId);  
-            await _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thing.Id, update);
+                .Set(t => t.CategoryId, thing.CategoryId);
+            return _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thing.Id, update);
         }
 
-        public async Task UpdateThingsCategory(Guid userId, Guid categoryId, Guid replacementId)
+        public Task UpdateThingsCategory(Guid userId, Guid categoryId, Guid replacementId)
         {
             var update = Builders<Thing>.Update
                 .Set(t => t.CategoryId, replacementId);
-            await _db.Things.UpdateManyAsync(t => t.UserId == userId && t.CategoryId == categoryId, update);
+            return _db.Things.UpdateManyAsync(t => t.UserId == userId && t.CategoryId == categoryId, update);
         }
     }
 }
