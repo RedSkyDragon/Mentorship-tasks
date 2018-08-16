@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
@@ -6,6 +7,7 @@ using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
+    [RoutePrefix("users")]
     public class UsersController : BaseController
     {
         private IUsersBL _users;
@@ -16,36 +18,38 @@ namespace ThingsBook.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IHttpActionResult> Get()
+        [Route("")]
+        public async Task<IEnumerable<User>> Get()
         {
-            return Ok(await _users.GetAll());
+            return await _users.GetAll();
         }
 
         [HttpGet]
-        public async Task<IHttpActionResult> Get(Guid id)
+        [Route("{id}")]
+        public async Task<User> Get(Guid id)
         {
-            return Ok(await _users.Get(id));
+            return await _users.Get(id);
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> Post(User user)
+        [Route("")]
+        public async Task Post(User user)
         {
             await _users.CreateOrUpdate(user);
-            return Ok();
         }
 
         [HttpPut]
-        public async Task<IHttpActionResult> Put(User user)
+        [Route("")]
+        public async Task Put(User user)
         {
             await _users.CreateOrUpdate(user);
-            return Ok();
         }
 
         [HttpDelete]
-        public async Task<IHttpActionResult> Delete(Guid id)
+        [Route("{id}")]
+        public async Task Delete(Guid id)
         {
             await _users.Delete(id);
-            return Ok();
         }
     }
 }
