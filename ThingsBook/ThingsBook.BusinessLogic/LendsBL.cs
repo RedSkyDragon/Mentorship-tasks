@@ -21,7 +21,7 @@ namespace ThingsBook.BusinessLogic
         {
             var thing = await Data.Things.GetThing(userId, thingId);
             var delLend = Data.Lends.DeleteLend(userId, thingId);
-            var hist = MakeLendHistorical(userId, thing, returnDate);
+            var hist = MakeLendHistorical(thing, returnDate);
             var createHist = Data.History.CreateHistLend(userId, hist);
             await Task.WhenAll(delLend, createHist);
         }
@@ -43,15 +43,19 @@ namespace ThingsBook.BusinessLogic
 
         public async Task<FilteredLends> GetThingLends(Guid userId, Guid thingId)
         {
-            var activeLends = new List<LendBL>();
+            var activeLends = new List<ActiveLend>();
             var thing = Data.Things.GetThing(userId, thingId);            
-            var hist = Data.History.GetThingHistLends(userId, thingId);
-            await Task.WhenAll(thing, hist);
+            var hists = Data.History.GetThingHistLends(userId, thingId);
+            await Task.WhenAll(thing, hists);
             if (thing.Result.Lend != null)
             {
-                activeLends.Add(LendBLFromThing(userId, thing.Result));
+                activeLends.Add(await ActiveLendFromThing(userId, thing.Result));
             }
-            return new FilteredLends { ActiveLends = activeLends, History = hist.Result.Select(t => HistLendBLFromModel(userId, t)) };
+            return new FilteredLends
+            {
+                ActiveLends = activeLends,
+                History = await HistLendsFromModel(userId, hists.Result, thing.Result)
+            };
         }
 
         public async Task Update(Guid userId, Guid thingId, Lend lend)
@@ -59,32 +63,31 @@ namespace ThingsBook.BusinessLogic
             await Data.Lends.UpdateLend(userId, thingId, lend);
         }
 
-        private HistLendBL HistLendBLFromModel(Guid userId, HistoricalLend hist)
+        private async Task<IEnumerable<HistLend>> HistLendsFromModel(Guid userId, IEnumerable<HistoricalLend> hists, Thing thing)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLendBL>());
-            var histBL = config.CreateMapper().Map<HistoricalLend, HistLendBL>(hist);
-            var friend = Data.Friends.GetFriend(userId, hist.FriendId);
-            var thing = Data.Things.GetThing(userId, hist.ThingId);
-            Task.WhenAll(friend, thing).Wait();
-            histBL.FriendName = friend.Result.Name;
-            histBL.ThingId = thing.Result.Id;
-            histBL.ThingName = thing.Result.Name;
-            return histBL;
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
+            var histsBL = hists.Select(h => mapper.Map<HistoricalLend, HistLend>(h));
+            foreach (var hist in histsBL)
+            {
+                var friend = await Data.Friends.GetFriend(userId, hist.FriendId);
+                hist.FriendName = friend.Name;
+                hist.ThingName = thing.Name;
+            }
+            return histsBL;
         }
 
-        private LendBL LendBLFromThing(Guid userId, Thing thing)
+        private async Task<ActiveLend> ActiveLendFromThing(Guid userId, Thing thing)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, LendBL>());
-            var lendBL = config.CreateMapper().Map<Lend, LendBL>(thing.Lend);
-            var friend = Data.Friends.GetFriend(userId, thing.Lend.FriendId);
-            friend.Wait();
-            lendBL.FriendName = friend.Result.Name;
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, ActiveLend>());
+            var lendBL = config.CreateMapper().Map<Lend, ActiveLend>(thing.Lend);
+            var friend = await Data.Friends.GetFriend(userId, thing.Lend.FriendId);
+            lendBL.FriendName = friend.Name;
             lendBL.ThingId = thing.Id;
             lendBL.ThingName = thing.Name;
             return lendBL;
         }
 
-        private HistoricalLend MakeLendHistorical(Guid userId, Thing thing, DateTime returnDate)
+        private HistoricalLend MakeLendHistorical(Thing thing, DateTime returnDate)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, HistoricalLend>());
             var hist = config.CreateMapper().Map<Lend, HistoricalLend>(thing.Lend);

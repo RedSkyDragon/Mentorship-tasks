@@ -34,17 +34,6 @@ namespace ThingsBook.Data.Mongo
             await _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
         }
 
-        public async Task<IEnumerable<Lend>> GetFriendLends(Guid userId, Guid friendId)
-        {
-            var lends = new List<Lend>();
-            var things = (await _db.Things.FindAsync(t => t.UserId == userId && t.Lend.FriendId == friendId)).ToEnumerable();
-            foreach (var thing in things)
-            {
-                lends.Add(thing.Lend);
-            }
-            return lends;
-        }
-
         public async Task<Lend> GetLend(Guid userId, Guid thingId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Id == thingId);

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ThingsBook.BusinessLogic.Models
 {
-    public class LendBL
+    public class ActiveLend
     {
         public Guid Id { get; set; }
 

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ThingsBook.BusinessLogic.Models
 {
-    public class HistLendBL
+    public class HistLend
     {
         public Guid Id { get; set; }
 

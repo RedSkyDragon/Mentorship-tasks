@@ -39,6 +39,12 @@ namespace ThingsBook.Data.Mongo
             await _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);
         }
 
+        public async Task<IEnumerable<Thing>> GetThindsForFriend(Guid userId, Guid friedId)
+        {
+            var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Lend.FriendId == friedId);
+            return result.ToEnumerable();
+        }
+
         public async Task<Thing> GetThing(Guid userId, Guid id)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Id == id);
@@ -70,6 +76,13 @@ namespace ThingsBook.Data.Mongo
                 .Set(t => t.About, thing.About)
                 .Set(t => t.CategoryId, thing.CategoryId);  
             await _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thing.Id, update);
+        }
+
+        public async Task UpdateThingsCategory(Guid userId, Guid categoryId, Guid replacementId)
+        {
+            var update = Builders<Thing>.Update
+                .Set(t => t.CategoryId, replacementId);
+            await _db.Things.UpdateManyAsync(t => t.UserId == userId && t.CategoryId == categoryId, update);
         }
     }
 }

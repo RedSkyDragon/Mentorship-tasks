@@ -12,7 +12,7 @@ namespace ThingsBook.BusinessLogic
         public async Task Create(User user)
         {
             var createUser = Data.Users.CreateUser(user);
-            var createCat = Data.Categories.CreateCategory(new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
+            var createCat = Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
             await Task.WhenAll(createUser, createCat);
         }
 

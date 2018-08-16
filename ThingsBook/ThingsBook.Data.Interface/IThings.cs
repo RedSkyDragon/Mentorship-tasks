@@ -14,7 +14,11 @@ namespace ThingsBook.Data.Interface
 
         Task<Thing> GetThingForLend(Guid userId, Guid lendId);
 
+        Task<IEnumerable<Thing>> GetThindsForFriend(Guid userId, Guid friedId);
+
         Task UpdateThing(Guid userId, Thing thing);
+
+        Task UpdateThingsCategory(Guid userId, Guid categoryId, Guid replacementId);
 
         Task DeleteThing(Guid userId, Guid id);
 

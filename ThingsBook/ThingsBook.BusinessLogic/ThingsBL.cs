@@ -21,15 +21,8 @@ namespace ThingsBook.BusinessLogic
 
         public async Task DeleteCategoryWithReplacement(Guid userId, Guid categoryId, Guid replacementId)
         {
-            var tasks = new List<Task>();
-            tasks.Add(Data.Categories.DeleteCategory(userId, categoryId));
-            var things = await Data.Things.GetThingsForCategory(userId, categoryId);
-            foreach (var thing in things)
-            {
-                thing.CategoryId = replacementId;
-                tasks.Add(Data.Things.UpdateThing(userId, thing));
-            }
-            await Task.WhenAll(tasks);
+            await Data.Things.UpdateThingsCategory(userId, categoryId, replacementId);
+            await Data.Categories.DeleteCategory(userId, categoryId);
         }
 
         public async Task DeleteCategoryWithThings(Guid userId, Guid id)

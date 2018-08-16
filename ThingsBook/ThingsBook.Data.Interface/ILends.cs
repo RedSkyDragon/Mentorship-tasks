@@ -8,8 +8,6 @@ namespace ThingsBook.Data.Interface
     {
         Task<Lend> GetLend(Guid userId, Guid thingId);
 
-        Task<IEnumerable<Lend>> GetFriendLends(Guid userId, Guid friendId);
-
         Task UpdateLend(Guid userId, Guid thingId, Lend lend);
 
         Task DeleteLend(Guid userId, Guid thingId);

@@ -3,36 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using ThingsBook.BusinessLogic;
+using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
-    public class FriendsController : ApiController
+    public class FriendsController : BaseController
     {
-        // GET: api/Friends
-        public IEnumerable<string> Get()
+        private IFriendsBL _friends;
+
+        public FriendsController(IFriendsBL friends)
         {
-            return new string[] { "value1", "value2" };
+            _friends = friends;
+        }
+
+        // GET: api/Friends
+        [HttpGet]
+        public async Task<IHttpActionResult> Get(Guid userId)
+        {
+            return Ok(await _friends.GetAll(userId));
         }
 
         // GET: api/Friends/5
-        public string Get(int id)
+        [HttpGet]
+        public async Task<IHttpActionResult> Get(Guid id)
         {
-            return "value";
+            return Ok(await _friends.GetOne(id));
         }
 
         // POST: api/Friends
-        public void Post([FromBody]string value)
+        public async Task<IHttpActionResult> Post(Friend friend)
         {
         }
 
         // PUT: api/Friends/5
-        public void Put(int id, [FromBody]string value)
+        public async Task<IHttpActionResult> Put(int id, [FromBody]string value)
         {
         }
 
         // DELETE: api/Friends/5
-        public void Delete(int id)
+        public async Task<IHttpActionResult> Delete(int id)
         {
         }
     }
