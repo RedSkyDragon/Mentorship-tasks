@@ -9,19 +9,9 @@ namespace ThingsBook.BusinessLogic.Models
     public class ActiveLend
     {
         /// <summary>
-        /// Gets or sets the identifier.
-        /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user identifier.
-        /// </summary>
-        public Guid UserId { get; set; }
-
-        /// <summary>
         /// Gets or sets the thing.
         /// </summary>
-        public Thing Thing { get; set; }
+        public ThingWithoutLend Thing { get; set; }
 
         /// <summary>
         /// Gets or sets the friend.

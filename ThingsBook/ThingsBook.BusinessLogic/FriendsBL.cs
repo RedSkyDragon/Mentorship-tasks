@@ -116,13 +116,14 @@ namespace ThingsBook.BusinessLogic
         private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, Friend friend)
         {
             var history = await Data.History.GetFriendHistLends(userId, friend.Id);
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
             var lends = new List<HistLend>();
             foreach (var item in history)
             {
-                var lend = mapper.Map<HistoricalLend, HistLend>(item.Key);
+                var lend = lendMapper.Map<HistoricalLend, HistLend>(item.Key);
                 lend.Friend = friend;
-                lend.Thing = item.Value;
+                lend.Thing = thingMapper.Map<ThingWithoutLend>(item.Value);
                 lends.Add(lend);
             }
             return lends;
@@ -137,13 +138,14 @@ namespace ThingsBook.BusinessLogic
         private async Task<IEnumerable<ActiveLend>> GetActiveLends(Guid userId, Friend friend)
         {
             var things = await Data.Things.GetThingsForFriend(userId, friend.Id);
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Lend, ActiveLend>()).CreateMapper();
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Lend, ActiveLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
             var lends = new List<ActiveLend>();
             foreach (var thing in things)
             {
-                var lend = mapper.Map<ActiveLend>(thing.Lend);
+                var lend = lendMapper.Map<ActiveLend>(thing.Lend);
                 lend.Friend = friend;
-                lend.Thing = thing;
+                lend.Thing = thingMapper.Map<ThingWithoutLend>(thing);
             }
             return lends;
         }

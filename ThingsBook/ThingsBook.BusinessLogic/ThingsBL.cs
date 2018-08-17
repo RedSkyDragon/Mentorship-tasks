@@ -207,13 +207,14 @@ namespace ThingsBook.BusinessLogic
         private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, Thing thing)
         {
             var history = await Data.History.GetThingHistLends(userId, thing.Id);
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
             var lends = new List<HistLend>();
             foreach (var item in history)
             {
-                var lend = mapper.Map<HistoricalLend, HistLend>(item.Key);
+                var lend = lendMapper.Map<HistoricalLend, HistLend>(item.Key);
                 lend.Friend = item.Value;
-                lend.Thing = thing;
+                lend.Thing = thingMapper.Map<ThingWithoutLend>(thing);
                 lends.Add(lend);
             }
             return lends;
@@ -227,11 +228,12 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         private async Task<ActiveLend> GetActiveLends(Guid userId, Thing thing)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Lend, ActiveLend>());
-            var lendBL = config.CreateMapper().Map<Lend, ActiveLend>(thing.Lend);
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Lend, ActiveLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
+            var lendBL = lendMapper.Map<Lend, ActiveLend>(thing.Lend);
             var friend = await Data.Friends.GetFriend(userId, thing.Lend.FriendId);
             lendBL.Friend = friend;
-            lendBL.Thing = thing;
+            lendBL.Thing = thingMapper.Map<ThingWithoutLend>(thing);
             return lendBL;
         }
     }

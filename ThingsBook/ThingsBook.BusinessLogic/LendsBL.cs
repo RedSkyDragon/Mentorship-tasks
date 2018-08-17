@@ -73,12 +73,13 @@ namespace ThingsBook.BusinessLogic
         public async Task<HistLend> GetHistoricalLend(Guid userId, Guid id)
         {
             var hist = await Data.History.GetHistLend(userId, id);
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
-            var histLend = mapper.Map<HistoricalLend, HistLend>(hist);
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
+            var histLend = lendMapper.Map<HistoricalLend, HistLend>(hist);
             var friend = await Data.Friends.GetFriend(userId, hist.FriendId);
             var thing = await Data.Things.GetThing(userId, hist.ThingId);
             histLend.Friend = friend;
-            histLend.Thing = thing;
+            histLend.Thing = thingMapper.Map<ThingWithoutLend>(thing);
             return histLend;
         }
 
@@ -92,14 +93,15 @@ namespace ThingsBook.BusinessLogic
         public async Task<IEnumerable<HistLend>> GetHistoricalLends(Guid userId)
         {
             var hists = await Data.History.GetHistLends(userId);
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
-            var histLends = hists.Select(h => mapper.Map<HistoricalLend, HistLend>(h));
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
+            var histLends = hists.Select(h => lendMapper.Map<HistoricalLend, HistLend>(h));
             foreach (var hist in histLends)
             {
                 var friend = await Data.Friends.GetFriend(userId, hist.Friend.Id);
                 var thing = await Data.Things.GetThing(userId, hist.Thing.Id);
                 hist.Friend = friend;
-                hist.Thing = thing;
+                hist.Thing = thingMapper.Map<ThingWithoutLend>(thing);
             }
             return histLends;
         }

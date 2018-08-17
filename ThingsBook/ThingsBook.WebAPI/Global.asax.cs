@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
-using System.Web.Routing;
+﻿using System.Web.Http;
 using ThingsBook.WebAPI.Utils;
 
 namespace ThingsBook.WebAPI
 {
+    /// <summary>
+    /// Application class
+    /// </summary>
+    /// <seealso cref="System.Web.HttpApplication" />
     public class WebApiApplication : System.Web.HttpApplication
     {
+        /// <summary>
+        /// Applications start function.
+        /// </summary>
         protected void Application_Start()
         {
             AutofacConfig.ConfigureContainer();

@@ -57,6 +57,7 @@
     <Compile Include="IUsersBL.cs" />
     <Compile Include="Models\HistLend.cs" />
     <Compile Include="Models\ActiveLend.cs" />
+    <Compile Include="Models\ThingWithoutLend.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThingsBL.cs" />
     <Compile Include="UsersBL.cs" />

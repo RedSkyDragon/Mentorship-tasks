@@ -125,7 +125,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <param name="replacementId">The replacement category identifier.</param>
         /// <returns>204(no content)</returns>
         [HttpDelete]
-        [Route("{categoryId:guid}")]
+        [Route("{categoryId:guid}/replace")]
         public Task DeleteAndReplace([FromUri]Guid userId, [FromUri]Guid categoryId, [FromUri]Guid replacementId)
         {
             return _things.DeleteCategoryWithReplacement(userId, categoryId, replacementId);
