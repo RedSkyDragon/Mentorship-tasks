@@ -6,15 +6,28 @@ using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Mongo
 {
+    /// <summary>
+    /// Mongo implementation of DAL interface for historical lends.
+    /// </summary>
+    /// <seealso cref="ThingsBook.Data.Interface.IHistory" />
     public class History : IHistory
     {
         private ThingsBookContext _db;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="History"/> class.
+        /// </summary>
+        /// <param name="db">The database context.</param>
         public History(ThingsBookContext db)
         {
             _db = db;
         }
 
+        /// <summary>
+        /// Creates the historical lend.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="lend">The lend.</param>
         public async Task CreateHistLend(Guid userId, HistoricalLend lend)
         {
             if (userId == lend.UserId)
@@ -23,26 +36,53 @@ namespace ThingsBook.Data.Mongo
             }
         }
 
+        /// <summary>
+        /// Deletes the friend history.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="friendId">The friend identifier.</param>
         public Task DeleteFriendHistory(Guid userId, Guid friendId)
         {
             return _db.History.DeleteManyAsync(h => h.UserId == userId && h.FriendId == friendId);
         }
 
+        /// <summary>
+        /// Deletes the historical lend.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="id">The lend identifier.</param>
         public Task DeleteHistLend(Guid userId, Guid id)
         {
             return _db.History.DeleteOneAsync(h => h.UserId == userId && h.Id == id);
         }
 
+        /// <summary>
+        /// Deletes the thing history.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="thingId">The thing identifier.</param>
         public Task DeleteThingHistory(Guid userId, Guid thingId)
         {
             return _db.History.DeleteManyAsync(h => h.UserId == userId && h.ThingId == thingId);
         }
 
+        /// <summary>
+        /// Deletes the user history.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
         public Task DeleteUserHistory(Guid userId)
         {
             return _db.History.DeleteManyAsync(h => h.UserId == userId); 
         }
 
+        /// <summary>
+        /// Gets the friend historical lends.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="friendId">The friend identifier.</param>
+        /// <returns>
+        /// Dictionary with lend as key and lended thing as value.
+        /// </returns>
         public async Task<IDictionary<HistoricalLend, Thing>> GetFriendHistLends(Guid userId, Guid friendId)
         {
             var result = new Dictionary<HistoricalLend, Thing>();
@@ -61,18 +101,41 @@ namespace ThingsBook.Data.Mongo
             return result;
         }
 
+        /// <summary>
+        /// Gets the historical lend.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="id">The historical lend identifier.</param>
+        /// <returns>
+        /// Historical lend
+        /// </returns>
         public async Task<HistoricalLend> GetHistLend(Guid userId, Guid id)
         {
             var result = await _db.History.FindAsync(h => h.UserId == userId && h.Id == id);
             return result.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Gets all historical lends of user.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>
+        /// List of historical lends.
+        /// </returns>
         public async Task<IEnumerable<HistoricalLend>> GetHistLends(Guid userId)
         {
             var result = await _db.History.FindAsync(h => h.UserId == userId);
             return result.ToEnumerable();
         }
 
+        /// <summary>
+        /// Gets the thing historical lends.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="thingId">The thing identifier.</param>
+        /// <returns>
+        /// Dictionary with lend as key and friend as value.
+        /// </returns>
         public async Task<IDictionary<HistoricalLend, Friend>> GetThingHistLends(Guid userId, Guid thingId)
         {
             var result = new Dictionary<HistoricalLend, Friend>();
@@ -91,6 +154,12 @@ namespace ThingsBook.Data.Mongo
             return result;
         }
 
+        /// <summary>
+        /// Updates the historical lend.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="lend">The lend.</param>
+        /// <returns></returns>
         public Task UpdateHistLend(Guid userId, HistoricalLend lend)
         {
             var update = Builders<HistoricalLend>.Update
