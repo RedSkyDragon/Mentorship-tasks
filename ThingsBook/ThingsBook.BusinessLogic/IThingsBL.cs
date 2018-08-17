@@ -8,9 +8,9 @@ namespace ThingsBook.BusinessLogic
 {
     public interface IThingsBL
     {
-        Task CreateThing(Guid userId, Thing thing);
+        Task<Thing> CreateThing(Guid userId, Thing thing);
 
-        Task UpdateThing(Guid userId, Thing thing);
+        Task<Thing> UpdateThing(Guid userId, Thing thing);
 
         Task DeleteThing(Guid userId, Guid id);
 
@@ -22,9 +22,9 @@ namespace ThingsBook.BusinessLogic
 
         Task<FilteredLends> GetThingLends(Guid userId, Guid thingId);
 
-        Task CreateCategory(Guid userId, Category category);
+        Task<Category> CreateCategory(Guid userId, Category category);
 
-        Task UpdateCategory(Guid userId, Category category);
+        Task<Category> UpdateCategory(Guid userId, Category category);
 
         Task DeleteCategoryWithThings(Guid userId, Guid id);
 

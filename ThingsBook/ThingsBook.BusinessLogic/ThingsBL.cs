@@ -11,14 +11,16 @@ namespace ThingsBook.BusinessLogic
     {
         public ThingsBL(CommonDAL data) : base(data) { }
 
-        public Task CreateCategory(Guid userId, Category category)
+        public async Task<Category> CreateCategory(Guid userId, Category category)
         {
-            return Data.Categories.CreateCategory(userId, category);
+            await Data.Categories.CreateCategory(userId, category);
+            return await Data.Categories.GetCategory(userId, category.Id);
         }
 
-        public Task CreateThing(Guid userId, Thing thing)
+        public async Task<Thing> CreateThing(Guid userId, Thing thing)
         {
-            return Data.Things.CreateThing(userId, thing);
+            await Data.Things.CreateThing(userId, thing);
+            return await Data.Things.GetThing(userId, thing.Id);
         }
 
         public async Task DeleteCategoryWithReplacement(Guid userId, Guid categoryId, Guid replacementId)
@@ -63,14 +65,16 @@ namespace ThingsBook.BusinessLogic
             return Data.Things.GetThingsForCategory(userId, categoryId);
         }
 
-        public Task UpdateCategory(Guid userId, Category category)
+        public async Task<Category> UpdateCategory(Guid userId, Category category)
         {
-            return Data.Categories.UpdateCategory(userId, category);
+            await Data.Categories.UpdateCategory(userId, category);
+            return await Data.Categories.GetCategory(userId, category.Id);
         }
 
-        public Task UpdateThing(Guid userId, Thing thing)
+        public async Task<Thing> UpdateThing(Guid userId, Thing thing)
         {
-            return Data.Things.UpdateThing(userId, thing);
+            await Data.Things.UpdateThing(userId, thing);
+            return await Data.Things.GetThing(userId, thing.Id);
         }
 
         public async Task<FilteredLends> GetThingLends(Guid userId, Guid thingId)

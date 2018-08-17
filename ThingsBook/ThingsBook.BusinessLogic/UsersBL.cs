@@ -9,22 +9,23 @@ namespace ThingsBook.BusinessLogic
     {
         public UsersBL(CommonDAL data) : base(data) { }
 
-        public async Task Create(User user)
+        public async Task<User> Create(User user)
         {
             await Data.Users.CreateUser(user);
             await Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
+            return await Data.Users.GetUser(user.Id);
         }
 
-        public async Task CreateOrUpdate(User user)
+        public async Task<User> CreateOrUpdate(User user)
         {
             var current = await Get(user.Id);
             if (current == null)
             {
-                await Create(user);
+                return await Create(user);
             }
             else
             {
-                await Update(user);
+                return await Update(user);
             }
         }
 
@@ -46,9 +47,10 @@ namespace ThingsBook.BusinessLogic
             return Data.Users.GetUsers();
         }
 
-        public Task Update(User user)
+        public async Task<User> Update(User user)
         {
-            return Data.Users.UpdateUser(user);
+            await Data.Users.UpdateUser(user);
+            return await Data.Users.GetUser(user.Id);
         }
     }
 }

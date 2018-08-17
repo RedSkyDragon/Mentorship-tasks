@@ -12,9 +12,10 @@ namespace ThingsBook.BusinessLogic
     {
         public LendsBL(CommonDAL data) : base(data) { }
 
-        public Task Create(Guid userId, Guid thingId, Lend lend)
+        public async Task<Thing> Create(Guid userId, Guid thingId, Lend lend)
         {
-            return Data.Lends.CreateLend(userId, thingId, lend);
+            await Data.Lends.CreateLend(userId, thingId, lend);
+            return await Data.Things.GetThing(userId, thingId);
         }
 
         public async Task Delete(Guid userId, Guid thingId, DateTime returnDate)
@@ -57,9 +58,10 @@ namespace ThingsBook.BusinessLogic
             return histLends;
         }
 
-        public Task Update(Guid userId, Guid thingId, Lend lend)
+        public async Task<Thing> Update(Guid userId, Guid thingId, Lend lend)
         {
-            return Data.Lends.UpdateLend(userId, thingId, lend);
+            await Data.Lends.UpdateLend(userId, thingId, lend);
+            return await Data.Things.GetThing(userId, thingId);
         }
 
         private HistoricalLend ReturnThing(Thing thing, DateTime returnDate)

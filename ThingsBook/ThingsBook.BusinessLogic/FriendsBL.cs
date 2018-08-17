@@ -11,9 +11,10 @@ namespace ThingsBook.BusinessLogic
     {
         public FriendsBL(CommonDAL data): base(data) { }
 
-        public Task Create(Guid userId, Friend friend)
+        public async Task<Friend> Create(Guid userId, Friend friend)
         {
-            return Data.Friends.CreateFriend(userId, friend);
+            await Data.Friends.CreateFriend(userId, friend);
+            return await Data.Friends.GetFriend(userId, friend.Id);
         }
 
         public async Task Delete(Guid userId, Guid id)
@@ -46,9 +47,10 @@ namespace ThingsBook.BusinessLogic
             return Data.Friends.GetFriend(userId, id);
         }
 
-        public Task Update(Guid userId, Friend friend)
+        public async Task<Friend> Update(Guid userId, Friend friend)
         {
-            return Data.Friends.UpdateFriend(userId, friend);
+            await Data.Friends.UpdateFriend(userId, friend);
+            return await Data.Friends.GetFriend(userId, friend.Id);
         }
 
         private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, Friend friend)
