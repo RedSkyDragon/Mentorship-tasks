@@ -1,0 +1,41 @@
+User
+{
+	_id: USER_ID,
+	name: "Вася Пупкин",
+	categories: 
+	[{
+		_id: CATEGORY_ID,
+		name: "Книги",
+		additional_info: "Bla-bla-bla",
+		things: 
+		[{
+			_id: THING_ID,
+			name: "Книга Винни-Пух",
+			additional_info: "Для детей, 1997г. выпуска",
+			lend:
+			{
+				_id: LEND_ID,
+				friend_id: id1,
+				lend_date: 07.07.18,
+				comment: "На месяц. Обещал шоколадку по возвращению"
+			}				
+		},...]
+	},...],
+	friends: 
+	[{
+		_id: FRIEND_ID,
+		name: "Иван Иванов",
+		contacts: "тел: 123443534; vk: id123121314", //имеет смысл сделать вложенным объектом?
+	}, ...]
+}
+
+LendHistory
+{
+	_id: LENDHISTORY_ID,
+	user_id: id1,
+	thing_id: id2,
+	friend_id: id3,
+	lend_date: 07.07.18,
+	return_date: 12.03.19,
+	comment: "Вернул в хорошем состоянии"	
+}
