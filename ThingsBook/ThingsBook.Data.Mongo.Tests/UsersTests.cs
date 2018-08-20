@@ -12,7 +12,6 @@ namespace ThingsBook.Data.Mongo.Tests
         private User _user;
 
         [SetUp]
-        [Test]
         public async Task Setup()
         {
             _users = new Users(new ThingsBookContext("mongodb://localhost/ThingsBook"));
@@ -73,7 +72,6 @@ namespace ThingsBook.Data.Mongo.Tests
             Assert.AreEqual(null, res);
         }
 
-        [Test]
         [TearDown]
         public async Task Final()
         {
