@@ -82,7 +82,6 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [TearDown]
-        [Explicit]
         public async Task Final()
         {
             await _users.DeleteUser(_user.Id);
