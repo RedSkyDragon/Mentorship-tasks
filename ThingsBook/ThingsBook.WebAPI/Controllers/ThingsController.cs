@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
 using ThingsBook.BusinessLogic.Models;
-using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
@@ -75,14 +74,13 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("")]
         public Task<Thing> Post([FromUri]Guid userId, [FromBody]Models.Thing thing)
         {
-            var thingDM = new Thing
+            var thingBL = new Thing
             {
                 Name = thing.Name,
                 About = thing.About,
-                CategoryId = thing.CategoryId,
-                UserId = userId
+                CategoryId = thing.CategoryId
             };
-            return _things.CreateThing(userId, thingDM);
+            return _things.CreateThing(userId, thingBL);
         }
 
         /// <summary>
@@ -96,15 +94,14 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("{thingId:guid}")]
         public Task<Thing> Put([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Models.Thing thing)
         {
-            var thingDM = new Thing
+            var thingBL = new Thing
             {
                 Id = thingId,
                 Name = thing.Name,
                 About = thing.About,
-                CategoryId = thing.CategoryId,
-                UserId = userId
+                CategoryId = thing.CategoryId
             };
-            return _things.UpdateThing(userId, thingDM);
+            return _things.UpdateThing(userId, thingBL);
         }
 
         /// <summary>

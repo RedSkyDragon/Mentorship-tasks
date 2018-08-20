@@ -6,7 +6,7 @@ namespace ThingsBook.Data.Interface
     /// <summary>
     /// Utils for GUID
     /// </summary>
-    internal static class SequentialGuidUtils
+    public static class SequentialGuidUtils
     {
         /// <summary>
         /// Creates the sequential unique identifier.

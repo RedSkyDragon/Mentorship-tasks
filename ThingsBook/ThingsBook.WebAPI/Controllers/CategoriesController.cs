@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
-using ThingsBook.Data.Interface;
+using ThingsBook.BusinessLogic.Models;
 
 namespace ThingsBook.WebAPI.Controllers
 {
@@ -74,13 +74,12 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("")]
         public Task<Category> Post([FromUri]Guid userId, [FromBody]Models.Category category)
         {
-            Category categoryDM = new Category
+            Category categoryBL = new Category
             {
-                UserId = userId,
                 Name = category.Name,
                 About = category.About
             };
-            return _things.CreateCategory(userId, categoryDM);
+            return _things.CreateCategory(userId, categoryBL);
         }
 
         /// <summary>
@@ -94,14 +93,13 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("{categoryId:guid}")]
         public Task<Category> Put([FromUri]Guid userId, [FromUri]Guid categoryId, [FromBody]Models.Category category)
         {
-            Category categoryDM = new Category
+            Category categoryBL = new Category
             {
                 Id = categoryId,
-                UserId = userId,
                 Name = category.Name,
                 About = category.About
             };
-            return _things.UpdateCategory(userId, categoryDM);
+            return _things.UpdateCategory(userId, categoryBL);
         }
 
         /// <summary>

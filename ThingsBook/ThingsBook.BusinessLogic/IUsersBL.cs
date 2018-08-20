@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ThingsBook.Data.Interface;
+using ThingsBook.BusinessLogic.Models;
 
 namespace ThingsBook.BusinessLogic
 {

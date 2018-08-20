@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.BusinessLogic.Models;
 using ThingsBook.Data.Interface;
@@ -28,10 +29,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Created category.
         /// </returns>
-        public async Task<Category> CreateCategory(Guid userId, Category category)
+        public async Task<Models.Category> CreateCategory(Guid userId, Models.Category category)
         {
-            await Data.Categories.CreateCategory(userId, category);
-            return await Data.Categories.GetCategory(userId, category.Id);
+            await Data.Categories.CreateCategory(userId, ModelsConverter.ToDataModel(category, userId));
+            return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
         }
 
         /// <summary>
@@ -42,10 +43,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Created thing.
         /// </returns>
-        public async Task<Thing> CreateThing(Guid userId, Thing thing)
+        public async Task<Models.Thing> CreateThing(Guid userId, Models.Thing thing)
         {
-            await Data.Things.CreateThing(userId, thing);
-            return await Data.Things.GetThing(userId, thing.Id);
+            await Data.Things.CreateThing(userId, ModelsConverter.ToDataModel(thing, userId));
+            return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
         }
 
         /// <summary>
@@ -91,9 +92,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// List of categories
         /// </returns>
-        public Task<IEnumerable<Category>> GetCategories(Guid userId)
+        public async Task<IEnumerable<Models.Category>> GetCategories(Guid userId)
         {
-            return Data.Categories.GetCategories(userId);
+            var result = await Data.Categories.GetCategories(userId);     
+            return result.Select(r => ModelsConverter.ToBLModel(r));
         }
 
         /// <summary>
@@ -104,9 +106,9 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Requested category
         /// </returns>
-        public Task<Category> GetCategory(Guid userId, Guid id)
+        public async Task<Models.Category> GetCategory(Guid userId, Guid id)
         {
-            return Data.Categories.GetCategory(userId, id);
+            return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, id));
         }
 
         /// <summary>
@@ -117,9 +119,9 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Requested thing.
         /// </returns>
-        public Task<Thing> GetThing(Guid userId, Guid id)
+        public async Task<Models.Thing> GetThing(Guid userId, Guid id)
         {
-            return Data.Things.GetThing(userId, id);
+            return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, id));
         }
 
         /// <summary>
@@ -129,9 +131,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// List of things.
         /// </returns>
-        public Task<IEnumerable<Thing>> GetThings(Guid userId)
+        public async Task<IEnumerable<Models.Thing>> GetThings(Guid userId)
         {
-            return Data.Things.GetThings(userId);
+            var result = await Data.Things.GetThings(userId);
+            return result.Select(r => ModelsConverter.ToBLModel(r));
         }
 
         /// <summary>
@@ -142,9 +145,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// List of things.
         /// </returns>
-        public Task<IEnumerable<Thing>> GetThingsForCategory(Guid userId, Guid categoryId)
+        public async Task<IEnumerable<Models.Thing>> GetThingsForCategory(Guid userId, Guid categoryId)
         {
-            return Data.Things.GetThingsForCategory(userId, categoryId);
+            var result = await Data.Things.GetThingsForCategory(userId, categoryId);
+            return result.Select(r => ModelsConverter.ToBLModel(r));
         }
 
         /// <summary>
@@ -155,10 +159,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Updated category
         /// </returns>
-        public async Task<Category> UpdateCategory(Guid userId, Category category)
+        public async Task<Models.Category> UpdateCategory(Guid userId, Models.Category category)
         {
-            await Data.Categories.UpdateCategory(userId, category);
-            return await Data.Categories.GetCategory(userId, category.Id);
+            await Data.Categories.UpdateCategory(userId, ModelsConverter.ToDataModel(category, userId));
+            return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
         }
 
         /// <summary>
@@ -169,10 +173,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Updated thing.
         /// </returns>
-        public async Task<Thing> UpdateThing(Guid userId, Thing thing)
+        public async Task<Models.Thing> UpdateThing(Guid userId, Models.Thing thing)
         {
-            await Data.Things.UpdateThing(userId, thing);
-            return await Data.Things.GetThing(userId, thing.Id);
+            await Data.Things.UpdateThing(userId, ModelsConverter.ToDataModel(thing, userId));
+            return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
         }
 
         /// <summary>
@@ -186,7 +190,7 @@ namespace ThingsBook.BusinessLogic
         public async Task<FilteredLends> GetThingLends(Guid userId, Guid thingId)
         {
             var activeLends = new List<ActiveLend>();
-            var thing = await Data.Things.GetThing(userId, thingId);
+            var thing = ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
             if (thing.Lend != null)
             {
                 activeLends.Add(await GetActiveLends(userId, thing));
@@ -204,16 +208,16 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="thing">The thing.</param>
         /// <returns></returns>
-        private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, Thing thing)
+        private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, Models.Thing thing)
         {
             var history = await Data.History.GetThingHistLends(userId, thing.Id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
-            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Models.Thing, ThingWithoutLend>()).CreateMapper();
             var lends = new List<HistLend>();
             foreach (var item in history)
             {
                 var lend = lendMapper.Map<HistoricalLend, HistLend>(item.Key);
-                lend.Friend = item.Value;
+                lend.Friend = ModelsConverter.ToBLModel(item.Value);
                 lend.Thing = thingMapper.Map<ThingWithoutLend>(thing);
                 lends.Add(lend);
             }
@@ -226,13 +230,13 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="thing">The thing.</param>
         /// <returns></returns>
-        private async Task<ActiveLend> GetActiveLends(Guid userId, Thing thing)
+        private async Task<ActiveLend> GetActiveLends(Guid userId, Models.Thing thing)
         {
-            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Lend, ActiveLend>()).CreateMapper();
-            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
-            var lendBL = lendMapper.Map<Lend, ActiveLend>(thing.Lend);
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Models.Lend, ActiveLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Models.Thing, ThingWithoutLend>()).CreateMapper();
+            var lendBL = lendMapper.Map<Models.Lend, ActiveLend>(thing.Lend);
             var friend = await Data.Friends.GetFriend(userId, thing.Lend.FriendId);
-            lendBL.Friend = friend;
+            lendBL.Friend = ModelsConverter.ToBLModel(friend);
             lendBL.Thing = thingMapper.Map<ThingWithoutLend>(thing);
             return lendBL;
         }

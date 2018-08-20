@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.BusinessLogic.Models;
 using ThingsBook.Data.Interface;
@@ -28,10 +29,11 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Created friend.
         /// </returns>
-        public async Task<Friend> Create(Guid userId, Friend friend)
+        public async Task<Models.Friend> Create(Guid userId, Models.Friend friend)
         {
-            await Data.Friends.CreateFriend(userId, friend);
-            return await Data.Friends.GetFriend(userId, friend.Id);
+
+            await Data.Friends.CreateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
+            return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
         }
 
         /// <summary>
@@ -54,9 +56,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// List if friends.
         /// </returns>
-        public Task<IEnumerable<Friend>> GetAll(Guid userId)
+        public async Task<IEnumerable<Models.Friend>> GetAll(Guid userId)
         {
-            return Data.Friends.GetFriends(userId);
+            var friends = await Data.Friends.GetFriends(userId);
+            return friends.Select(t => ModelsConverter.ToBLModel(t));
         }
 
         /// <summary>
@@ -69,7 +72,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<FilteredLends> GetFriendLends(Guid userId, Guid friendId)
         {
-            var friend = await Data.Friends.GetFriend(userId, friendId);
+            var friend = ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friendId));
             var active = GetActiveLends(userId, friend);
             var history = GetHistoryLends(userId, friend);
             await Task.WhenAll(active, history);
@@ -88,9 +91,9 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Requested friend.
         /// </returns>
-        public Task<Friend> GetOne(Guid userId, Guid id)
+        public async Task<Models.Friend> GetOne(Guid userId, Guid id)
         {
-            return Data.Friends.GetFriend(userId, id);
+            return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, id));
         }
 
         /// <summary>
@@ -101,10 +104,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Updated friend.
         /// </returns>
-        public async Task<Friend> Update(Guid userId, Friend friend)
+        public async Task<Models.Friend> Update(Guid userId, Models.Friend friend)
         {
-            await Data.Friends.UpdateFriend(userId, friend);
-            return await Data.Friends.GetFriend(userId, friend.Id);
+            await Data.Friends.UpdateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
+            return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
         }
 
         /// <summary>
@@ -113,11 +116,11 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="friend">The friend.</param>
         /// <returns></returns>
-        private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, Friend friend)
+        private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, Models.Friend friend)
         {
             var history = await Data.History.GetFriendHistLends(userId, friend.Id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
-            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, ThingWithoutLend>()).CreateMapper();
             var lends = new List<HistLend>();
             foreach (var item in history)
             {
@@ -135,17 +138,18 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="friend">The friend.</param>
         /// <returns></returns>
-        private async Task<IEnumerable<ActiveLend>> GetActiveLends(Guid userId, Friend friend)
+        private async Task<IEnumerable<ActiveLend>> GetActiveLends(Guid userId, Models.Friend friend)
         {
             var things = await Data.Things.GetThingsForFriend(userId, friend.Id);
-            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Lend, ActiveLend>()).CreateMapper();
-            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Thing, ThingWithoutLend>()).CreateMapper();
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Lend, ActiveLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, ThingWithoutLend>()).CreateMapper();
             var lends = new List<ActiveLend>();
             foreach (var thing in things)
             {
                 var lend = lendMapper.Map<ActiveLend>(thing.Lend);
                 lend.Friend = friend;
                 lend.Thing = thingMapper.Map<ThingWithoutLend>(thing);
+                lends.Add(lend);
             }
             return lends;
         }

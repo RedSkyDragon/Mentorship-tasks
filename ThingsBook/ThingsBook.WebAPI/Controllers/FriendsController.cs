@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
 using ThingsBook.BusinessLogic.Models;
-using ThingsBook.Data.Interface;
 
 namespace ThingsBook.WebAPI.Controllers
 {
@@ -74,13 +73,12 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("")]
         public Task<Friend> Post([FromUri]Guid userId, [FromBody]Models.Friend friend)
         {
-            Friend friendDM = new Friend
+            Friend friendBL = new Friend
             {
                 Name = friend.Name,
-                Contacts = friend.Contacts,
-                UserId = userId
+                Contacts = friend.Contacts
             };
-            return _friends.Create(userId, friendDM);
+            return _friends.Create(userId, friendBL);
         }
 
         /// <summary>
@@ -94,14 +92,13 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("{friendId:guid}")]
         public Task<Friend> Put([FromUri]Guid userId, [FromUri]Guid friendId, [FromBody]Models.Friend friend)
         {
-            Friend friendDM = new Friend
+            Friend friendBL = new Friend
             {
                 Id = friendId,
                 Name = friend.Name,
-                Contacts = friend.Contacts,
-                UserId = userId
+                Contacts = friend.Contacts
             };
-            return _friends.Update(userId, friendDM);
+            return _friends.Update(userId, friendBL);
         }
 
         /// <summary>

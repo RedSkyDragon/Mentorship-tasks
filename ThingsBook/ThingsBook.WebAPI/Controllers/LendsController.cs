@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
-using ThingsBook.Data.Interface;
+using ThingsBook.BusinessLogic.Models;
 
 namespace ThingsBook.WebAPI.Controllers
 {

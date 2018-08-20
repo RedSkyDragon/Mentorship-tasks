@@ -3,19 +3,14 @@
 namespace ThingsBook.BusinessLogic.Models
 {
     /// <summary>
-    /// Active lend business logic model
+    /// Business model for lend
     /// </summary>
-    public class ActiveLend
+    public class Lend
     {
         /// <summary>
-        /// Gets or sets the thing.
+        /// Gets or sets the friend identifier.
         /// </summary>
-        public ThingWithoutLend Thing { get; set; }
-
-        /// <summary>
-        /// Gets or sets the friend.
-        /// </summary>
-        public Friend Friend { get; set; }
+        public Guid FriendId { get; set; }
 
         /// <summary>
         /// Gets or sets the lend date.

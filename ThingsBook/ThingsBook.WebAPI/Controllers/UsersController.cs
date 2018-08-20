@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
-using ThingsBook.Data.Interface;
+using ThingsBook.BusinessLogic.Models;
 
 namespace ThingsBook.WebAPI.Controllers
 {
@@ -58,8 +58,8 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("")]
         public Task<User> Post([FromBody]Models.User user)
         {
-            User userDM = new User { Name = user.Name };
-            return _users.CreateOrUpdate(userDM);
+            User userBL = new User { Name = user.Name };
+            return _users.CreateOrUpdate(userBL);
         }
 
         /// <summary>
@@ -72,8 +72,8 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("{userId:guid}")]
         public Task<User> Put([FromUri]Guid userId, [FromBody]Models.User user)
         {
-            User userDM = new User { Id = userId, Name = user.Name };
-            return _users.CreateOrUpdate(userDM);
+            User userBL = new User { Id = userId, Name = user.Name };
+            return _users.CreateOrUpdate(userBL);
         }
 
         /// <summary>

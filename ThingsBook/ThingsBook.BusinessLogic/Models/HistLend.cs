@@ -11,7 +11,7 @@ namespace ThingsBook.BusinessLogic.Models
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = SequentialGuidUtils.CreateGuid();
 
         /// <summary>
         /// Gets or sets the thing.

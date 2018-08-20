@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
 
@@ -25,11 +26,11 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Created user.
         /// </returns>
-        public async Task<User> Create(User user)
+        public async Task<Models.User> Create(Models.User user)
         {
-            await Data.Users.CreateUser(user);
+            await Data.Users.CreateUser(ModelsConverter.ToDataModel(user));
             await Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
-            return await Data.Users.GetUser(user.Id);
+            return ModelsConverter.ToBLModel(await Data.Users.GetUser(user.Id));
         }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Created or updated user.
         /// </returns>
-        public async Task<User> CreateOrUpdate(User user)
+        public async Task<Models.User> CreateOrUpdate(Models.User user)
         {
             var current = await Get(user.Id);
             if (current == null)
@@ -72,9 +73,9 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Requested user.
         /// </returns>
-        public Task<User> Get(Guid id)
+        public async Task<Models.User> Get(Guid id)
         {
-            return Data.Users.GetUser(id);
+            return ModelsConverter.ToBLModel(await Data.Users.GetUser(id));
         }
 
         /// <summary>
@@ -83,9 +84,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// List of users.
         /// </returns>
-        public Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<Models.User>> GetAll()
         {
-            return Data.Users.GetUsers();
+            var result = await Data.Users.GetUsers();
+            return result.Select(r => ModelsConverter.ToBLModel(r));
         }
 
         /// <summary>
@@ -95,10 +97,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Updated user.
         /// </returns>
-        public async Task<User> Update(User user)
+        public async Task<Models.User> Update(Models.User user)
         {
-            await Data.Users.UpdateUser(user);
-            return await Data.Users.GetUser(user.Id);
+            await Data.Users.UpdateUser(ModelsConverter.ToDataModel(user));
+            return ModelsConverter.ToBLModel(await Data.Users.GetUser(user.Id));
         }
     }
 }
