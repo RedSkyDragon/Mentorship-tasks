@@ -1,10 +1,18 @@
-﻿namespace ThingsBook.WebAPI.Models
+﻿using System;
+using ThingsBook.Data.Interface;
+
+namespace ThingsBook.BusinessLogic.Models
 {
     /// <summary>
-    /// Friend model for data from client
+    /// Business logic model for friend
     /// </summary>
     public class Friend
     {
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        public Guid Id { get; set; } = SequentialGuidUtils.CreateGuid();
+
         /// <summary>
         /// Gets or sets the name.
         /// </summary>

@@ -1,22 +1,22 @@
 ﻿using System;
+using ThingsBook.Data.Interface;
 
-namespace ThingsBook.Data.Interface
+namespace ThingsBook.BusinessLogic.Models
 {
     /// <summary>
-    /// Thing data model.
+    /// Business logic model for thing.
     /// </summary>
-    /// <seealso cref="ThingsBook.Data.Interface.Entity" />
-    public class Thing : Entity
+    public class ThingWithLend
     {
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        public Guid Id { get; set; } = SequentialGuidUtils.CreateGuid();
+
         /// <summary>
         /// Gets or sets the category identifier.
         /// </summary>
         public Guid CategoryId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user identifier.
-        /// </summary>
-        public Guid UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the name.

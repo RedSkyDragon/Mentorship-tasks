@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace ThingsBook.Data.Interface
+namespace ThingsBook.BusinessLogic.Models
 {
     /// <summary>
-    /// Lend data model.
+    /// Business model for lend
     /// </summary>
     public class Lend
     {

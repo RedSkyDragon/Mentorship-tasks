@@ -7,15 +7,28 @@ using ThingsBook.Data.Interface;
 
 namespace ThingsBook.Data.Mongo
 {
+    /// <summary>
+    /// Mongo implementation of DAL interface for things.
+    /// </summary>
+    /// <seealso cref="ThingsBook.Data.Interface.IThings" />
     public class Things : IThings
     {
         private ThingsBookContext _db;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Things"/> class.
+        /// </summary>
+        /// <param name="db">The database context.</param>
         public Things(ThingsBookContext db)
         {
             _db = db;
         }
 
+        /// <summary>
+        /// Creates the thing.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="thing">The thing.</param>
         public async Task CreateThing(Guid userId, Thing thing)
         {
             if (userId == thing.UserId)
@@ -24,45 +37,95 @@ namespace ThingsBook.Data.Mongo
             }
         }
 
+        /// <summary>
+        /// Deletes the thing.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="id">The thing identifier.</param>
         public Task DeleteThing(Guid userId, Guid id)
         {
             return _db.Things.DeleteOneAsync(t => t.UserId == userId && t.Id == id);
         }
 
+        /// <summary>
+        /// Deletes all things.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
         public Task DeleteThings(Guid userId)
         {
             return _db.Things.DeleteManyAsync(t => t.UserId == userId);
         }
 
+        /// <summary>
+        /// Deletes all things with specified category.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="categoryId">The category identifier.</param>
         public Task DeleteThingsForCategory(Guid userId, Guid categoryId)
         {
             return _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);
         }
 
+        /// <summary>
+        /// Gets the things lended by the specified friend.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="friedId">The fried identifier.</param>
+        /// <returns>
+        /// List of things.
+        /// </returns>
         public async Task<IEnumerable<Thing>> GetThingsForFriend(Guid userId, Guid friedId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Lend.FriendId == friedId);
             return result.ToEnumerable();
         }
 
+        /// <summary>
+        /// Gets the thing.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="id">The thing identifier.</param>
+        /// <returns>
+        /// The thing.
+        /// </returns>
         public async Task<Thing> GetThing(Guid userId, Guid id)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Id == id);
             return result.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Gets all things.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>
+        /// List of things
+        /// </returns>
         public async Task<IEnumerable<Thing>> GetThings(Guid userId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId);
             return result.ToEnumerable();
         }
 
+        /// <summary>
+        /// Gets the things with specified category.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="categoryId">The category identifier.</param>
+        /// <returns>
+        /// List of things.
+        /// </returns>
         public async Task<IEnumerable<Thing>> GetThingsForCategory(Guid userId, Guid categoryId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.CategoryId == categoryId);
             return result.ToEnumerable();
         }
 
+        /// <summary>
+        /// Updates the thing.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="thing">The thing.</param>
         public Task UpdateThing(Guid userId, Thing thing)
         {
             var update = Builders<Thing>.Update
@@ -72,6 +135,12 @@ namespace ThingsBook.Data.Mongo
             return _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thing.Id, update);
         }
 
+        /// <summary>
+        /// Updates the things category.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="categoryId">The category identifier.</param>
+        /// <param name="replacementId">The replacement identifier.</param>
         public Task UpdateThingsCategory(Guid userId, Guid categoryId, Guid replacementId)
         {
             var update = Builders<Thing>.Update

@@ -9,7 +9,7 @@ using ThingsBook.Data.Mongo;
 namespace ThingsBook.WebAPI.Utils
 {
     /// <summary>
-    /// Configures AutoFac
+    /// AutoFac configuration.
     /// </summary>
     public class AutofacConfig
     {
