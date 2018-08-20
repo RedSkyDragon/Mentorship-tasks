@@ -17,7 +17,7 @@ namespace ThingsBook.BusinessLogic
         /// <param name="thingId">The thing identifier.</param>
         /// <param name="lend">The lend.</param>
         /// <returns>Thing with created lend.</returns>
-        Task<Thing> Create(Guid userId, Guid thingId, Lend lend);
+        Task<ThingWithLend> Create(Guid userId, Guid thingId, Lend lend);
 
         /// <summary>
         /// Deletes the specified lend record and creates history record.
@@ -35,7 +35,7 @@ namespace ThingsBook.BusinessLogic
         /// <param name="thingId">The thing identifier.</param>
         /// <param name="lend">The lend.</param>
         /// <returns>Updated thing with lend</returns>
-        Task<Thing> Update(Guid userId, Guid thingId, Lend lend);
+        Task<ThingWithLend> Update(Guid userId, Guid thingId, Lend lend);
 
         /// <summary>
         /// Gets the historical lend.

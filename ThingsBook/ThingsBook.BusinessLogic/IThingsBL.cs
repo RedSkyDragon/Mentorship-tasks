@@ -16,7 +16,7 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="thing">The thing.</param>
         /// <returns>Created thing.</returns>
-        Task<Thing> CreateThing(Guid userId, Thing thing);
+        Task<ThingWithLend> CreateThing(Guid userId, ThingWithLend thing);
 
         /// <summary>
         /// Updates the thing.
@@ -24,7 +24,7 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="thing">The thing.</param>
         /// <returns>Updated thing.</returns>
-        Task<Thing> UpdateThing(Guid userId, Thing thing);
+        Task<ThingWithLend> UpdateThing(Guid userId, ThingWithLend thing);
 
         /// <summary>
         /// Deletes the thing.
@@ -40,14 +40,14 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="id">The thing identifier.</param>
         /// <returns>Requested thing.</returns>
-        Task<Thing> GetThing(Guid userId, Guid id);
+        Task<ThingWithLend> GetThing(Guid userId, Guid id);
 
         /// <summary>
         /// Gets all things for user.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>List of things.</returns>
-        Task<IEnumerable<Thing>> GetThings(Guid userId);
+        Task<IEnumerable<ThingWithLend>> GetThings(Guid userId);
 
         /// <summary>
         /// Gets the things of requested category.
@@ -55,7 +55,7 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="categoryId">The category identifier.</param>
         /// <returns>List of things.</returns>
-        Task<IEnumerable<Thing>> GetThingsForCategory(Guid userId, Guid categoryId);
+        Task<IEnumerable<ThingWithLend>> GetThingsForCategory(Guid userId, Guid categoryId);
 
         /// <summary>
         /// Gets the thing active lend and lends history.

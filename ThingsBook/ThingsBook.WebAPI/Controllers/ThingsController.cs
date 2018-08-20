@@ -33,7 +33,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>List of things</returns>
         [HttpGet]
         [Route("~/things")]
-        public Task<IEnumerable<Thing>> Get([FromUri]Guid userId)
+        public Task<IEnumerable<ThingWithLend>> Get([FromUri]Guid userId)
         {
             return _things.GetThings(userId);
         }
@@ -46,7 +46,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Thing</returns>
         [HttpGet]
         [Route("{thingId:guid}")]
-        public Task<Thing> Get([FromUri]Guid userId, [FromUri]Guid thingId)
+        public Task<ThingWithLend> Get([FromUri]Guid userId, [FromUri]Guid thingId)
         {
             return _things.GetThing(userId, thingId);
         }
@@ -72,9 +72,9 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Created thing</returns>
         [HttpPost]
         [Route("")]
-        public Task<Thing> Post([FromUri]Guid userId, [FromBody]Models.Thing thing)
+        public Task<ThingWithLend> Post([FromUri]Guid userId, [FromBody]Models.Thing thing)
         {
-            var thingBL = new Thing
+            var thingBL = new ThingWithLend
             {
                 Name = thing.Name,
                 About = thing.About,
@@ -92,9 +92,9 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Updated thing</returns>
         [HttpPut]
         [Route("{thingId:guid}")]
-        public Task<Thing> Put([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Models.Thing thing)
+        public Task<ThingWithLend> Put([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Models.Thing thing)
         {
-            var thingBL = new Thing
+            var thingBL = new ThingWithLend
             {
                 Id = thingId,
                 Name = thing.Name,

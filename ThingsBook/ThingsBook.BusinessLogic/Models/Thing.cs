@@ -1,22 +1,16 @@
 ﻿using System;
-using ThingsBook.Data.Interface;
 
 namespace ThingsBook.BusinessLogic.Models
 {
     /// <summary>
-    /// Business logic model for thing.
+    /// Business logic model for thing. Lend is not included.
     /// </summary>
     public class Thing
     {
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
-        public Guid Id { get; set; } = SequentialGuidUtils.CreateGuid();
-
-        /// <summary>
-        /// Gets or sets the category identifier.
-        /// </summary>
-        public Guid CategoryId { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
@@ -24,13 +18,13 @@ namespace ThingsBook.BusinessLogic.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the additional information.
+        /// Gets or sets the about.
         /// </summary>
         public string About { get; set; }
 
         /// <summary>
-        /// Gets or sets the lend information.
+        /// Gets or sets the category identifier.
         /// </summary>
-        public Lend Lend { get; set; }
+        public Guid CategoryId { get; set; }
     }
 }

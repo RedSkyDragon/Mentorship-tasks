@@ -30,7 +30,7 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Thing with created lend.
         /// </returns>
-        public async Task<Models.Thing> Create(Guid userId, Guid thingId, Models.Lend lend)
+        public async Task<Models.ThingWithLend> Create(Guid userId, Guid thingId, Models.Lend lend)
         {
             await Data.Lends.CreateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
@@ -74,12 +74,12 @@ namespace ThingsBook.BusinessLogic
         {
             var hist = await Data.History.GetHistLend(userId, id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
-            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, ThingWithoutLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
             var histLend = lendMapper.Map<HistoricalLend, HistLend>(hist);
             var friend = ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, hist.FriendId));
             var thing = await Data.Things.GetThing(userId, hist.ThingId);
             histLend.Friend = friend;
-            histLend.Thing = thingMapper.Map<ThingWithoutLend>(thing);
+            histLend.Thing = thingMapper.Map<Models.Thing>(thing);
             return histLend;
         }
 
@@ -94,7 +94,7 @@ namespace ThingsBook.BusinessLogic
         {
             var hists = await Data.History.GetHistLends(userId);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
-            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, ThingWithoutLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
             var histLends = new List<HistLend>();
             foreach (var hist in hists)
             {
@@ -102,7 +102,7 @@ namespace ThingsBook.BusinessLogic
                 var thing = await Data.Things.GetThing(userId, hist.ThingId);
                 var histLend = lendMapper.Map<HistoricalLend, HistLend>(hist);
                 histLend.Friend = friend;
-                histLend.Thing = thingMapper.Map<ThingWithoutLend>(thing);
+                histLend.Thing = thingMapper.Map<Models.Thing>(thing);
                 histLends.Add(histLend);
             }
             return histLends;
@@ -117,7 +117,7 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Updated thing with lend
         /// </returns>
-        public async Task<Models.Thing> Update(Guid userId, Guid thingId, Models.Lend lend)
+        public async Task<Models.ThingWithLend> Update(Guid userId, Guid thingId, Models.Lend lend)
         {
             await Data.Lends.UpdateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));

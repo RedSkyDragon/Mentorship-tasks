@@ -59,7 +59,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>List of things</returns>
         [HttpGet]
         [Route("{categoryId:guid}/things")]
-        public Task<IEnumerable<Thing>> GetForCategory([FromUri]Guid userId, [FromUri]Guid categoryId)
+        public Task<IEnumerable<ThingWithLend>> GetForCategory([FromUri]Guid userId, [FromUri]Guid categoryId)
         {
             return _things.GetThingsForCategory(userId, categoryId);
         }

@@ -39,10 +39,10 @@ namespace ThingsBook.BusinessLogic
         /// <param name="thing">The thing.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The data model.</returns>
-        public static Data.Interface.Thing ToDataModel(Models.Thing thing, Guid userId)
+        public static Data.Interface.Thing ToDataModel(Models.ThingWithLend thing, Guid userId)
         {
             var mapper = new MapperConfiguration(
-                cfg => cfg.CreateMap<Models.Thing, Data.Interface.Thing>()
+                cfg => cfg.CreateMap<Models.ThingWithLend, Data.Interface.Thing>()
                 .ForMember(
                     destination => destination.Lend,
                     opts => opts.MapFrom(source => ToDataModel(source.Lend))
@@ -59,17 +59,17 @@ namespace ThingsBook.BusinessLogic
         /// </summary>
         /// <param name="thing">The thing.</param>
         /// <returns>The business logic model.</returns>
-        public static Models.Thing ToBLModel(Data.Interface.Thing thing)
+        public static Models.ThingWithLend ToBLModel(Data.Interface.Thing thing)
         {
             var mapper = new MapperConfiguration(
-                cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()
+                cfg => cfg.CreateMap<Data.Interface.Thing, Models.ThingWithLend>()
                 .ForMember(
                     destination => destination.Lend,
                     opts => opts.MapFrom(source => ToBLModel(source.Lend))
                     )
                 )
                 .CreateMapper();
-            return mapper.Map<Models.Thing>(thing);
+            return mapper.Map<Models.ThingWithLend>(thing);
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Lended thing</returns>
         [HttpPost]
         [Route("{thingId:guid}")]
-        public Task<Thing> Post([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Lend lend)
+        public Task<ThingWithLend> Post([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Lend lend)
         {
             return _lends.Create(userId, thingId, lend);
         }
@@ -50,7 +50,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Updated thing</returns>
         [HttpPut]
         [Route("{thingId:guid}")]
-        public Task<Thing> Put([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Lend lend)
+        public Task<ThingWithLend> Put([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Lend lend)
         {
             return _lends.Update(userId, thingId, lend);
         }

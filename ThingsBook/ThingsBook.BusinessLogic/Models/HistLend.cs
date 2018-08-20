@@ -16,7 +16,7 @@ namespace ThingsBook.BusinessLogic.Models
         /// <summary>
         /// Gets or sets the thing.
         /// </summary>
-        public ThingWithoutLend Thing { get; set; }
+        public Thing Thing { get; set; }
 
         /// <summary>
         /// Gets or sets the friend.

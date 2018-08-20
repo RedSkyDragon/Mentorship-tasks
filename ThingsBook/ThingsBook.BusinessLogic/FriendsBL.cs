@@ -120,13 +120,13 @@ namespace ThingsBook.BusinessLogic
         {
             var history = await Data.History.GetFriendHistLends(userId, friend.Id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
-            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, ThingWithoutLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
             var lends = new List<HistLend>();
             foreach (var item in history)
             {
                 var lend = lendMapper.Map<HistoricalLend, HistLend>(item.Key);
                 lend.Friend = friend;
-                lend.Thing = thingMapper.Map<ThingWithoutLend>(item.Value);
+                lend.Thing = thingMapper.Map<Models.Thing>(item.Value);
                 lends.Add(lend);
             }
             return lends;
@@ -142,13 +142,13 @@ namespace ThingsBook.BusinessLogic
         {
             var things = await Data.Things.GetThingsForFriend(userId, friend.Id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Lend, ActiveLend>()).CreateMapper();
-            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, ThingWithoutLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
             var lends = new List<ActiveLend>();
             foreach (var thing in things)
             {
                 var lend = lendMapper.Map<ActiveLend>(thing.Lend);
                 lend.Friend = friend;
-                lend.Thing = thingMapper.Map<ThingWithoutLend>(thing);
+                lend.Thing = thingMapper.Map<Models.Thing>(thing);
                 lends.Add(lend);
             }
             return lends;
