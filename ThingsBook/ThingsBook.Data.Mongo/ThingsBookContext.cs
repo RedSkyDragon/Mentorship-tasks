@@ -18,9 +18,10 @@ namespace ThingsBook.Data.Mongo
         /// <summary>
         /// Initializes a new instance of the <see cref="ThingsBookContext"/> class.
         /// </summary>
-        public ThingsBookContext()
+        public ThingsBookContext() : this(ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString) { }
+
+        public ThingsBookContext(string connectionString)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString;
             var connection = new MongoUrlBuilder(connectionString);
             MongoClient client = new MongoClient(connectionString);
             _database = client.GetDatabase(connection.DatabaseName);
