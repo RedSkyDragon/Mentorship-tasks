@@ -12,6 +12,7 @@ namespace ThingsBook.Data.Mongo.Tests
         private User _user;
 
         [SetUp]
+        [Explicit]
         public async Task Setup()
         {
             _users = new Users(new ThingsBookContext("mongodb://localhost/ThingsBook"));
@@ -20,14 +21,19 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task CreateUserTest()
-        {           
-            var dbUser = await _users.GetUser(_user.Id);
-            Assert.AreEqual(_user.Id, dbUser.Id);
-            Assert.AreEqual(_user.Name, dbUser.Name);
+        {
+            var user = new User { Name = "Test User" };
+            await _users.CreateUser(user);
+            var dbUser = await _users.GetUser(user.Id);
+            Assert.AreEqual(user.Id, dbUser.Id);
+            Assert.AreEqual(user.Name, dbUser.Name);
+            await _users.DeleteUser(user.Id);
         }
 
         [Test]
+        [Explicit]
         public async Task UpdateUserTest()
         {
             _user.Name = "Updated name";
@@ -38,6 +44,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task GetUserTest()
         {
             var firstUser = await _users.GetUser(_user.Id);
@@ -47,6 +54,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task GetAllUsersTest()
         {
             var user1 = new User { Name = "Sample User1" };
@@ -63,6 +71,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task DeleteUserTest()
         {
             var user = new User { Name = "DeleteSample User" };
@@ -73,6 +82,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [TearDown]
+        [Explicit]
         public async Task Final()
         {
             await _users.DeleteUser(_user.Id);
