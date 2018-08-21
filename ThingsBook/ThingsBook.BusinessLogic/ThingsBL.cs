@@ -80,9 +80,10 @@ namespace ThingsBook.BusinessLogic
         /// <param name="userId">The user identifier.</param>
         /// <param name="id">The thing identifier.</param>
         /// <returns></returns>
-        public Task DeleteThing(Guid userId, Guid id)
+        public async Task DeleteThing(Guid userId, Guid id)
         {
-            return Data.Things.DeleteThing(userId, id);
+            await Data.History.DeleteThingHistory(userId, id);
+            await Data.Things.DeleteThing(userId, id);
         }
 
         /// <summary>

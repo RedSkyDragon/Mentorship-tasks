@@ -16,7 +16,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [SetUp]
         public async Task Setup()
         {
-            var context = new ThingsBookContext("mongodb://localhost/ThingsBook");
+            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
             _users = new Users(context);
             _user = new User { Name = "CategoryTest User" };
             _categories = new Categories(context);
@@ -45,6 +45,7 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var first = await _categories.GetCategory(_user.Id, _category.Id);
             var second = await _categories.GetCategory(_user.Id, _category.Id);
+            Assert.AreNotEqual(null, first);
             Assert.AreEqual(first.Id, second.Id);
             Assert.AreEqual(first.Name, second.Name);
             Assert.AreEqual(first.About, second.About);

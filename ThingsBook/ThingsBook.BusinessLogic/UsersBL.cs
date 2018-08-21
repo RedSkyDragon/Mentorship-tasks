@@ -63,6 +63,7 @@ namespace ThingsBook.BusinessLogic
             await Data.Things.DeleteThings(id);
             await Data.Friends.DeleteFriends(id);
             await Data.Categories.DeleteCategories(id);
+            await Data.History.DeleteUserHistory(id);
             await Data.Users.DeleteUser(id);
         }
 

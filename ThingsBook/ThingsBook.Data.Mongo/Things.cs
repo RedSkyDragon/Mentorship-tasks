@@ -61,9 +61,15 @@ namespace ThingsBook.Data.Mongo
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="categoryId">The category identifier.</param>
-        public Task DeleteThingsForCategory(Guid userId, Guid categoryId)
+        public async Task DeleteThingsForCategory(Guid userId, Guid categoryId)
         {
-            return _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);
+            var options = new FindOptions<Thing> { Projection = new ProjectionDefinitionBuilder<Thing>().Include(p => p.Id) };
+            var things = (await _db.Things.FindAsync(t => t.UserId == userId && t.CategoryId == categoryId, options)).ToEnumerable();
+            foreach (var thing in things)
+            {
+                await _db.History.DeleteManyAsync(h => h.UserId == userId && h.ThingId == thing.Id);
+            }
+            await _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);          
         }
 
         /// <summary>

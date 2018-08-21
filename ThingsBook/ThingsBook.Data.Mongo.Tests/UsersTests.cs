@@ -15,7 +15,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task Setup()
         {
-            _users = new Users(new ThingsBookContext("mongodb://localhost/ThingsBook"));
+            _users = new Users(new ThingsBookContext("mongodb://localhost/ThingsBookTests"));
             _user = new User { Name = "Sample User setup" };
             await _users.CreateUser(_user);
         }

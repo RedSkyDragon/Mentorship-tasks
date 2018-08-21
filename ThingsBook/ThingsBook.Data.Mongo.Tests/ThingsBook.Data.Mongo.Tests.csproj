@@ -49,8 +49,10 @@
   <ItemGroup>
     <Compile Include="CategoriesTests.cs" />
     <Compile Include="FriendsTests.cs" />
+    <Compile Include="HistoryTests.cs" />
     <Compile Include="LendsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThingsTests.cs" />
     <Compile Include="UsersTests.cs" />
   </ItemGroup>
   <ItemGroup>
