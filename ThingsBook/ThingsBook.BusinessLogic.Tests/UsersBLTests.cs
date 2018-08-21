@@ -82,7 +82,8 @@ namespace ThingsBook.BusinessLogic.Tests
         {
             var user = new Models.User { };
             Assert.DoesNotThrowAsync(async () => {
-                await _usersBL.Get(user.Id);
+                var res = await _usersBL.Get(user.Id);
+                Assert.AreNotEqual(null, res);
             });
         }
 
@@ -91,7 +92,8 @@ namespace ThingsBook.BusinessLogic.Tests
         {
             var user = new Models.User { };
             Assert.DoesNotThrowAsync(async () => {
-                await _usersBL.GetAll();
+                var res = await _usersBL.GetAll();
+                Assert.AreNotEqual(null, res);
             });
         }
     }
