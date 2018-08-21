@@ -53,6 +53,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task CreateHistoricalLendTest()
         {
             var lend = new HistoricalLend
@@ -77,6 +78,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task UpdateHistoricalLendTest()
         {
             _lend.ReturnDate = DateTime.Parse("2018-07-09");
@@ -94,6 +96,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task GetLendTest()
         {
             var lend1 = await _history.GetHistLend(_user.Id, _lend.Id);
@@ -110,6 +113,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task GetLendsTest()
         {
             var lend = new HistoricalLend
@@ -139,6 +143,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task GetFriendLendsTest()
         {
             var thing = new Thing
@@ -179,6 +184,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task GetThingLendsTest()
         {
             var friend = new Friend
@@ -219,6 +225,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task DeleteHistLendTest()
         {
             var lend = new HistoricalLend { UserId = _user.Id };
@@ -229,6 +236,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task DeleteHistLendsTest()
         {
             var user = new User { };
@@ -244,6 +252,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task DeleteFriendHistLendsTest()
         {
             var user = new User { };
@@ -259,6 +268,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task DeleteThingHistLendsTest()
         {
             var user = new User { };
