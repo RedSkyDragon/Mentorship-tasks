@@ -8,32 +8,32 @@
         /// <summary>
         /// Gets the users DAL interface.
         /// </summary>
-        public IUsers Users { get; }
+        public virtual IUsers Users { get; }
 
         /// <summary>
         /// Gets the friends DAL interface.
         /// </summary>
-        public IFriends Friends { get; }
+        public virtual IFriends Friends { get; }
 
         /// <summary>
         /// Gets the things DAL interface.
         /// </summary>
-        public IThings Things { get; }
+        public virtual IThings Things { get; }
 
         /// <summary>
         /// Gets the categories DAL interface.
         /// </summary>
-        public ICategories Categories { get; }
+        public virtual ICategories Categories { get; }
 
         /// <summary>
         /// Gets the lends DAL interface.
         /// </summary>
-        public ILends Lends { get; }
+        public virtual ILends Lends { get; }
 
         /// <summary>
         /// Gets the history DAL interface.
         /// </summary>
-        public IHistory History { get; }
+        public virtual IHistory History { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommonDAL"/> class.
