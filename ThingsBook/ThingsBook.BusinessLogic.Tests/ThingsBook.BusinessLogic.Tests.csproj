@@ -60,7 +60,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FriendsBLTests.cs" />
+    <Compile Include="LendsBLTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThingsBLTests.cs" />
     <Compile Include="UsersBLTests.cs" />
   </ItemGroup>
   <ItemGroup>
