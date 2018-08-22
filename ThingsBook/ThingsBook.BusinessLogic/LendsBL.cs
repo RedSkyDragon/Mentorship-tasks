@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.BusinessLogic.Models;
 using ThingsBook.Data.Interface;
@@ -117,7 +116,7 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Updated thing with lend
         /// </returns>
-        public async Task<Models.ThingWithLend> Update(Guid userId, Guid thingId, Models.Lend lend)
+        public async Task<ThingWithLend> Update(Guid userId, Guid thingId, Models.Lend lend)
         {
             await Data.Lends.UpdateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));

@@ -44,7 +44,12 @@ namespace ThingsBook.BusinessLogic.Tests
             var user = new  Models.User{ };
             Assert.DoesNotThrowAsync(async () => {
                 var result = await _usersBL.Create(user);
+                Assert.NotNull(result);
                 Assert.AreEqual(user.Id, result.Id);
+            });
+            Assert.ThrowsAsync<NullReferenceException>(() =>
+            {
+                return _usersBL.Create(null);
             });
         }
 
@@ -54,7 +59,12 @@ namespace ThingsBook.BusinessLogic.Tests
             var user = new Models.User { };
             Assert.DoesNotThrowAsync(async () => {
                 var result = await _usersBL.Update(user);
+                Assert.NotNull(result);
                 Assert.AreEqual(user.Id, result.Id);
+            });
+            Assert.ThrowsAsync<NullReferenceException>(() =>
+            {
+                return _usersBL.Update(null);
             });
         }
 
@@ -64,7 +74,12 @@ namespace ThingsBook.BusinessLogic.Tests
             var user = new Models.User { };
             Assert.DoesNotThrowAsync(async () => {
                 var result = await _usersBL.CreateOrUpdate(user);
+                Assert.NotNull(result);
                 Assert.AreEqual(user.Id, result.Id);
+            });
+            Assert.ThrowsAsync<NullReferenceException>(() =>
+            {
+                return _usersBL.CreateOrUpdate(null);
             });
         }
 
@@ -72,8 +87,8 @@ namespace ThingsBook.BusinessLogic.Tests
         public void DeleteUserTest()
         {
             var user = new Models.User { };
-            Assert.DoesNotThrowAsync(async () => {
-                await _usersBL.Delete(user.Id);
+            Assert.DoesNotThrowAsync(() => {
+                return _usersBL.Delete(user.Id);
             });
         }
 
@@ -84,6 +99,7 @@ namespace ThingsBook.BusinessLogic.Tests
             Assert.DoesNotThrowAsync(async () => {
                 var res = await _usersBL.Get(user.Id);
                 Assert.NotNull(res);
+                Assert.AreEqual(user.Id, res.Id);
             });
         }
 

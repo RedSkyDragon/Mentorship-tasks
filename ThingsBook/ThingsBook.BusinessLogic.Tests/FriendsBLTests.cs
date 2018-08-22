@@ -45,6 +45,10 @@ namespace ThingsBook.BusinessLogic.Tests
                 Assert.NotNull(result);
                 Assert.AreEqual(friend.Id, result.Id);
             });
+            Assert.ThrowsAsync<NullReferenceException>(() =>
+            {
+                return _friendsBL.Create(new Guid(), null);
+            });
         }
 
         [Test]
@@ -56,6 +60,10 @@ namespace ThingsBook.BusinessLogic.Tests
                 var result = await _friendsBL.Update(new Guid(), friend);
                 Assert.NotNull(result);
                 Assert.AreEqual(friend.Id, result.Id);
+            });
+            Assert.ThrowsAsync<NullReferenceException>(() =>
+            {
+                return _friendsBL.Update(new Guid(), null);
             });
         }
 
@@ -82,7 +90,7 @@ namespace ThingsBook.BusinessLogic.Tests
         }
 
         [Test]
-        public void deleteFriendTest()
+        public void DeleteFriendTest()
         {
             Assert.DoesNotThrowAsync(() =>
             {
@@ -91,7 +99,7 @@ namespace ThingsBook.BusinessLogic.Tests
         }
 
         [Test]
-        public void GetLendsFriendTest()
+        public void GetFriendLendsTest()
         {
             Assert.DoesNotThrowAsync(async () =>
             {
