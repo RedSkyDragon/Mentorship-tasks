@@ -30,10 +30,15 @@ namespace ThingsBook.Data.Mongo
         /// <param name="lend">The lend.</param>
         public async Task CreateHistLend(Guid userId, HistoricalLend lend)
         {
-            if (userId == lend.UserId)
+            if (lend == null)
             {
-                await _db.History.InsertOneAsync(lend);
+                throw new ArgumentNullException("lend");
             }
+            if (userId != lend.UserId)
+            {
+                throw new ArgumentException("Param userId must be equal to lend.UserId.");
+            }
+            await _db.History.InsertOneAsync(lend);
         }
 
         /// <summary>
@@ -162,6 +167,14 @@ namespace ThingsBook.Data.Mongo
         /// <returns></returns>
         public Task UpdateHistLend(Guid userId, HistoricalLend lend)
         {
+            if (lend == null)
+            {
+                throw new ArgumentNullException("lend");
+            }
+            if (userId != lend.UserId)
+            {
+                throw new ArgumentException("Param userId must be equal to lend.UserId.");
+            }
             var update = Builders<HistoricalLend>.Update
                 .Set(h => h.FriendId, lend.FriendId)
                 .Set(h => h.ThingId, lend.ThingId)

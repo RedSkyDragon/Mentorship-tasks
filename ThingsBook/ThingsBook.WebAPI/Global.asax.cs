@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using ThingsBook.WebAPI.Utils;
 
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "Web.config", Watch = true)]
 namespace ThingsBook.WebAPI
 {
     /// <summary>
@@ -16,6 +17,7 @@ namespace ThingsBook.WebAPI
         {
             AutofacConfig.ConfigureContainer();
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configuration.Filters.Add(new CustomExceptionFilter());
         }
     }
 }

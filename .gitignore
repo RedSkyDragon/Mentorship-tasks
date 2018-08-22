@@ -4,6 +4,7 @@
 [Ll]ogs/
 ErrorLog.txt
 InfoLog.txt
+[Tt]estPlaylists
 
 # User-specific files
 *.suo

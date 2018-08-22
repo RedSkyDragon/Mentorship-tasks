@@ -31,10 +31,15 @@ namespace ThingsBook.Data.Mongo
         /// <param name="friend">The friend.</param>
         public async Task CreateFriend(Guid userId, Friend friend)
         {
-            if (userId == friend.UserId)
+            if (friend == null)
             {
-                await _db.Friends.InsertOneAsync(friend);
+                throw new ArgumentNullException("friend");
             }
+            if (userId != friend.UserId)
+            {
+                throw new ArgumentException("Param userId must be equal to friend.UserId.");
+            }
+            await _db.Friends.InsertOneAsync(friend);
         }
 
         /// <summary>
@@ -90,6 +95,14 @@ namespace ThingsBook.Data.Mongo
         /// <param name="friend">The friend.</param>
         public Task UpdateFriend(Guid userId, Friend friend)
         {
+            if (friend == null)
+            {
+                throw new ArgumentNullException("friend");
+            }
+            if (userId != friend.UserId)
+            {
+                throw new ArgumentException("Param userId must be equal to friend.UserId.");
+            }
             var update = Builders<Friend>.Update
                 .Set(f => f.Name, friend.Name)
                 .Set(f => f.Contacts, friend.Contacts);

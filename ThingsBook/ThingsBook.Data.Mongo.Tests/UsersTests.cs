@@ -12,22 +12,28 @@ namespace ThingsBook.Data.Mongo.Tests
         private User _user;
 
         [SetUp]
+        [Explicit]
         public async Task Setup()
         {
-            _users = new Users(new ThingsBookContext("mongodb://localhost/ThingsBook"));
+            _users = new Users(new ThingsBookContext("mongodb://localhost/ThingsBookTests"));
             _user = new User { Name = "Sample User setup" };
             await _users.CreateUser(_user);
         }
 
         [Test]
+        [Explicit]
         public async Task CreateUserTest()
-        {           
-            var dbUser = await _users.GetUser(_user.Id);
-            Assert.AreEqual(_user.Id, dbUser.Id);
-            Assert.AreEqual(_user.Name, dbUser.Name);
+        {
+            var user = new User { Name = "Test User" };
+            await _users.CreateUser(user);
+            var dbUser = await _users.GetUser(user.Id);
+            Assert.AreEqual(user.Id, dbUser.Id);
+            Assert.AreEqual(user.Name, dbUser.Name);
+            await _users.DeleteUser(user.Id);
         }
 
         [Test]
+        [Explicit]
         public async Task UpdateUserTest()
         {
             _user.Name = "Updated name";
@@ -38,6 +44,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task GetUserTest()
         {
             var firstUser = await _users.GetUser(_user.Id);
@@ -47,6 +54,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task GetAllUsersTest()
         {
             var user1 = new User { Name = "Sample User1" };
@@ -54,6 +62,7 @@ namespace ThingsBook.Data.Mongo.Tests
             var user2 = new User { Name = "Sample User2" };
             await _users.CreateUser(user2);
             var users = (await _users.GetUsers()).ToList();
+            Assert.NotNull(users);
             Assert.AreEqual(user1.Name, users.Find(u => u.Id == user1.Id).Name);
             Assert.AreEqual(user2.Name, users.Find(u => u.Id == user2.Id).Name);
             foreach (var user in users)
@@ -63,13 +72,14 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [Test]
+        [Explicit]
         public async Task DeleteUserTest()
         {
             var user = new User { Name = "DeleteSample User" };
             await _users.CreateUser(user);
             await _users.DeleteUser(user.Id);
             var res = await _users.GetUser(user.Id);
-            Assert.AreEqual(null, res);
+            Assert.Null(res);
         }
 
         [TearDown]

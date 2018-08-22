@@ -31,10 +31,15 @@ namespace ThingsBook.Data.Mongo
         /// <param name="category">The category.</param>
         public async Task CreateCategory(Guid userId, Category category)
         {
-            if (userId == category.UserId)
+            if (category == null)
             {
-                await _db.Categories.InsertOneAsync(category);
+                throw new ArgumentNullException("category");
             }
+            if (userId != category.UserId)
+            {
+                throw new ArgumentException("Param userId must be equal to category.UserId.");
+            }
+            await _db.Categories.InsertOneAsync(category);
         }
 
         /// <summary>
@@ -90,6 +95,14 @@ namespace ThingsBook.Data.Mongo
         /// <param name="category">The category.</param>
         public Task UpdateCategory(Guid userId, Category category)
         {
+            if (category == null)
+            {
+                throw new ArgumentNullException("category");
+            }
+            if (userId != category.UserId)
+            {
+                throw new ArgumentException("Param userId must be equal to category.UserId.");
+            }
             var update = Builders<Category>.Update
                 .Set(c => c.Name, category.Name)
                 .Set(c => c.About, category.About);

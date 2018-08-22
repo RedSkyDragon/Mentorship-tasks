@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsBook.BusinessLogic", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsBook.Data.Mongo.Tests", "ThingsBook.Data.Mongo.Tests\ThingsBook.Data.Mongo.Tests.csproj", "{C9CEE963-4FE0-47BD-BA2B-73F754DC086F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsBook.BusinessLogic.Tests", "ThingsBook.BusinessLogic.Tests\ThingsBook.BusinessLogic.Tests.csproj", "{8DA84F86-76D5-4E36-ADB3-03A082300CF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C9CEE963-4FE0-47BD-BA2B-73F754DC086F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9CEE963-4FE0-47BD-BA2B-73F754DC086F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9CEE963-4FE0-47BD-BA2B-73F754DC086F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DA84F86-76D5-4E36-ADB3-03A082300CF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DA84F86-76D5-4E36-ADB3-03A082300CF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DA84F86-76D5-4E36-ADB3-03A082300CF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DA84F86-76D5-4E36-ADB3-03A082300CF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

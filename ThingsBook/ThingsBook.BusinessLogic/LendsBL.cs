@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.BusinessLogic.Models;
 using ThingsBook.Data.Interface;
@@ -30,8 +29,12 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Thing with created lend.
         /// </returns>
-        public async Task<Models.ThingWithLend> Create(Guid userId, Guid thingId, Models.Lend lend)
+        public async Task<ThingWithLend> Create(Guid userId, Guid thingId, Models.Lend lend)
         {
+            if (lend == null)
+            {
+                throw new ArgumentNullException("lend");
+            }
             await Data.Lends.CreateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
         }
@@ -46,6 +49,10 @@ namespace ThingsBook.BusinessLogic
         public async Task Delete(Guid userId, Guid thingId, DateTime returnDate)
         {
             var thing = await Data.Things.GetThing(userId, thingId);
+            if (thing.Lend == null)
+            {
+                throw new ArgumentException("Thing with thingId must has not null lend");
+            }
             var historyLend = ReturnThing(thing, returnDate);
             await Data.History.CreateHistLend(userId, historyLend);
             await Data.Lends.DeleteLend(userId, thingId);
@@ -117,8 +124,12 @@ namespace ThingsBook.BusinessLogic
         /// <returns>
         /// Updated thing with lend
         /// </returns>
-        public async Task<Models.ThingWithLend> Update(Guid userId, Guid thingId, Models.Lend lend)
+        public async Task<ThingWithLend> Update(Guid userId, Guid thingId, Models.Lend lend)
         {
+            if (lend == null)
+            {
+                throw new ArgumentNullException("lend");
+            }
             await Data.Lends.UpdateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
         }
