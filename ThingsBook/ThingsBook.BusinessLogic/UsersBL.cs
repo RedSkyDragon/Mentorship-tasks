@@ -28,6 +28,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.User> Create(Models.User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
             await Data.Users.CreateUser(ModelsConverter.ToDataModel(user));
             await Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
             return ModelsConverter.ToBLModel(await Data.Users.GetUser(user.Id));
@@ -42,6 +46,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.User> CreateOrUpdate(Models.User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
             var current = await Get(user.Id);
             if (current == null)
             {
@@ -100,6 +108,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.User> Update(Models.User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
             await Data.Users.UpdateUser(ModelsConverter.ToDataModel(user));
             return ModelsConverter.ToBLModel(await Data.Users.GetUser(user.Id));
         }

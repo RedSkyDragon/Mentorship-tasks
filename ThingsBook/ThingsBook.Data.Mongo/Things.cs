@@ -31,10 +31,15 @@ namespace ThingsBook.Data.Mongo
         /// <param name="thing">The thing.</param>
         public async Task CreateThing(Guid userId, Thing thing)
         {
-            if (userId == thing.UserId)
+            if (thing == null)
             {
-                await _db.Things.InsertOneAsync(thing);
+                throw new ArgumentNullException("thing");
             }
+            if (userId != thing.UserId)
+            {
+                throw new ArgumentException("Param userId must be equal to thing.UserId.");
+            }
+            await _db.Things.InsertOneAsync(thing);
         }
 
         /// <summary>
@@ -64,11 +69,8 @@ namespace ThingsBook.Data.Mongo
         public async Task DeleteThingsForCategory(Guid userId, Guid categoryId)
         {
             var options = new FindOptions<Thing> { Projection = new ProjectionDefinitionBuilder<Thing>().Include(p => p.Id) };
-            var things = (await _db.Things.FindAsync(t => t.UserId == userId && t.CategoryId == categoryId, options)).ToEnumerable();
-            foreach (var thing in things)
-            {
-                await _db.History.DeleteManyAsync(h => h.UserId == userId && h.ThingId == thing.Id);
-            }
+            var things = (await _db.Things.FindAsync(t => t.UserId == userId && t.CategoryId == categoryId, options)).ToList().Select(t => t.Id);
+            await _db.History.DeleteManyAsync(h => h.UserId == userId && things.Contains(h.ThingId));
             await _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);          
         }
 
@@ -134,6 +136,14 @@ namespace ThingsBook.Data.Mongo
         /// <param name="thing">The thing.</param>
         public Task UpdateThing(Guid userId, Thing thing)
         {
+            if (thing == null)
+            {
+                throw new ArgumentNullException("thing");
+            }
+            if (userId != thing.UserId)
+            {
+                throw new ArgumentException("Param userId must be equal to thing.UserId.");
+            }
             var update = Builders<Thing>.Update
                 .Set(t => t.Name, thing.Name)
                 .Set(t => t.About, thing.About)

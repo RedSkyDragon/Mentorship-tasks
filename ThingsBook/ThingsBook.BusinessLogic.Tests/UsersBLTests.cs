@@ -12,105 +12,112 @@ namespace ThingsBook.BusinessLogic.Tests
     public class UsersBLTests
     {
         private IUsersBL _usersBL;
+        private Mock<IUsers> _users;
+        private Mock<IFriends> _friends;
+        private Mock<ICategories> _categories;
+        private Mock<IHistory> _history;
+        private Mock<IThings> _things;
+        private Mock<ILends> _lends;
 
         [SetUp]
         public void Setup()
         {           
-            var users = new Mock<IUsers>();
-            users.SetReturnsDefault(Task.Delay(10));
-            users.Setup(t => t.CreateUser(It.Is<User>(u => u != null))).Returns(Task.Delay(1));
-            users.Setup(t => t.UpdateUser(It.Is<User>(u => u != null))).Returns(Task.Delay(1));
-            users.Setup(t => t.DeleteUser(It.IsAny<Guid>())).Returns(Task.Delay(10));
-            users.Setup(t => t.GetUser(It.IsAny<Guid>()))
+            _users = new Mock<IUsers>();
+            _users.SetReturnsDefault(Task.Delay(10));
+            _users.Setup(t => t.CreateUser(It.IsAny<User>())).Returns(Task.CompletedTask);
+            _users.Setup(t => t.UpdateUser(It.IsAny<User>())).Returns(Task.CompletedTask);
+            _users.Setup(t => t.DeleteUser(It.IsAny<Guid>())).Returns(Task.Delay(10));
+            _users.Setup(t => t.GetUser(It.IsAny<Guid>()))
                 .Returns((Guid id) => Task.FromResult(new User { Id = id, Name = "Mock" }));
-            users.Setup(t => t.GetUsers())
+            _users.Setup(t => t.GetUsers())
                 .Returns(Task.FromResult((new List<User>()).AsEnumerable()));
-            var history = new Mock<IHistory>();
-            history.Setup(h => h.DeleteUserHistory(It.IsAny<Guid>())).Returns(Task.Delay(1));
-            var categories = new Mock<ICategories>();
-            categories.Setup(c => c.CreateCategory(It.IsAny<Guid>(),It.Is<Data.Interface.Category>(u => u != null))).Returns(Task.Delay(1));
-            var friends = new Mock<IFriends>();
-            friends.Setup(f => f.DeleteFriends(It.IsAny<Guid>())).Returns(Task.Delay(1));
-            var things = new Mock<IThings>();
-            things.Setup(t => t.DeleteThings(It.IsAny<Guid>())).Returns(Task.Delay(1));
-            var lends = new Mock<ILends>();
-            var dal = new CommonDAL(users.Object, friends.Object, categories.Object, things.Object, lends.Object, history.Object);
+            _history = new Mock<IHistory>();
+            _history.Setup(h => h.DeleteUserHistory(It.IsAny<Guid>())).Returns(Task.CompletedTask);
+            _categories = new Mock<ICategories>();
+            _categories.Setup(c => c.CreateCategory(It.IsAny<Guid>(),It.IsAny<Category>())).Returns(Task.CompletedTask);
+            _friends = new Mock<IFriends>();
+            _friends.Setup(f => f.DeleteFriends(It.IsAny<Guid>())).Returns(Task.CompletedTask);
+            _things = new Mock<IThings>();
+            _things.Setup(t => t.DeleteThings(It.IsAny<Guid>())).Returns(Task.CompletedTask);
+            _lends = new Mock<ILends>();
+            var dal = new CommonDAL(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
             _usersBL = new UsersBL(dal);
         }
 
         [Test]
-        public void CreateUserTest()
+        public async Task CreateUserTest()
         {
-            var user = new  Models.User{ };
-            Assert.DoesNotThrowAsync(async () => {
-                var result = await _usersBL.Create(user);
-                Assert.NotNull(result);
-                Assert.AreEqual(user.Id, result.Id);
-            });
-            Assert.ThrowsAsync<NullReferenceException>(() =>
+            var user = new  Models.User{ };            
+            var result = await _usersBL.Create(user);
+            Assert.NotNull(result);
+            Assert.AreEqual(user.Id, result.Id);
+            Assert.ThrowsAsync<ArgumentNullException>(() =>
             {
                 return _usersBL.Create(null);
             });
+            _users.Verify(u => u.CreateUser(It.IsAny<User>()), Times.Once());
+            _categories.Verify(u => u.CreateCategory(It.IsAny<Guid>(), It.IsAny<Category>()), Times.Once());
         }
 
         [Test]
-        public void UpdateUserTest()
+        public async Task UpdateUserTest()
         {
             var user = new Models.User { };
-            Assert.DoesNotThrowAsync(async () => {
-                var result = await _usersBL.Update(user);
-                Assert.NotNull(result);
-                Assert.AreEqual(user.Id, result.Id);
-            });
-            Assert.ThrowsAsync<NullReferenceException>(() =>
+            var result = await _usersBL.Update(user);
+            Assert.NotNull(result);
+            Assert.AreEqual(user.Id, result.Id);
+            Assert.ThrowsAsync<ArgumentNullException>(() =>
             {
                 return _usersBL.Update(null);
             });
+            _users.Verify(u => u.UpdateUser(It.IsAny<User>()), Times.Once());
         }
 
         [Test]
-        public void CreateOrUpdateUserTest()
+        public async Task CreateOrUpdateUserTest()
         {
             var user = new Models.User { };
-            Assert.DoesNotThrowAsync(async () => {
-                var result = await _usersBL.CreateOrUpdate(user);
-                Assert.NotNull(result);
-                Assert.AreEqual(user.Id, result.Id);
-            });
-            Assert.ThrowsAsync<NullReferenceException>(() =>
+            var result = await _usersBL.CreateOrUpdate(user);
+            Assert.NotNull(result);
+            Assert.AreEqual(user.Id, result.Id);
+            Assert.ThrowsAsync<ArgumentNullException>(() =>
             {
                 return _usersBL.CreateOrUpdate(null);
             });
+            _users.Verify(u => u.CreateUser(It.IsAny<User>()), Times.AtMostOnce());
+            _categories.Verify(u => u.CreateCategory(It.IsAny<Guid>(), It.IsAny<Category>()), Times.AtMostOnce());
+            _users.Verify(u => u.UpdateUser(It.IsAny<User>()), Times.AtMostOnce());
         }
 
         [Test]
-        public void DeleteUserTest()
+        public async Task DeleteUserTest()
         {
             var user = new Models.User { };
-            Assert.DoesNotThrowAsync(() => {
-                return _usersBL.Delete(user.Id);
-            });
+            await _usersBL.Delete(user.Id);
+            _users.Verify(u => u.DeleteUser(It.IsAny<Guid>()), Times.Once());
+            _friends.Verify(u => u.DeleteFriends(It.IsAny<Guid>()), Times.Once());
+            _categories.Verify(u => u.DeleteCategories(It.IsAny<Guid>()), Times.Once());
+            _things.Verify(u => u.DeleteThings(It.IsAny<Guid>()), Times.Once());
+            _history.Verify(u => u.DeleteUserHistory(It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
-        public void GetUserTest()
+        public async Task GetUserTest()
         {
             var user = new Models.User { };
-            Assert.DoesNotThrowAsync(async () => {
-                var res = await _usersBL.Get(user.Id);
-                Assert.NotNull(res);
-                Assert.AreEqual(user.Id, res.Id);
-            });
+            var res = await _usersBL.Get(user.Id);
+            Assert.NotNull(res);
+            Assert.AreEqual(user.Id, res.Id);
+            _users.Verify(u => u.GetUser(It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
-        public void GetUsersTest()
+        public async Task GetUsersTest()
         {
             var user = new Models.User { };
-            Assert.DoesNotThrowAsync(async () => {
-                var res = await _usersBL.GetAll();
-                Assert.NotNull(res);
-            });
+            var res = await _usersBL.GetAll();
+            Assert.NotNull(res);
+            _users.Verify(u => u.GetUsers(), Times.Once());
         }
     }
 }

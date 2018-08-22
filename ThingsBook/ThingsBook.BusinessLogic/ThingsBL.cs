@@ -31,6 +31,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Category> CreateCategory(Guid userId, Models.Category category)
         {
+            if (category == null)
+            {
+                throw new ArgumentNullException("category");
+            }
             await Data.Categories.CreateCategory(userId, ModelsConverter.ToDataModel(category, userId));
             return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
         }
@@ -45,6 +49,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<ThingWithLend> CreateThing(Guid userId, ThingWithLend thing)
         {
+            if (thing == null)
+            {
+                throw new ArgumentNullException("thing");
+            }
             await Data.Things.CreateThing(userId, ModelsConverter.ToDataModel(thing, userId));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
         }
@@ -162,6 +170,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Category> UpdateCategory(Guid userId, Models.Category category)
         {
+            if (category == null)
+            {
+                throw new ArgumentNullException("category");
+            }
             await Data.Categories.UpdateCategory(userId, ModelsConverter.ToDataModel(category, userId));
             return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
         }
@@ -176,6 +188,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<ThingWithLend> UpdateThing(Guid userId, ThingWithLend thing)
         {
+            if (thing == null)
+            {
+                throw new ArgumentNullException("thing");
+            }
             await Data.Things.UpdateThing(userId, ModelsConverter.ToDataModel(thing, userId));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
         }

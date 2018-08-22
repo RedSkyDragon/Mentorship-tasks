@@ -30,6 +30,10 @@ namespace ThingsBook.Data.Mongo
         /// <param name="lend">The lend.</param>
         public Task CreateLend(Guid userId, Guid thingId, Lend lend)
         {
+            if (lend == null)
+            {
+                throw new ArgumentNullException("lend");
+            }
             var update = Builders<Thing>.Update.Set(t => t.Lend, lend);
             return _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
         }
@@ -64,6 +68,10 @@ namespace ThingsBook.Data.Mongo
         /// <param name="lend">The lend.</param>
         public Task UpdateLend(Guid userId, Guid thingId, Lend lend)
         {
+            if (lend == null)
+            {
+                throw new ArgumentNullException("lend");
+            }
             var update = Builders<Thing>.Update
                 .Set(t => t.Lend.FriendId, lend.FriendId)
                 .Set(t => t.Lend.LendDate, lend.LendDate)

@@ -30,6 +30,10 @@ namespace ThingsBook.Data.Mongo
         /// <param name="user">The user.</param>
         public Task CreateUser(User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
             return _db.Users.InsertOneAsync(user);
         }
 
@@ -74,6 +78,10 @@ namespace ThingsBook.Data.Mongo
         /// <param name="user">The user.</param>
         public Task UpdateUser(User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
             var update = Builders<User>.Update.Set(u=> u.Name, user.Name);
             return _db.Users.UpdateOneAsync(u => u.Id == user.Id, update);
         }

@@ -31,7 +31,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Friend> Create(Guid userId, Models.Friend friend)
         {
-
+            if (friend == null)
+            {
+                throw new ArgumentNullException("friend");
+            }
             await Data.Friends.CreateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
             return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
         }
@@ -106,6 +109,10 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Friend> Update(Guid userId, Models.Friend friend)
         {
+            if (friend == null)
+            {
+                throw new ArgumentNullException("friend");
+            }
             await Data.Friends.UpdateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
             return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
         }
