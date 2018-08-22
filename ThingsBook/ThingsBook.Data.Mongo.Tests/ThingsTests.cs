@@ -47,7 +47,7 @@ namespace ThingsBook.Data.Mongo.Tests
             };
             await _things.CreateThing(_user.Id, thing);
             var dbThing = await _things.GetThing(_user.Id, thing.Id);
-            Assert.AreNotEqual(null, dbThing);
+            Assert.NotNull(dbThing);
             Assert.AreEqual(thing.Id, dbThing.Id);
             Assert.AreEqual(thing.Name, dbThing.Name);
             Assert.AreEqual(thing.UserId, dbThing.UserId);
@@ -64,7 +64,7 @@ namespace ThingsBook.Data.Mongo.Tests
             _thing.CategoryId = SequentialGuidUtils.CreateGuid();
             await _things.UpdateThing(_user.Id, _thing);
             var updated = await _things.GetThing(_user.Id, _thing.Id);
-            Assert.AreNotEqual(null, updated);
+            Assert.NotNull(updated);
             Assert.AreEqual(_thing.Id, updated.Id);
             Assert.AreEqual(_thing.Name, updated.Name);
             Assert.AreEqual(_thing.UserId, updated.UserId);
@@ -96,8 +96,8 @@ namespace ThingsBook.Data.Mongo.Tests
             var update = SequentialGuidUtils.CreateGuid();
             await _things.UpdateThingsCategory(_user.Id, catId, update);
             var updated = await _things.GetThingsForCategory(_user.Id, update);
-            Assert.AreNotEqual(null, updated);
-            Assert.AreEqual(true, updated.All(u => u.CategoryId == update));
+            Assert.NotNull(updated);
+            Assert.IsTrue(updated.All(u => u.CategoryId == update));
         }
 
         [Test]
@@ -113,10 +113,10 @@ namespace ThingsBook.Data.Mongo.Tests
             };
             await _things.CreateThing(_user.Id, thing);
             var dbThing = await _things.GetThing(_user.Id, thing.Id);
-            Assert.AreNotEqual(null, dbThing);
+            Assert.NotNull(dbThing);
             await _things.DeleteThing(_user.Id, thing.Id);
             dbThing = await _things.GetThing(_user.Id, thing.Id);
-            Assert.AreEqual(null, dbThing);
+            Assert.Null(dbThing);
         }
 
         [Test]
@@ -141,10 +141,10 @@ namespace ThingsBook.Data.Mongo.Tests
             await _things.CreateThing(_user.Id, thing1);
             await _things.CreateThing(_user.Id, thing2);
             var dbThings = await _things.GetThingsForCategory(_user.Id, catId);
-            Assert.AreNotEqual(0, dbThings.Count());
+            Assert.NotZero(dbThings.Count());
             await _things.DeleteThingsForCategory(_user.Id, catId);
             dbThings = await _things.GetThingsForCategory(_user.Id, catId);
-            Assert.AreEqual(0, dbThings.Count());
+            Assert.Zero(dbThings.Count());
         }
 
         [Test]
@@ -169,10 +169,10 @@ namespace ThingsBook.Data.Mongo.Tests
             await _things.CreateThing(user.Id, thing1);
             await _things.CreateThing(user.Id, thing2);
             var dbThings = await _things.GetThings(user.Id);
-            Assert.AreNotEqual(0, dbThings.Count());
+            Assert.NotZero(dbThings.Count());
             await _things.DeleteThings(user.Id);
             dbThings = await _things.GetThings(user.Id);
-            Assert.AreEqual(0, dbThings.Count());
+            Assert.Zero(dbThings.Count());
             await _users.DeleteUser(user.Id);
         }
 
@@ -182,7 +182,7 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var first = await _things.GetThing(_user.Id, _thing.Id);
             var second = await _things.GetThing(_user.Id, _thing.Id);
-            Assert.AreNotEqual(null, first);
+            Assert.NotNull(first);
             Assert.AreEqual(first.Id, second.Id);
             Assert.AreEqual(first.Name, second.Name);
             Assert.AreEqual(first.About, second.About);

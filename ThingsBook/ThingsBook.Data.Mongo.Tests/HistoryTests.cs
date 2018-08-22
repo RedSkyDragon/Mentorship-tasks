@@ -67,7 +67,7 @@ namespace ThingsBook.Data.Mongo.Tests
             };
             await _history.CreateHistLend(_user.Id, lend);
             var dbLend = await _history.GetHistLend(_user.Id, lend.Id);
-            Assert.AreNotEqual(null, dbLend);
+            Assert.NotNull(dbLend);
             Assert.AreEqual(lend.Id, dbLend.Id);
             Assert.AreEqual(lend.LendDate, dbLend.LendDate.ToLocalTime());
             Assert.AreEqual(lend.ReturnDate, dbLend.ReturnDate.ToLocalTime());
@@ -85,7 +85,7 @@ namespace ThingsBook.Data.Mongo.Tests
             _lend.Comment = "Update";
             await _history.UpdateHistLend(_user.Id, _lend);
             var dbLend = await _history.GetHistLend(_user.Id, _lend.Id);
-            Assert.AreNotEqual(null, dbLend);
+            Assert.NotNull(dbLend);
             Assert.AreEqual(_lend.Id, dbLend.Id);
             Assert.AreEqual(_lend.LendDate, dbLend.LendDate.ToLocalTime());
             Assert.AreEqual(_lend.ReturnDate, dbLend.ReturnDate.ToLocalTime());
@@ -101,8 +101,8 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var lend1 = await _history.GetHistLend(_user.Id, _lend.Id);
             var lend2 = await _history.GetHistLend(_user.Id, _lend.Id);
-            Assert.AreNotEqual(null, lend1);
-            Assert.AreNotEqual(null, lend2);
+            Assert.NotNull(lend1);
+            Assert.NotNull(lend2);
             Assert.AreEqual(lend1.Id, lend2.Id);
             Assert.AreEqual(lend1.LendDate, lend2.LendDate);
             Assert.AreEqual(lend1.ReturnDate, lend2.ReturnDate);
@@ -232,7 +232,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(_user.Id, lend);
             await _history.DeleteHistLend(_user.Id, lend.Id);
             var dbLend = await _history.GetHistLend(_user.Id, lend.Id);
-            Assert.AreEqual(null, dbLend);
+            Assert.Null(dbLend);
         }
 
         [Test]
@@ -247,7 +247,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(user.Id, lend2);
             await _history.DeleteUserHistory(user.Id);
             var dbLends = await _history.GetHistLends(user.Id);
-            Assert.AreEqual(0, dbLends.Count());
+            Assert.Zero(dbLends.Count());
             await _users.DeleteUser(user.Id);
         }
 
@@ -263,7 +263,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(user.Id, lend2);
             await _history.DeleteFriendHistory(user.Id, lend1.FriendId);
             var dbLends = await _history.GetFriendHistLends(user.Id, lend1.FriendId);
-            Assert.AreEqual(0, dbLends.Count());
+            Assert.Zero(dbLends.Count());
             await _users.DeleteUser(user.Id);
         }
 
@@ -279,7 +279,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(user.Id, lend2);
             await _history.DeleteThingHistory(user.Id, lend1.ThingId);
             var dbLends = await _history.GetThingHistLends(user.Id, lend1.ThingId);
-            Assert.AreEqual(0, dbLends.Count());
+            Assert.Zero(dbLends.Count());
             await _users.DeleteUser(user.Id);
         }
 

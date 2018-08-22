@@ -62,6 +62,7 @@ namespace ThingsBook.Data.Mongo.Tests
             var user2 = new User { Name = "Sample User2" };
             await _users.CreateUser(user2);
             var users = (await _users.GetUsers()).ToList();
+            Assert.NotNull(users);
             Assert.AreEqual(user1.Name, users.Find(u => u.Id == user1.Id).Name);
             Assert.AreEqual(user2.Name, users.Find(u => u.Id == user2.Id).Name);
             foreach (var user in users)
@@ -78,7 +79,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _users.CreateUser(user);
             await _users.DeleteUser(user.Id);
             var res = await _users.GetUser(user.Id);
-            Assert.AreEqual(null, res);
+            Assert.Null(res);
         }
 
         [TearDown]

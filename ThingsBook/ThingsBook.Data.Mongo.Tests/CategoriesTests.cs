@@ -45,7 +45,7 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var first = await _categories.GetCategory(_user.Id, _category.Id);
             var second = await _categories.GetCategory(_user.Id, _category.Id);
-            Assert.AreNotEqual(null, first);
+            Assert.NotNull(first);
             Assert.AreEqual(first.Id, second.Id);
             Assert.AreEqual(first.Name, second.Name);
             Assert.AreEqual(first.About, second.About);
@@ -57,7 +57,7 @@ namespace ThingsBook.Data.Mongo.Tests
         public async Task GetAllCategoriesTest()
         {
             var categories = await _categories.GetCategories(_user.Id);
-            Assert.AreEqual(true, categories.Count() > 0);
+            Assert.True(categories.Count() > 0);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _categories.CreateCategory(_user.Id, category);
             await _categories.DeleteCategory(_user.Id, category.Id);
             var dbCategory = await _categories.GetCategory(_user.Id, category.Id);
-            Assert.AreEqual(null, dbCategory);
+            Assert.Null(dbCategory);
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _categories.CreateCategory(user.Id, category2);
             await _categories.DeleteCategories(user.Id);
             var categories = (await _categories.GetCategories(user.Id)).ToList();
-            Assert.AreEqual(true, categories.Count() == 0);
+            Assert.True(categories.Count() == 0);
             await _users.DeleteUser(user.Id);
         }
 

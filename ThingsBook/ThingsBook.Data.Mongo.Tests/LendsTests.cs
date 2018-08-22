@@ -38,7 +38,7 @@ namespace ThingsBook.Data.Mongo.Tests
            
             await _lends.CreateLend(_user.Id, _thing.Id, _lend);
             var dbLend = (await _things.GetThing(_user.Id, _thing.Id)).Lend;
-            Assert.AreNotEqual(null, dbLend);
+            Assert.NotNull(dbLend);
             Assert.AreEqual(_lend.LendDate, dbLend.LendDate.ToLocalTime());
             Assert.AreEqual(_lend.Comment, dbLend.Comment);
             Assert.AreEqual(_lend.FriendId, dbLend.FriendId);
@@ -54,7 +54,7 @@ namespace ThingsBook.Data.Mongo.Tests
             _lend.Comment = "Updated lend";
             await _lends.UpdateLend(_user.Id, _thing.Id, _lend);
             var dbLend = (await _things.GetThing(_user.Id, _thing.Id)).Lend;
-            Assert.AreNotEqual(null, dbLend);
+            Assert.NotNull(dbLend);
             Assert.AreEqual(_lend.LendDate, dbLend.LendDate.ToLocalTime());
             Assert.AreEqual(_lend.Comment, dbLend.Comment);
             Assert.AreEqual(_lend.FriendId, dbLend.FriendId);
@@ -69,10 +69,10 @@ namespace ThingsBook.Data.Mongo.Tests
             await _things.CreateThing(_user.Id, thing);
             await _lends.CreateLend(_user.Id, thing.Id, lend);
             var dbLend = (await _things.GetThing(_user.Id, thing.Id)).Lend;
-            Assert.AreNotEqual(null, dbLend);
+            Assert.NotNull(dbLend);
             await _lends.DeleteLend(_user.Id, thing.Id);
             dbLend = (await _things.GetThing(_user.Id, thing.Id)).Lend;
-            Assert.AreEqual(null, dbLend);
+            Assert.IsNull(dbLend);
         }
 
         [Test]
@@ -89,11 +89,11 @@ namespace ThingsBook.Data.Mongo.Tests
             await _lends.CreateLend(_user.Id, thing2.Id, lend2);
             var dbLend1 = (await _things.GetThing(_user.Id, thing1.Id)).Lend;
             var dbLend2 = (await _things.GetThing(_user.Id, thing2.Id)).Lend;
-            Assert.AreNotEqual(null, dbLend1);
-            Assert.AreNotEqual(null, dbLend2);
+            Assert.NotNull(dbLend1);
+            Assert.NotNull(dbLend2);
             await _lends.DeleteFriendLends(_user.Id, new Guid());
             var dbLends = (await _things.GetThingsForFriend(_user.Id, new Guid()));
-            Assert.AreEqual(0, dbLends.Count());
+            Assert.Zero(dbLends.Count());
         }
 
         [TearDown]
