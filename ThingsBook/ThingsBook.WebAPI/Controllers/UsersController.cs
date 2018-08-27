@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
 using ThingsBook.BusinessLogic.Models;
+using System.Security.Claims;
 
 namespace ThingsBook.WebAPI.Controllers
 {
@@ -13,6 +14,7 @@ namespace ThingsBook.WebAPI.Controllers
     /// </summary>
     /// <seealso cref="ThingsBook.WebAPI.Controllers.BaseController" />
     [RoutePrefix("user")]
+    [Authorize]
     public class UsersController : BaseController
     {
         private IUsersBL _users;
@@ -34,6 +36,11 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("~/users")]
         public Task<IEnumerable<User>> Get()
         {
+            var claims = new Dictionary<string, string>();
+            foreach (var claim in (User as ClaimsPrincipal).Claims)
+            {
+                claims.Add(claim.Type, claim.Value);
+            }
             return _users.GetAll();
         }
 

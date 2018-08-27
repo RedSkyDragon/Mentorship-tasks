@@ -16,10 +16,9 @@ namespace ThingsBook.WebAPI.Utils
         /// <summary>
         /// configures AutoFac options for current project
         /// </summary>
-        public static void ConfigureContainer()
+        public static void ConfigureContainer(HttpConfiguration config)
         {
             var builder = new ContainerBuilder();
-            var config = GlobalConfiguration.Configuration;
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
             builder.Register(c => new ThingsBookContext()).As<ThingsBookContext>().InstancePerRequest();
             RegisterDAL(builder);
