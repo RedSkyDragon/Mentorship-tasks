@@ -36,11 +36,8 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("~/users")]
         public Task<IEnumerable<User>> Get()
         {
-            var claims = new Dictionary<string, string>();
-            foreach (var claim in (User as ClaimsPrincipal).Claims)
-            {
-                claims.Add(claim.Type, claim.Value);
-            }
+            var name = UserName;
+            var id = UserId;
             return _users.GetAll();
         }
 

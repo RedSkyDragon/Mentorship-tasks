@@ -22,8 +22,8 @@ namespace ThingsBook.IdentityServer
                     Password = "password",
                     Claims = new []
                     {
-                        new Claim("name", "Alex"),
-                        new Claim("user_id", "user_idForAlex")
+                        new Claim("user_name", "Alex", "string"),
+                        new Claim("user_id", "user_idForAlex", "Guid")
                     }
                 },
                 new TestUser
@@ -33,7 +33,7 @@ namespace ThingsBook.IdentityServer
                     Password = "password",
                     Claims = new []
                     {
-                        new Claim("name", "Bob"),
+                        new Claim("user_name", "Bob"),
                         new Claim("user_id", "user_idForBob")
                     }
                 }
@@ -49,7 +49,7 @@ namespace ThingsBook.IdentityServer
                     Name = "ThingsBook.WebAPI",
                     DisplayName = "ThingsBook",
                     //ApiSecrets = { new Secret("secret".Sha256()) },
-                    UserClaims = new List<string> { "name", "user_id" },
+                    UserClaims = new List<string> { "user_name", "user_id" },
                     Scopes = { new Scope
                     {
                         Name = "things-book",
@@ -67,7 +67,7 @@ namespace ThingsBook.IdentityServer
                 new Client
                 {
                     ClientId = "MVCClient",
-                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                    AllowedGrantTypes = GrantTypes.Implicit,
                     RedirectUris = { "http://localhost/ThingsBook.MVCClient/Home/Callback" },
                     PostLogoutRedirectUris = { "http://localhost/ThingsBook.MVCClient" },
                     AllowedScopes = new List<string>
@@ -76,7 +76,6 @@ namespace ThingsBook.IdentityServer
                         IdentityServerConstants.StandardScopes.Profile,
                         "things-book"
                     },
-                    AccessTokenType = AccessTokenType.Reference,
                     AllowAccessTokensViaBrowser = true
                 }
             };
