@@ -10,36 +10,7 @@ using System.Threading.Tasks;
 namespace ThingsBook.IdentityServer
 {
     public class Config
-    {
-        public static List<TestUser> GetUsers()
-        {
-            return new List<TestUser>
-            {
-                new TestUser
-                {
-                    SubjectId = "1",
-                    Username = "Alex",
-                    Password = "password",
-                    Claims = new []
-                    {
-                        new Claim("user_name", "Alex", "string"),
-                        new Claim("user_id", "user_idForAlex", "Guid")
-                    }
-                },
-                new TestUser
-                {
-                    SubjectId = "2",
-                    Username = "bob",
-                    Password = "password",
-                    Claims = new []
-                    {
-                        new Claim("user_name", "Bob"),
-                        new Claim("user_id", "user_idForBob")
-                    }
-                }
-            };
-        }
-
+    { 
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new List<ApiResource>
