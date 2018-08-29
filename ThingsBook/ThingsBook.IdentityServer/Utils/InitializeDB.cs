@@ -54,24 +54,49 @@ namespace ThingsBook.IdentityServer.Utils
                     }
                 }
 
-                var bob = userMgr.FindByNameAsync("bob").Result;
-                if (bob == null)
+                var jacob = userMgr.FindByNameAsync("Jacob").Result;
+                if (jacob == null)
                 {
-                    bob = new ApplicationUser
+                    jacob = new ApplicationUser
                     {
-                        UserName = "bob"
+                        UserName = "Jacob"
                     };
-                    var result = userMgr.CreateAsync(bob, "Pass123$").Result;
+                    var result = userMgr.CreateAsync(jacob, "Pass123$").Result;
                     if (!result.Succeeded)
                     {
                         throw new Exception(result.Errors.First().Description);
                     }
 
-                    result = userMgr.AddClaimsAsync(bob, new Claim[]{
+                    result = userMgr.AddClaimsAsync(jacob, new Claim[]{
                         new Claim(JwtClaimTypes.Id, SequentialGuidUtils.CreateGuid().ToString()),
-                        new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Bob"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith")
+                        new Claim(JwtClaimTypes.Name, "Jacob Frye"),
+                        new Claim(JwtClaimTypes.GivenName, "Jacob"),
+                        new Claim(JwtClaimTypes.FamilyName, "Frye")
+                    }).Result;
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
+                    }
+                }
+
+                var max = userMgr.FindByNameAsync("Maxwell").Result;
+                if (max == null)
+                {
+                    max = new ApplicationUser
+                    {
+                        UserName = "Maxwell"
+                    };
+                    var result = userMgr.CreateAsync(max, "Pass123$").Result;
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
+                    }
+
+                    result = userMgr.AddClaimsAsync(max, new Claim[]{
+                        new Claim(JwtClaimTypes.Id, SequentialGuidUtils.CreateGuid().ToString()),
+                        new Claim(JwtClaimTypes.Name, "Maxwell Roth"),
+                        new Claim(JwtClaimTypes.GivenName, "Maxwell"),
+                        new Claim(JwtClaimTypes.FamilyName, "Roth")
                     }).Result;
                     if (!result.Succeeded)
                     {

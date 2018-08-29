@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ThingsBook.IdentityServer.Models;
+using ThingsBook.IdentityServer.Utils;
 
 namespace ThingsBook.IdentityServer
 {

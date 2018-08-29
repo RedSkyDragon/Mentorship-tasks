@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IndexViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -10,11 +11,73 @@
         <hr class="my-4">
         <p>Please, login to see about page.</p>
         <p class="lead">
-                @Html.ActionLink("Log in", "Login", new { }, new { @class = "btn btn-primary btn-lg" })
+            @Html.ActionLink("Log in", "Login", new { }, new { @class = "btn btn-primary btn-lg" })
         </p>
     </div>
 }
 else
 {
-    <h1>Logged in as: @User.Identity.Name</h1>
+    <h1 class="display-4">Hello!</h1>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">User info from api</div>
+        <div class="panel-body">
+            <p>Id: @Model.ApiUser.Id</p>
+            <p>Name: @Model.ApiUser.Name</p>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Categories info from api</div>
+        <table class="table">
+            <tr>
+                <th class="col-md-3">Id</th>
+                <th class="col-md-3">Name</th>
+                <th class="col-md-6">About</th>
+            </tr>
+            @foreach (var item in Model.Categories)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.About)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Things info from api</div>
+        <table class="table">
+            <tr>
+                <th class="col-md-3">Id</th>
+                <th class="col-md-3">Name</th>
+                <th class="col-md-3">About</th>
+                <th class="col-md-3">Category Id</th>
+            </tr>
+            @foreach (var item in Model.Things)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.About)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CategoryId)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
 }
