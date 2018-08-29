@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using IdentityModel;
+using log4net;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -21,20 +22,14 @@ namespace ThingsBook.WebAPI.Controllers
         /// </value>
         protected ILog Logger { get { return LogManager.GetLogger(GetType()); } }
 
-        protected string UserName
+        protected User ApiUser
         {
             get
             {
                 var claims = (User as ClaimsPrincipal).Claims.Select(c => new { Type = c.Type, Value = c.Value }).ToList();
-                return claims.Where(c => c.Type == "user_name").FirstOrDefault().Value;
-            }
-        }
-        protected string UserId
-        {
-            get
-            {
-                var claims = (User as ClaimsPrincipal).Claims.Select(c => new { Type = c.Type, Value = c.Value }).ToList();               
-                return claims.Where(c => c.Type == "user_id").FirstOrDefault().Value;
+                var id = claims.Where(c => c.Type == JwtClaimTypes.Id).FirstOrDefault().Value;
+                var name = claims.Where(c => c.Type == JwtClaimTypes.Name).FirstOrDefault().Value;
+                return new User { Id = Guid.Parse(id), Name = name };
             }
         }
     }

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
 using ThingsBook.BusinessLogic.Models;
-using System.Security.Claims;
 
 namespace ThingsBook.WebAPI.Controllers
 {
@@ -29,67 +28,47 @@ namespace ThingsBook.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Gets all users.
+        /// Gets the specified user from claims.
         /// </summary>
-        /// <returns>List of users</returns>
-        [HttpGet]
-        [Route("~/users")]
-        public Task<IEnumerable<User>> Get()
-        {
-            var name = UserName;
-            var id = UserId;
-            return _users.GetAll();
-        }
-
-        /// <summary>
-        /// Gets the specified user by identifier.
-        /// </summary>
-        /// <param name="userId">The user identifier</param>
         /// <returns>User object</returns>
         [HttpGet]
-        [Route("{userId:guid}")]
-        public Task<User> Get(Guid userId)
+        [Route("")]
+        public Task<User> Get()
         {
-            return _users.Get(userId);
+            return _users.Get(ApiUser.Id);
         }
 
         /// <summary>
-        /// Creates new user.
+        /// Creates new user from claims.
         /// </summary>
-        /// <param name="user">The user information</param>
         /// <returns>Created user</returns>
         [HttpPost]
         [Route("")]
-        public Task<User> Post([FromBody]Models.User user)
+        public Task<User> Post()
         {
-            User userBL = new User { Name = user.Name };
-            return _users.CreateOrUpdate(userBL);
+            return _users.CreateOrUpdate(ApiUser);
         }
 
         /// <summary>
-        /// Updates the specified user by identifier.
+        /// Updates the specified user from claims.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
-        /// <param name="user">The user information.</param>
         /// <returns>Updated user</returns>
         [HttpPut]
-        [Route("{userId:guid}")]
-        public Task<User> Put([FromUri]Guid userId, [FromBody]Models.User user)
+        [Route("")]
+        public Task<User> Put()
         {
-            User userBL = new User { Id = userId, Name = user.Name };
-            return _users.CreateOrUpdate(userBL);
+            return _users.CreateOrUpdate(ApiUser);
         }
 
         /// <summary>
-        /// Deletes the specified user by identifier.
+        /// Deletes the specified user by identifier from claims.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <returns>204(no content)</returns>
         [HttpDelete]
-        [Route("{userId:guid}")]
-        public Task Delete([FromUri]Guid userId)
+        [Route("")]
+        public Task Delete()
         {
-            return _users.Delete(userId);
+            return _users.Delete(ApiUser.Id);
         }
     }
 }

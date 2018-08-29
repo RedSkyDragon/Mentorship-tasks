@@ -11,6 +11,7 @@ namespace ThingsBook.WebAPI.Controllers
     /// </summary>
     /// <seealso cref="ThingsBook.WebAPI.Controllers.BaseController" />
     [RoutePrefix("lend")]
+    [Authorize]
     public class LendsController : BaseController
     {
         private ILendsBL _lends;
@@ -30,47 +31,44 @@ namespace ThingsBook.WebAPI.Controllers
         /// <summary>
         /// Creates new lend.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="thingId">The thing identifier.</param>
         /// <param name="lend">The lend information</param>
         /// <returns>Lended thing</returns>
         [HttpPost]
         [Route("{thingId:guid}")]
-        public Task<ThingWithLend> Post([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Lend lend)
+        public Task<ThingWithLend> Post([FromUri]Guid thingId, [FromBody]Lend lend)
         {
-            return _lends.Create(userId, thingId, lend);
+            return _lends.Create(ApiUser.Id, thingId, lend);
         }
 
         /// <summary>
         /// Updates the lend of specified by identifier thing.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="thingId">The thing identifier.</param>
         /// <param name="lend">The lend information.</param>
         /// <returns>Updated thing</returns>
         [HttpPut]
         [Route("{thingId:guid}")]
-        public Task<ThingWithLend> Put([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]Lend lend)
+        public Task<ThingWithLend> Put([FromUri]Guid thingId, [FromBody]Lend lend)
         {
-            return _lends.Update(userId, thingId, lend);
+            return _lends.Update(ApiUser.Id, thingId, lend);
         }
 
         /// <summary>
         /// Turnes the lend of specified by identifier thing into history
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="thingId">The thing identifier.</param>
         /// <param name="returnDate">The return date.</param>
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{thingId:guid}")]
-        public Task Delete([FromUri]Guid userId, [FromUri]Guid thingId, [FromBody]DateTime? returnDate)
+        public Task Delete([FromUri]Guid thingId, [FromBody]DateTime? returnDate)
         {
             if (!returnDate.HasValue)
             {
                 returnDate = DateTime.Now;
             }
-            return _lends.Delete(userId, thingId, returnDate.Value);
+            return _lends.Delete(ApiUser.Id, thingId, returnDate.Value);
         }
     }
 }

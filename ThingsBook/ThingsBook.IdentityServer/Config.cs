@@ -1,4 +1,5 @@
-﻿using IdentityServer4;
+﻿using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 using System.Collections.Generic;
 
@@ -15,7 +16,7 @@ namespace ThingsBook.IdentityServer
                     Name = "ThingsBook.WebAPI",
                     DisplayName = "ThingsBook",
                     //ApiSecrets = { new Secret("secret".Sha256()) },
-                    UserClaims = new List<string> { "user_name", "user_id" },
+                    UserClaims = new List<string> { JwtClaimTypes.Id, JwtClaimTypes.Name },
                     Scopes = { new Scope
                     {
                         Name = "things-book",
@@ -25,7 +26,6 @@ namespace ThingsBook.IdentityServer
                 }
             };
         }
-
         public static IEnumerable<Client> GetClients()
         {
             return new List<Client>
