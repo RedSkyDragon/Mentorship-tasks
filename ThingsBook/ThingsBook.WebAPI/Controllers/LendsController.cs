@@ -15,17 +15,15 @@ namespace ThingsBook.WebAPI.Controllers
     public class LendsController : BaseController
     {
         private ILendsBL _lends;
-        private IThingsBL _things;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LendsController"/> class.
         /// </summary>
         /// <param name="lends">The lends business logic.</param>
         /// <param name="things">The things business logic.</param>
-        public LendsController(ILendsBL lends, IThingsBL things)
+        public LendsController(ILendsBL lends)
         {
             _lends = lends;
-            _things = things;
         }
 
         /// <summary>
