@@ -113,6 +113,7 @@ namespace MvcImplicit.Controllers
             var disco = await DiscoveryClient.GetAsync("http://localhost/thingsbook.identityserver");
             var endSessionUrl = new RequestUrl(disco.EndSessionEndpoint).CreateEndSessionUrl(
                 idTokenHint: token,
+                extra: new { ShowSignoutPrompt = true },
                 postLogoutRedirectUri: "http://localhost/thingsbook.mvcclient");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect(endSessionUrl);

@@ -2,7 +2,7 @@
 
 namespace ThingsBook.IdentityServer.UI
 {
-    public class LoginInputModel
+    public class LoginViewModel
     {
         [Required]
         public string Username { get; set; }
