@@ -7,12 +7,14 @@ using ThingsBook.BusinessLogic.Models;
 
 namespace ThingsBook.WebAPI.Controllers
 {
+
     /// <summary>
-    /// Controller for history management
+    /// Controller for history management.
     /// </summary>
-    /// <seealso cref="System.Web.Http.ApiController" />
+    /// <seealso cref="ThingsBook.WebAPI.Controllers.BaseController" />
     [RoutePrefix("history")]
-    public class LendsHistoryController : ApiController
+    [Authorize]
+    public class LendsHistoryController : BaseController
     {
         private ILendsBL _lends;
 
@@ -28,39 +30,36 @@ namespace ThingsBook.WebAPI.Controllers
         /// <summary>
         /// Gets full history fot the specified by identifier user.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <returns>List of history records</returns>
         [HttpGet]
         [Route("")]
-        public Task<IEnumerable<HistLend>> Get([FromUri]Guid userId)
+        public Task<IEnumerable<HistLend>> Get()
         {
-            return _lends.GetHistoricalLends(userId);
+            return _lends.GetHistoricalLends(ApiUser.Id);
         }
 
         /// <summary>
         /// Gets the specified by identifier history record.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="lendId">The record identifier.</param>
         /// <returns>History record</returns>
         [HttpGet]
         [Route("{lendId:guid}")]
-        public Task<HistLend> Get([FromUri]Guid userId, [FromUri]Guid lendId)
+        public Task<HistLend> Get([FromUri]Guid lendId)
         {
-            return _lends.GetHistoricalLend(userId, lendId);
+            return _lends.GetHistoricalLend(ApiUser.Id, lendId);
         }
 
         /// <summary>
         /// Deletes the specified by identifier history record.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="lendId">The record identifier.</param>
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{lendId:guid}")]
-        public Task Delete([FromUri]Guid userId, [FromUri]Guid lendId)
+        public Task Delete([FromUri]Guid lendId)
         {
-            return _lends.DeleteHistoricalLend(userId, lendId);
+            return _lends.DeleteHistoricalLend(ApiUser.Id, lendId);
         }
     }
 }

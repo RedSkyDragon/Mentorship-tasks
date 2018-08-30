@@ -12,6 +12,7 @@ namespace ThingsBook.WebAPI.Controllers
     /// </summary>
     /// <seealso cref="ThingsBook.WebAPI.Controllers.BaseController" />
     [RoutePrefix("friend")]
+    [Authorize]
     public class FriendsController : BaseController
     {
         private IFriendsBL _friends;
@@ -28,69 +29,64 @@ namespace ThingsBook.WebAPI.Controllers
         /// <summary>
         /// Gets all friends for the specified user identifier.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <returns>List of friends</returns>
         [HttpGet]
         [Route("~/friends")]
-        public Task<IEnumerable<Friend>> Get([FromUri]Guid userId)
+        public Task<IEnumerable<Friend>> Get()
         {
-            return _friends.GetAll(userId);
+            return _friends.GetAll(ApiUser.Id);
         }
 
         /// <summary>
         /// Gets the specified friend by identifier.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="friendId">The friend identifier.</param>
         /// <returns>Friend</returns>
         [HttpGet]
         [Route("{friendId:guid}")]
-        public Task<Friend> Get([FromUri]Guid userId, [FromUri]Guid friendId)
+        public Task<Friend> Get([FromUri]Guid friendId)
         {
-            return _friends.GetOne(userId,friendId);
+            return _friends.GetOne(ApiUser.Id, friendId);
         }
 
         /// <summary>
         /// Gets the lends for specified by identifier friend.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="friendId">The friend identifier.</param>
         /// <returns>Filtered lends with active records and history</returns>
         [HttpGet]
         [Route("{friendId:guid}/lends")]
-        public Task<FilteredLends> GetLends([FromUri]Guid userId, [FromUri]Guid friendId)
+        public Task<FilteredLends> GetLends([FromUri]Guid friendId)
         {
-            return _friends.GetFriendLends(userId, friendId);
+            return _friends.GetFriendLends(ApiUser.Id, friendId);
         }
 
         /// <summary>
         /// Creates new friend.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="friend">The friend information.</param>
         /// <returns>Created friend.</returns>
         [HttpPost]
         [Route("")]
-        public Task<Friend> Post([FromUri]Guid userId, [FromBody]Models.Friend friend)
+        public Task<Friend> Post([FromBody]Models.Friend friend)
         {
             Friend friendBL = new Friend
             {
                 Name = friend.Name,
                 Contacts = friend.Contacts
             };
-            return _friends.Create(userId, friendBL);
+            return _friends.Create(ApiUser.Id, friendBL);
         }
 
         /// <summary>
         /// Updates the specified by identifier friend.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="friendId">The friend identifier.</param>
         /// <param name="friend">The friend information.</param>
         /// <returns>Updated friend.</returns>
         [HttpPut]
         [Route("{friendId:guid}")]
-        public Task<Friend> Put([FromUri]Guid userId, [FromUri]Guid friendId, [FromBody]Models.Friend friend)
+        public Task<Friend> Put([FromUri]Guid friendId, [FromBody]Models.Friend friend)
         {
             Friend friendBL = new Friend
             {
@@ -98,20 +94,19 @@ namespace ThingsBook.WebAPI.Controllers
                 Name = friend.Name,
                 Contacts = friend.Contacts
             };
-            return _friends.Update(userId, friendBL);
+            return _friends.Update(ApiUser.Id, friendBL);
         }
 
         /// <summary>
         /// Deletes the specified by identifier friend.
         /// </summary>
-        /// <param name="userId">The user identifier.</param>
         /// <param name="friendId">The friend identifier.</param>
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{friendId:guid}")]
-        public Task Delete([FromUri]Guid userId, [FromUri]Guid friendId)
+        public Task Delete([FromUri]Guid friendId)
         {
-            return _friends.Delete(userId, friendId);
+            return _friends.Delete(ApiUser.Id, friendId);
         }
     }
 }
