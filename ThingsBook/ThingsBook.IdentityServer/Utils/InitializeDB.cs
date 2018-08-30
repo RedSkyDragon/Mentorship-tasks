@@ -12,14 +12,27 @@ using ThingsBook.IdentityServer.Models;
 
 namespace ThingsBook.IdentityServer.Utils
 {
+    /// <summary>
+    /// Initialize methods for database.
+    /// </summary>
     public static class InitializeDB
     {
+        /// <summary>
+        /// Initializes the database.
+        /// </summary>
+        /// <param name="app">The application.</param>
         public static void InitializeDatabase(IApplicationBuilder app)
         {
             InitializeConfiguration(app);
             InitializeUsers(app);
         }
 
+        /// <summary>
+        /// Initializes the users.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <exception cref="System.Exception">
+        /// </exception>
         private static void InitializeUsers(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
@@ -106,6 +119,10 @@ namespace ThingsBook.IdentityServer.Utils
             }
         }
 
+        /// <summary>
+        /// Initializes the configuration.
+        /// </summary>
+        /// <param name="app">The application.</param>
         private static void InitializeConfiguration(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())

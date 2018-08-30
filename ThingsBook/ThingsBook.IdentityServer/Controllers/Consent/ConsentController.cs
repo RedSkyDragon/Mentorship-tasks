@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 namespace ThingsBook.IdentityServer.UI
 {
     /// <summary>
-    /// This controller processes the consent UI
+    /// Consent controller for identity server
     /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [SecurityHeaders]
     [Authorize]
     public class ConsentController : Controller
@@ -21,11 +22,14 @@ namespace ThingsBook.IdentityServer.UI
         private readonly IResourceStore _resourceStore;
         private readonly ILogger<ConsentController> _logger;
 
-        public ConsentController(
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IResourceStore resourceStore,
-            ILogger<ConsentController> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConsentController"/> class.
+        /// </summary>
+        /// <param name="interaction">The interaction.</param>
+        /// <param name="clientStore">The client store.</param>
+        /// <param name="resourceStore">The resource store.</param>
+        /// <param name="logger">The logger.</param>
+        public ConsentController(IIdentityServerInteractionService interaction, IClientStore clientStore, IResourceStore resourceStore, ILogger<ConsentController> logger)
         {
             _interaction = interaction;
             _clientStore = clientStore;
@@ -34,9 +38,9 @@ namespace ThingsBook.IdentityServer.UI
         }
 
         /// <summary>
-        /// Shows the consent screen
+        /// Action for Index page.
         /// </summary>
-        /// <param name="returnUrl"></param>
+        /// <param name="returnUrl">The return URL.</param>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Index(string returnUrl)
@@ -51,8 +55,10 @@ namespace ThingsBook.IdentityServer.UI
         }
 
         /// <summary>
-        /// Handles the consent screen postback
+        /// Post action for Index page.
         /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(ConsentInputModel model)
@@ -68,33 +74,24 @@ namespace ThingsBook.IdentityServer.UI
             {
                 ModelState.AddModelError("", result.ValidationError);
             }
-
             if (result.ShowView)
             {
                 return View("Index", result.ViewModel);
             }
-
             return View("Error");
         }
 
-        /*****************************************/
-        /* helper APIs for the ConsentController */
-        /*****************************************/
         private async Task<ProcessConsentResult> ProcessConsent(ConsentInputModel model)
         {
             var result = new ProcessConsentResult();
 
             ConsentResponse grantedConsent = null;
-
-            // user clicked 'no' - send back the standard 'access_denied' response
             if (model.Button == "no")
             {
                 grantedConsent = ConsentResponse.Denied;
             }
-            // user clicked 'yes' - validate the data
             else if (model.Button == "yes" && model != null)
             {
-                // if the user consented to some scope, build the response model
                 if (model.ScopesConsented != null && model.ScopesConsented.Any())
                 {
                     var scopes = model.ScopesConsented;
@@ -102,7 +99,6 @@ namespace ThingsBook.IdentityServer.UI
                     {
                         scopes = scopes.Where(x => x != IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess);
                     }
-
                     grantedConsent = new ConsentResponse
                     {
                         RememberConsent = model.RememberConsent,
@@ -118,25 +114,17 @@ namespace ThingsBook.IdentityServer.UI
             {
                 result.ValidationError = ConsentOptions.InvalidSelectionErrorMessage;
             }
-
             if (grantedConsent != null)
             {
-                // validate return url is still valid
                 var request = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
                 if (request == null) return result;
-
-                // communicate outcome of consent back to identityserver
                 await _interaction.GrantConsentAsync(request, grantedConsent);
-
-                // indicate that's it ok to redirect back to authorization endpoint
                 result.RedirectUri = model.ReturnUrl;
             }
             else
             {
-                // we need to redisplay the consent UI
                 result.ViewModel = await BuildViewModelAsync(model.ReturnUrl, model);
             }
-
             return result;
         }
 
@@ -167,26 +155,19 @@ namespace ThingsBook.IdentityServer.UI
             {
                 _logger.LogError("No consent request matching request: {0}", returnUrl);
             }
-
             return null;
         }
 
-        private ConsentViewModel CreateConsentViewModel(
-            ConsentInputModel model, string returnUrl,
-            AuthorizationRequest request,
-            Client client, Resources resources)
+        private ConsentViewModel CreateConsentViewModel(ConsentInputModel model, string returnUrl, AuthorizationRequest request, Client client, Resources resources)
         {
             var vm = new ConsentViewModel();
             vm.RememberConsent = model?.RememberConsent ?? true;
             vm.ScopesConsented = model?.ScopesConsented ?? Enumerable.Empty<string>();
-
             vm.ReturnUrl = returnUrl;
-
             vm.ClientName = client.ClientName ?? client.ClientId;
             vm.ClientUrl = client.ClientUri;
             vm.ClientLogoUrl = client.LogoUri;
             vm.AllowRememberConsent = client.AllowRememberConsent;
-
             vm.IdentityScopes = resources.IdentityResources.Select(x => CreateScopeViewModel(x, vm.ScopesConsented.Contains(x.Name) || model == null)).ToArray();
             vm.ResourceScopes = resources.ApiResources.SelectMany(x => x.Scopes).Select(x => CreateScopeViewModel(x, vm.ScopesConsented.Contains(x.Name) || model == null)).ToArray();
             if (ConsentOptions.EnableOfflineAccess && resources.OfflineAccess)
@@ -195,7 +176,6 @@ namespace ThingsBook.IdentityServer.UI
                     GetOfflineAccessScope(vm.ScopesConsented.Contains(IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess) || model == null)
                 });
             }
-
             return vm;
         }
 

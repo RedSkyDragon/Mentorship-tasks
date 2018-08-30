@@ -22,6 +22,9 @@ namespace ThingsBook.WebAPI.Controllers
         /// </value>
         protected ILog Logger { get { return LogManager.GetLogger(GetType()); } }
 
+        /// <summary>
+        /// Gets the API user.
+        /// </summary>
         protected User ApiUser
         {
             get

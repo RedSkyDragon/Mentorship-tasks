@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 namespace ThingsBook.IdentityServer.UI
 {
     /// <summary>
-    /// This sample controller allows a user to revoke grants given to clients
+    /// Grants controller for identity server
     /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [SecurityHeaders]
     [Authorize]
     public class GrantsController : Controller
@@ -19,9 +20,13 @@ namespace ThingsBook.IdentityServer.UI
         private readonly IClientStore _clients;
         private readonly IResourceStore _resources;
 
-        public GrantsController(IIdentityServerInteractionService interaction,
-            IClientStore clients,
-            IResourceStore resources)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GrantsController"/> class.
+        /// </summary>
+        /// <param name="interaction">The interaction.</param>
+        /// <param name="clients">The clients.</param>
+        /// <param name="resources">The resources.</param>
+        public GrantsController(IIdentityServerInteractionService interaction, IClientStore clients, IResourceStore resources)
         {
             _interaction = interaction;
             _clients = clients;
@@ -29,8 +34,9 @@ namespace ThingsBook.IdentityServer.UI
         }
 
         /// <summary>
-        /// Show list of grants
+        /// Action for Index page.
         /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -38,8 +44,10 @@ namespace ThingsBook.IdentityServer.UI
         }
 
         /// <summary>
-        /// Handle postback to revoke a client
+        /// Revokes grants from specified client identifier.
         /// </summary>
+        /// <param name="clientId">The client identifier.</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Revoke(string clientId)
@@ -51,7 +59,6 @@ namespace ThingsBook.IdentityServer.UI
         private async Task<GrantsViewModel> BuildViewModelAsync()
         {
             var grants = await _interaction.GetAllUserConsentsAsync();
-
             var list = new List<GrantViewModel>();
             foreach(var grant in grants)
             {
@@ -59,7 +66,6 @@ namespace ThingsBook.IdentityServer.UI
                 if (client != null)
                 {
                     var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes);
-
                     var item = new GrantViewModel()
                     {
                         ClientId = client.ClientId,
@@ -71,15 +77,10 @@ namespace ThingsBook.IdentityServer.UI
                         IdentityGrantNames = resources.IdentityResources.Select(x => x.DisplayName ?? x.Name).ToArray(),
                         ApiGrantNames = resources.ApiResources.Select(x => x.DisplayName ?? x.Name).ToArray()
                     };
-
                     list.Add(item);
                 }
             }
-
-            return new GrantsViewModel
-            {
-                Grants = list
-            };
+            return new GrantsViewModel { Grants = list };
         }
     }
 }

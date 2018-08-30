@@ -11,8 +11,15 @@ using ThingsBook.IdentityServer.Utils;
 
 namespace ThingsBook.IdentityServer
 {
+    /// <summary>
+    /// Startup class for identity server.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Configures the services.
+        /// </summary>
+        /// <param name="services">The services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -46,6 +53,11 @@ namespace ThingsBook.IdentityServer
             services.AddMvc();
         }
 
+        /// <summary>
+        /// Configures the specified application.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <param name="env">The env.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             //InitializeDB.InitializeDatabase(app);
