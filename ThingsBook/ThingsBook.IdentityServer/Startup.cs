@@ -1,8 +1,10 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ThingsBook.IdentityServer.Models;
 using ThingsBook.IdentityServer.Utils;
@@ -13,19 +15,17 @@ namespace ThingsBook.IdentityServer
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            //string cs = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-            //var connectionString = Configuration.GetConnectionString("DefaultConnection");
-
-            const string connectionString = @"Data Source=srv2015.vrn.dataart.net\sql2014dev;database=Test;Integrated Security=True;MultipleActiveResultSets=True";
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(connectionString));
-
+                options.UseSqlServer(connectionString));
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
                 .AddAspNetIdentity<ApplicationUser>()
@@ -43,7 +43,6 @@ namespace ThingsBook.IdentityServer
                     options.EnableTokenCleanup = true;
                                 options.TokenCleanupInterval = 30;
                 });
-
             services.AddMvc();
         }
 

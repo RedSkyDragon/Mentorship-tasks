@@ -12,14 +12,6 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IIS",
-      "launchBrowser": true,
-      "launchUrl": "http://localhost/ThingsBook.MVCClient",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "ThingsBook.MVCClient": {
       "commandName": "IIS",
       "launchBrowser": true,

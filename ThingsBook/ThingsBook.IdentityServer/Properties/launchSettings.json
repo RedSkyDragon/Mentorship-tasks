@@ -12,14 +12,6 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IIS",
-      "launchBrowser": true,
-      "launchUrl": "http://localhost/ThingsBook.IdentityServer",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "ThingsBook.IdentityServer": {
       "commandName": "IIS",
       "launchBrowser": true,
