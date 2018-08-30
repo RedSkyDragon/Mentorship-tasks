@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace ThingsBook.IdentityServer.UI
 {
+    /// <summary>
+    /// Consent controller for identity server
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [SecurityHeaders]
     [Authorize]
     public class ConsentController : Controller
@@ -18,11 +22,14 @@ namespace ThingsBook.IdentityServer.UI
         private readonly IResourceStore _resourceStore;
         private readonly ILogger<ConsentController> _logger;
 
-        public ConsentController(
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IResourceStore resourceStore,
-            ILogger<ConsentController> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConsentController"/> class.
+        /// </summary>
+        /// <param name="interaction">The interaction.</param>
+        /// <param name="clientStore">The client store.</param>
+        /// <param name="resourceStore">The resource store.</param>
+        /// <param name="logger">The logger.</param>
+        public ConsentController(IIdentityServerInteractionService interaction, IClientStore clientStore, IResourceStore resourceStore, ILogger<ConsentController> logger)
         {
             _interaction = interaction;
             _clientStore = clientStore;
@@ -30,6 +37,11 @@ namespace ThingsBook.IdentityServer.UI
             _logger = logger;
         }
 
+        /// <summary>
+        /// Action for Index page.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Index(string returnUrl)
         {
@@ -42,6 +54,11 @@ namespace ThingsBook.IdentityServer.UI
             return View("Error");
         }
 
+        /// <summary>
+        /// Post action for Index page.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(ConsentInputModel model)

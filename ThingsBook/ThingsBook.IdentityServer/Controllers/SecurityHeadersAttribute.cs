@@ -3,8 +3,17 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace ThingsBook.IdentityServer.UI
 {
+    /// <summary>
+    /// Security headers attribute for controllers
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Filters.ActionFilterAttribute" />
     public class SecurityHeadersAttribute : ActionFilterAttribute
     {
+        /// <summary>
+        /// On executing event. Adds security headers to response.
+        /// </summary>
+        /// <param name="context">Executing context</param>
+        /// <inheritdoc />
         public override void OnResultExecuting(ResultExecutingContext context)
         {
             var result = context.Result;

@@ -5,8 +5,15 @@ using System.Collections.Generic;
 
 namespace ThingsBook.IdentityServer
 {
+    /// <summary>
+    /// Basic configuration for identity server.
+    /// </summary>
     public class Config
-    { 
+    {
+        /// <summary>
+        /// Gets the API resources.
+        /// </summary>
+        /// <returns></returns>
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new List<ApiResource>
@@ -26,6 +33,11 @@ namespace ThingsBook.IdentityServer
                 }
             };
         }
+
+        /// <summary>
+        /// Gets the clients.
+        /// </summary>
+        /// <returns></returns>
         public static IEnumerable<Client> GetClients()
         {
             return new List<Client>
@@ -46,6 +58,11 @@ namespace ThingsBook.IdentityServer
                 }
             };
         }
+
+        /// <summary>
+        /// Gets the identity resources.
+        /// </summary>
+        /// <returns></returns>
         public static List<IdentityResource> GetIdentityResources()
         {
             return new List<IdentityResource>

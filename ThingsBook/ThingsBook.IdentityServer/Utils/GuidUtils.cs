@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace ThingsBook.IdentityServer.Utils
 {
+    /// <summary>
+    /// Creates sequential guids
+    /// </summary>
     public static class SequentialGuidUtils
     {
         /// <summary>
