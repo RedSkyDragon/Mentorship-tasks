@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 
-namespace MvcImplicit.Controllers
+namespace ThingsBook.MVCClient.Controllers
 {
     /// <summary>
     /// Home page controller with login/logout actions
@@ -66,9 +66,10 @@ namespace MvcImplicit.Controllers
         /// Error action
         /// </summary>
         /// <returns></returns>
-        public IActionResult Error()
+        public IActionResult Error(string error = "")
         {
-            return View();
+            var model = new ErrorViewModel { Message = error };
+            return View(model);
         }
 
         /// <summary>
@@ -83,14 +84,14 @@ namespace MvcImplicit.Controllers
             var state = Request.Form["state"].FirstOrDefault();
             var idToken = Request.Form["id_token"].FirstOrDefault();
             var accessToken = Request.Form["access_token"].FirstOrDefault();
-            var error = Request.Form["error"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(error))
+            var requestError = Request.Form["error"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(requestError))
             {
-                throw new Exception(error);
+                return RedirectToAction("Error", new { error = requestError });
             }
             if (!string.Equals(state, "random_state"))
             {
-                throw new Exception("Invalid state");
+                return RedirectToAction("Error", new { error = "Strange state" });
             }
             if (User.Identity.IsAuthenticated)
             {

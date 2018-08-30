@@ -20,5 +20,10 @@ namespace ThingsBook.MVCClient.Models
         /// <c>true</c> if request identifier is not null or empty; otherwise, <c>false</c>.
         /// </value>
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+        /// <summary>
+        /// Gets or sets the message.
+        /// </summary>
+        public string Message { get; set; }
     }
 }
