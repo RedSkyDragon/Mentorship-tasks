@@ -14,11 +14,21 @@ using System.Net.Http;
 using ThingsBook.MVCClient.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MvcImplicit.Controllers
 {
+    /// <summary>
+    /// Home page controller with login/logout actions
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     public class HomeController : Controller
     {
+        /// <summary>
+        /// Index page action
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         public async Task<IActionResult> Index(string token)
         {
             if (token == null)
@@ -43,33 +53,31 @@ namespace MvcImplicit.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Client login
+        /// </summary>
+        /// <returns></returns>
         public Task<IActionResult> Login()
         {
             return StartAuthentication();
         }
 
+        /// <summary>
+        /// Error action
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Error()
         {
             return View();
         }
 
-        private async Task<IActionResult> StartAuthentication()
-        {
-            var client = new DiscoveryClient("http://localhost/thingsbook.identityserver");
-            client.Policy.RequireHttps = false;
-            var disco = await client.GetAsync();
-            var authorizeUrl = new RequestUrl(disco.AuthorizeEndpoint).CreateAuthorizeUrl(
-                clientId: "MVCClient",
-                responseType: "id_token token",
-                scope: "things-book openid profile",
-                redirectUri: "http://localhost/ThingsBook.MVCClient/Home/Callback",
-                state: "random_state",
-                nonce: "random_nonce",
-                responseMode: "form_post",
-                idTokenHint: "");
-            return Redirect(authorizeUrl);
-        }
-
+        /// <summary>
+        /// Callback for login
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception">
+        /// Invalid state
+        /// </exception>
         public async Task<IActionResult> Callback()
         {
             var state = Request.Form["state"].FirstOrDefault();
@@ -93,13 +101,93 @@ namespace MvcImplicit.Controllers
             return RedirectToAction("Index", new { token = accessToken });
         }
 
+        /// <summary>
+        /// Logout from client
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
+            var context = User.Identity as ClaimsIdentity;
+            var token = context.BootstrapContext.ToString();
             var disco = await DiscoveryClient.GetAsync("http://localhost/thingsbook.identityserver");
             var endSessionUrl = new RequestUrl(disco.EndSessionEndpoint).CreateEndSessionUrl(
-                idTokenHint: "",
-                postLogoutRedirectUri: "");
+                idTokenHint: token,
+                postLogoutRedirectUri: "http://localhost/thingsbook.mvcclient");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect(endSessionUrl);
+        }
+
+        private async Task<IActionResult> StartAuthentication()
+        {
+            var client = new DiscoveryClient("http://localhost/thingsbook.identityserver");
+            client.Policy.RequireHttps = false;
+            var disco = await client.GetAsync();
+            var authorizeUrl = new RequestUrl(disco.AuthorizeEndpoint).CreateAuthorizeUrl(
+                clientId: "MVCClient",
+                responseType: "id_token token",
+                scope: "things-book openid profile",
+                redirectUri: "http://localhost/ThingsBook.MVCClient/Home/Callback",
+                state: "random_state",
+                nonce: "random_nonce",
+                responseMode: "form_post");
+            return Redirect(authorizeUrl);
+        }
+
+        private async Task<ClaimsPrincipal> ValidateIdentityToken(string idToken)
+        {
+            var user = await ValidateJwt(idToken);
+            var nonce = user.FindFirst("nonce")?.Value ?? "";
+            if (!string.Equals(nonce, "random_nonce")) throw new Exception("invalid nonce");
+            return user;
+        }
+
+        private async Task<ClaimsPrincipal> ValidateLogoutToken(string logoutToken)
+        {
+            var claims = await ValidateJwt(logoutToken);
+
+            if (claims.FindFirst("sub") == null && claims.FindFirst("sid") == null) throw new Exception("Invalid logout token");
+
+            var nonce = claims.FindFirstValue("nonce");
+            if (!String.IsNullOrWhiteSpace(nonce)) throw new Exception("Invalid logout token");
+
+            var eventsJson = claims.FindFirst("events")?.Value;
+            if (String.IsNullOrWhiteSpace(eventsJson)) throw new Exception("Invalid logout token");
+
+            var events = JObject.Parse(eventsJson);
+            var logoutEvent = events.TryGetValue("http://schemas.openid.net/event/backchannel-logout");
+            if (logoutEvent == null) throw new Exception("Invalid logout token");
+
+            return claims;
+        }
+
+        private static async Task<ClaimsPrincipal> ValidateJwt(string jwt)
+        {
+            var disco = await DiscoveryClient.GetAsync("http://localhost/thingsbook.identityserver");
+            var keys = new List<SecurityKey>();
+            foreach (var webKey in disco.KeySet.Keys)
+            {
+                var e = Base64Url.Decode(webKey.E);
+                var n = Base64Url.Decode(webKey.N);
+                var key = new RsaSecurityKey(new RSAParameters { Exponent = e, Modulus = n })
+                {
+                    KeyId = webKey.Kid
+                };
+                keys.Add(key);
+            }
+            var parameters = new TokenValidationParameters
+            {
+                ValidIssuer = disco.Issuer,
+                ValidAudience = "MVCClient",
+                IssuerSigningKeys = keys,
+                NameClaimType = JwtClaimTypes.Name,
+                RoleClaimType = JwtClaimTypes.Role,
+                SaveSigninToken = true
+            };
+            var handler = new JwtSecurityTokenHandler();
+            handler.InboundClaimTypeMap.Clear();
+            var user = handler.ValidateToken(jwt, parameters, out var validatedToken);
+            return user;
         }
 
         private async Task<User> GetUserInfoFromApi(string token)
@@ -118,7 +206,7 @@ namespace MvcImplicit.Controllers
                     var data = await response.Content.ReadAsStringAsync();
                     return Newtonsoft.Json.JsonConvert.DeserializeObject<User>(data);
                 }
-                return null;                
+                return null;
             }
         }
 
@@ -180,61 +268,6 @@ namespace MvcImplicit.Controllers
                 }
                 return null;
             }
-        }
-
-        private async Task<ClaimsPrincipal> ValidateIdentityToken(string idToken)
-        {
-            var user = await ValidateJwt(idToken);
-            var nonce = user.FindFirst("nonce")?.Value ?? "";
-            if (!string.Equals(nonce, "random_nonce")) throw new Exception("invalid nonce");
-            return user;
-        }
-
-        private async Task<ClaimsPrincipal> ValidateLogoutToken(string logoutToken)
-        {
-            var claims = await ValidateJwt(logoutToken);
-
-            if (claims.FindFirst("sub") == null && claims.FindFirst("sid") == null) throw new Exception("Invalid logout token");
-
-            var nonce = claims.FindFirstValue("nonce");
-            if (!String.IsNullOrWhiteSpace(nonce)) throw new Exception("Invalid logout token");
-
-            var eventsJson = claims.FindFirst("events")?.Value;
-            if (String.IsNullOrWhiteSpace(eventsJson)) throw new Exception("Invalid logout token");
-
-            var events = JObject.Parse(eventsJson);
-            var logoutEvent = events.TryGetValue("http://schemas.openid.net/event/backchannel-logout");
-            if (logoutEvent == null) throw new Exception("Invalid logout token");
-
-            return claims;
-        }
-
-        private static async Task<ClaimsPrincipal> ValidateJwt(string jwt)
-        {
-            var disco = await DiscoveryClient.GetAsync("http://localhost/thingsbook.identityserver");
-            var keys = new List<SecurityKey>();
-            foreach (var webKey in disco.KeySet.Keys)
-            {
-                var e = Base64Url.Decode(webKey.E);
-                var n = Base64Url.Decode(webKey.N);
-                var key = new RsaSecurityKey(new RSAParameters { Exponent = e, Modulus = n })
-                {
-                    KeyId = webKey.Kid
-                };
-                keys.Add(key);
-            }
-            var parameters = new TokenValidationParameters
-            {
-                ValidIssuer = disco.Issuer,
-                ValidAudience = "MVCClient",
-                IssuerSigningKeys = keys,
-                NameClaimType = JwtClaimTypes.Name,
-                RoleClaimType = JwtClaimTypes.Role
-            };
-            var handler = new JwtSecurityTokenHandler();
-            handler.InboundClaimTypeMap.Clear();
-            var user = handler.ValidateToken(jwt, parameters, out var validatedToken);
-            return user;
         }
     }
 }

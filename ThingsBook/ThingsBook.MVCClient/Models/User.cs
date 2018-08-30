@@ -3,16 +3,13 @@
 namespace ThingsBook.MVCClient.Models
 {
     /// <summary>
-    /// User model for data from client
+    /// User model for data from api.
     /// </summary>
     public class User
     {
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
-        /// <value>
-        /// The identifier.
-        /// </value>
         public Guid Id { get; set; }
 
         /// <summary>

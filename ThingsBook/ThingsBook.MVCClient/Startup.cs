@@ -4,8 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ThingsBook.MVCClient
 {
+    /// <summary>
+    /// Startuo class for MVCClient
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Configures the services.
+        /// </summary>
+        /// <param name="services">The services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
@@ -13,6 +20,10 @@ namespace ThingsBook.MVCClient
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
+        /// <summary>
+        /// Configures the specified application.
+        /// </summary>
+        /// <param name="app">The application.</param>
         public void Configure(IApplicationBuilder app)
         {
             app.UseDeveloperExceptionPage();
