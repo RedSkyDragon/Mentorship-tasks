@@ -27,12 +27,17 @@ namespace ThingsBook.Data.Mongo
             _database = client.GetDatabase(connection.DatabaseName);
         }
 
+        static ThingsBookContext()
+        {
+            RegisterClassMaps();
+        }
+
         /// <summary>
         /// Gets the historical lends collection.
         /// </summary>
         public IMongoCollection<HistoricalLend> History
         {
-            get { return _database.GetCollection<HistoricalLend>("HistoricalLend"); }
+            get { return Collection<HistoricalLend>(); }
         }
 
         /// <summary>
@@ -40,7 +45,7 @@ namespace ThingsBook.Data.Mongo
         /// </summary>
         public IMongoCollection<User> Users
         {
-            get { return _database.GetCollection<User>("User"); }
+            get { return Collection<User>(); }
         }
 
         /// <summary>
@@ -48,7 +53,7 @@ namespace ThingsBook.Data.Mongo
         /// </summary>
         public IMongoCollection<Thing> Things
         {
-            get { return _database.GetCollection<Thing>("Things"); }
+            get { return Collection<Thing>(); }
         }
 
         /// <summary>
@@ -56,7 +61,7 @@ namespace ThingsBook.Data.Mongo
         /// </summary>
         public IMongoCollection<Category> Categories
         {
-            get { return _database.GetCollection<Category>("Category"); }
+            get { return Collection<Category>(); }
         }
 
         /// <summary>
@@ -64,7 +69,12 @@ namespace ThingsBook.Data.Mongo
         /// </summary>
         public IMongoCollection<Friend> Friends
         {
-            get { return _database.GetCollection<Friend>("Friend"); }
+            get { return Collection<Friend>(); }
+        }
+
+        private IMongoCollection<T> Collection<T>() where T: Entity
+        {
+            return _database.GetCollection<T>(typeof(T).Name);
         }
 
         /// <summary>
@@ -74,11 +84,11 @@ namespace ThingsBook.Data.Mongo
         {
             var conventionPack = new ConventionPack();
             conventionPack.Add(new CamelCaseElementNameConvention());
-            ConventionRegistry.Register("camelCase", conventionPack, t => true);
+            conventionPack.Add(new IgnoreIfNullConvention(true));
+            ConventionRegistry.Register("conventions", conventionPack, t => true);
             BsonClassMap.RegisterClassMap<User>(cm =>
             {
                 cm.AutoMap();
-                cm.GetMemberMap(c => c.Name).SetIsRequired(true);
             });
             BsonClassMap.RegisterClassMap<HistoricalLend>(cm =>
             {
@@ -98,12 +108,16 @@ namespace ThingsBook.Data.Mongo
                 cm.AutoMap();
                 cm.GetMemberMap(c => c.UserId).SetIsRequired(true);
             });
+            BsonClassMap.RegisterClassMap<Lend>(cm =>
+            {
+                cm.AutoMap();
+                cm.GetMemberMap(c => c.LendDate).SetSerializer(new DateTimeSerializer(dateOnly: true));
+                cm.GetMemberMap(c => c.LendDate).SetSerializer(new DateTimeSerializer(kind: DateTimeKind.Local));
+            });
             BsonClassMap.RegisterClassMap<Thing>(cm =>
             {
                 cm.AutoMap();
-                cm.GetMemberMap(c => c.UserId).SetIsRequired(true);
-                cm.GetMemberMap(c => c.Lend.LendDate).SetSerializer(new DateTimeSerializer(dateOnly: true));
-                cm.GetMemberMap(c => c.Lend.LendDate).SetSerializer(new DateTimeSerializer(kind: DateTimeKind.Local));
+                cm.GetMemberMap(c => c.UserId).SetIsRequired(true);               
             });
         }
     }

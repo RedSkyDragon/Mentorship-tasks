@@ -11,26 +11,26 @@ namespace ThingsBook.BusinessLogic.Tests
     public class ThingsBLTests
     {
         private IThingsBL _thingsBL;
-        private Mock<IUsers> _users;
-        private Mock<IFriends> _friends;
-        private Mock<ICategories> _categories;
-        private Mock<IHistory> _history;
-        private Mock<IThings> _things;
-        private Mock<ILends> _lends;
+        private Mock<IUsersDAL> _users;
+        private Mock<IFriendsDAL> _friends;
+        private Mock<ICategoriesDAL> _categories;
+        private Mock<IHistoryDAL> _history;
+        private Mock<IThingsDAL> _things;
+        private Mock<ILendsDAL> _lends;
 
         [SetUp]
         public void Setup()
         {
-            _friends = new Mock<IFriends>();
+            _friends = new Mock<IFriendsDAL>();
             _friends.Setup(f => f.GetFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userF, Guid idF) => Task.FromResult(new Friend { Id = idF, Name = "Mock" }));
-            _users = new Mock<IUsers>();
-            _history = new Mock<IHistory>();
+            _users = new Mock<IUsersDAL>();
+            _history = new Mock<IHistoryDAL>();
             _history.Setup(h => h.DeleteThingHistory(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
             _history.Setup(h => h.GetThingHistLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.FromResult(new Dictionary<HistoricalLend, Friend>() as IDictionary<HistoricalLend, Friend>));
-            _categories = new Mock<ICategories>();
+            _categories = new Mock<ICategoriesDAL>();
             _categories.Setup(c => c.GetCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userC, Guid idC) => Task.FromResult(new Category { Id = idC, Name = "Mock" }));
             _categories.Setup(c => c.GetCategories(It.IsAny<Guid>()))
@@ -41,7 +41,7 @@ namespace ThingsBook.BusinessLogic.Tests
                 .Returns(Task.CompletedTask);
             _categories.Setup(c => c.DeleteCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
-            _things = new Mock<IThings>();
+            _things = new Mock<IThingsDAL>();
             _things.Setup(t => t.CreateThing(It.IsAny<Guid>(), It.IsAny<Thing>()))
                 .Returns(Task.CompletedTask);
             _things.Setup(t => t.UpdateThing(It.IsAny<Guid>(), It.IsAny<Thing>()))
@@ -58,7 +58,7 @@ namespace ThingsBook.BusinessLogic.Tests
                .Returns(Task.CompletedTask);
             _things.Setup(t => t.DeleteThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
                .Returns(Task.CompletedTask);
-            _lends = new Mock<ILends>();
+            _lends = new Mock<ILendsDAL>();
             var dal = new CommonDAL(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
             _thingsBL = new ThingsBL(dal);
         }

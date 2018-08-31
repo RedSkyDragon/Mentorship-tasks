@@ -24,11 +24,8 @@ namespace ThingsBook.WebAPI
             app.UseIdentityServerBearerTokenAuthentication(new IdentityServerBearerTokenAuthenticationOptions
             {
                 Authority = "http://localhost/thingsbook.identityserver",
-                RequiredScopes = new[] { "things-book" }
-                //AuthenticationType = "Bearer",
-                //ValidationMode = ValidationMode.Local
-                //ClientId = "ThingsBook.WebAPI",
-                //ClientSecret = "secret"
+                RequiredScopes = new[] { "things-book" },
+                ClientId = "ThingsBook.WebAPI"
             });
             var httpConfiguration = new HttpConfiguration();
             AutofacConfig.ConfigureContainer(httpConfiguration);            

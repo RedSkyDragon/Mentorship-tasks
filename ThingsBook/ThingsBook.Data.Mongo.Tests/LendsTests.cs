@@ -9,9 +9,9 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class LendsTests
     {
-        private IUsers _users;
-        private IThings _things;
-        private ILends _lends;
+        private IUsersDAL _users;
+        private IThingsDAL _things;
+        private ILendsDAL _lends;
         private Thing _thing;
         private User _user;
         private Lend _lend;
@@ -20,11 +20,11 @@ namespace ThingsBook.Data.Mongo.Tests
         public async Task Setup()
         {
             var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
-            _users = new Users(context);
+            _users = new UsersDAL(context);
             _user = new User { Name = "LendTest User" };
-            _things = new Things(context);
+            _things = new ThingsDAL(context);
             _thing = new Thing { Name = "LendTest Thing", About = "LendTest About", UserId = _user.Id, CategoryId = new Guid() };
-            _lends = new Lends(context);
+            _lends = new LendsDAL(context);
             string date = "2018-08-20";
             _lend = new Lend { LendDate = DateTime.Parse(date), Comment = "Test lend creation", FriendId = SequentialGuidUtils.CreateGuid() };
             await _users.CreateUser(_user);
@@ -39,7 +39,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _lends.CreateLend(_user.Id, _thing.Id, _lend);
             var dbLend = (await _things.GetThing(_user.Id, _thing.Id)).Lend;
             Assert.NotNull(dbLend);
-            Assert.AreEqual(_lend.LendDate, dbLend.LendDate.ToLocalTime());
+            Assert.AreEqual(_lend.LendDate, dbLend.LendDate);
             Assert.AreEqual(_lend.Comment, dbLend.Comment);
             Assert.AreEqual(_lend.FriendId, dbLend.FriendId);
         }
@@ -55,7 +55,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _lends.UpdateLend(_user.Id, _thing.Id, _lend);
             var dbLend = (await _things.GetThing(_user.Id, _thing.Id)).Lend;
             Assert.NotNull(dbLend);
-            Assert.AreEqual(_lend.LendDate, dbLend.LendDate.ToLocalTime());
+            Assert.AreEqual(_lend.LendDate, dbLend.LendDate);
             Assert.AreEqual(_lend.Comment, dbLend.Comment);
             Assert.AreEqual(_lend.FriendId, dbLend.FriendId);
         }

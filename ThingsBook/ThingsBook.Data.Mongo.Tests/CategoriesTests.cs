@@ -8,8 +8,8 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class CategoriesTests
     {
-        private ICategories _categories;
-        private IUsers _users;
+        private ICategoriesDAL _categories;
+        private IUsersDAL _users;
         private User _user;
         private Category _category;
 
@@ -17,9 +17,9 @@ namespace ThingsBook.Data.Mongo.Tests
         public async Task Setup()
         {
             var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
-            _users = new Users(context);
+            _users = new UsersDAL(context);
             _user = new User { Name = "CategoryTest User" };
-            _categories = new Categories(context);
+            _categories = new CategoriesDAL(context);
             _category = new Category { Name = "Test Category", About = "Test contacts", UserId = _user.Id };
             await _users.CreateUser(_user);
             await _categories.CreateCategory(_user.Id, _category);

@@ -7,7 +7,7 @@ namespace ThingsBook.Data.Interface
     /// <summary>
     /// DAL interface for users.
     /// </summary>
-    public interface IUsers
+    public interface IUsersDAL
     {
         /// <summary>
         /// Gets all users.

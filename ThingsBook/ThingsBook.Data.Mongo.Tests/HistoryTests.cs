@@ -9,23 +9,24 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class HistoryTests
     {
-        private IUsers _users;
-        private IHistory _history;
-        private IThings _things;
-        private IFriends _friends;
+        private IUsersDAL _users;
+        private IHistoryDAL _history;
+        private IThingsDAL _things;
+        private IFriendsDAL _friends;
         private Thing _thing;
         private HistoricalLend _lend;
         private User _user;
         private Friend _friend;
 
         [SetUp]
+        [Explicit]
         public async Task Setup()
         {
             var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
-            _users = new Users(context);
+            _users = new UsersDAL(context);
             _user = new User { Name = "ThingsTest User" };
-            _history = new History(context);
-            _things = new Things(context);
+            _history = new HistoryDAL(context);
+            _things = new ThingsDAL(context);
             _thing = new Thing
             {
                 Name = "Test Thing",
@@ -33,7 +34,7 @@ namespace ThingsBook.Data.Mongo.Tests
                 UserId = _user.Id,
                 CategoryId = new Guid()
             };
-            _friends = new Friends(context);
+            _friends = new FriendsDAL(context);
             _friend = new Friend { Name = "Test Friend", Contacts = "Test contacts", UserId = _user.Id };
             _lend = new HistoricalLend
             {
@@ -67,8 +68,8 @@ namespace ThingsBook.Data.Mongo.Tests
             var dbLend = await _history.GetHistLend(_user.Id, lend.Id);
             Assert.NotNull(dbLend);
             Assert.AreEqual(lend.Id, dbLend.Id);
-            Assert.AreEqual(lend.LendDate, dbLend.LendDate.ToLocalTime());
-            Assert.AreEqual(lend.ReturnDate, dbLend.ReturnDate.ToLocalTime());
+            Assert.AreEqual(lend.LendDate, dbLend.LendDate);
+            Assert.AreEqual(lend.ReturnDate, dbLend.ReturnDate);
             Assert.AreEqual(lend.Comment, dbLend.Comment);
             Assert.AreEqual(lend.UserId, dbLend.UserId);
             Assert.AreEqual(lend.ThingId, dbLend.ThingId);
@@ -85,8 +86,8 @@ namespace ThingsBook.Data.Mongo.Tests
             var dbLend = await _history.GetHistLend(_user.Id, _lend.Id);
             Assert.NotNull(dbLend);
             Assert.AreEqual(_lend.Id, dbLend.Id);
-            Assert.AreEqual(_lend.LendDate, dbLend.LendDate.ToLocalTime());
-            Assert.AreEqual(_lend.ReturnDate, dbLend.ReturnDate.ToLocalTime());
+            Assert.AreEqual(_lend.LendDate, dbLend.LendDate);
+            Assert.AreEqual(_lend.ReturnDate, dbLend.ReturnDate);
             Assert.AreEqual(_lend.Comment, dbLend.Comment);
             Assert.AreEqual(_lend.UserId, dbLend.UserId);
             Assert.AreEqual(_lend.ThingId, dbLend.ThingId);
@@ -282,6 +283,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [TearDown]
+        [Explicit]
         public async Task Final()
         {
             await _history.DeleteUserHistory(_user.Id);

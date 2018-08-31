@@ -7,7 +7,7 @@ namespace ThingsBook.Data.Interface
     /// <summary>
     /// DAL interface for history.
     /// </summary>
-    public interface IHistory
+    public interface IHistoryDAL
     {
         /// <summary>
         /// Gets all historical lends of user.

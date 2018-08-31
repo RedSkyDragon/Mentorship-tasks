@@ -7,7 +7,7 @@ namespace ThingsBook.Data.Interface
     /// <summary>
     /// DAL interface for categories.
     /// </summary>
-    public interface ICategories
+    public interface ICategoriesDAL
     {
         /// <summary>
         /// Gets the categories.

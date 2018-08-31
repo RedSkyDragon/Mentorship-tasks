@@ -30,7 +30,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
             await Data.Users.CreateUser(ModelsConverter.ToDataModel(user));
             await Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
@@ -48,7 +48,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
             var current = await Get(user.Id);
             if (current == null)
@@ -110,7 +110,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
             await Data.Users.UpdateUser(ModelsConverter.ToDataModel(user));
             return ModelsConverter.ToBLModel(await Data.Users.GetUser(user.Id));

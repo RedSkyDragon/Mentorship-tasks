@@ -10,16 +10,16 @@ namespace ThingsBook.Data.Mongo
     /// <summary>
     /// Mongo implementation of DAL interface for friends.
     /// </summary>
-    /// <seealso cref="ThingsBook.Data.Interface.IFriends" />
-    public class Friends : IFriends
+    /// <seealso cref="ThingsBook.Data.Interface.IFriendsDAL" />
+    public class FriendsDAL : IFriendsDAL
     {
         private ThingsBookContext _db;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Friends"/> class.
+        /// Initializes a new instance of the <see cref="FriendsDAL"/> class.
         /// </summary>
         /// <param name="db">The database context.</param>
-        public Friends(ThingsBookContext db)
+        public FriendsDAL(ThingsBookContext db)
         {
             _db = db;
         }
@@ -29,17 +29,17 @@ namespace ThingsBook.Data.Mongo
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="friend">The friend.</param>
-        public async Task CreateFriend(Guid userId, Friend friend)
+        public Task CreateFriend(Guid userId, Friend friend)
         {
             if (friend == null)
             {
-                throw new ArgumentNullException("friend");
+                throw new ArgumentNullException(nameof(friend));
             }
             if (userId != friend.UserId)
             {
-                throw new ArgumentException("Param userId must be equal to friend.UserId.");
+                throw new ArgumentException("Param userId must be equal to friend.UserId.", nameof(userId));
             }
-            await _db.Friends.InsertOneAsync(friend);
+            return _db.Friends.InsertOneAsync(friend);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<Friend> GetFriend(Guid userId, Guid id)
         {
             var result = await _db.Friends.FindAsync(f => f.UserId == userId && f.Id == id);
-            return result.FirstOrDefault();
+            return await result.FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<IEnumerable<Friend>> GetFriends(Guid userId)
         {
             var result = await _db.Friends.FindAsync(f => f.UserId == userId);
-            return result.ToEnumerable();
+            return await result.ToListAsync();
         }
 
         /// <summary>
@@ -97,11 +97,11 @@ namespace ThingsBook.Data.Mongo
         {
             if (friend == null)
             {
-                throw new ArgumentNullException("friend");
+                throw new ArgumentNullException(nameof(friend));
             }
             if (userId != friend.UserId)
             {
-                throw new ArgumentException("Param userId must be equal to friend.UserId.");
+                throw new ArgumentException("Param userId must be equal to friend.UserId.", nameof(userId));
             }
             var update = Builders<Friend>.Update
                 .Set(f => f.Name, friend.Name)

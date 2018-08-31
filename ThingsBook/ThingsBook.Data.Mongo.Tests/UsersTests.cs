@@ -8,14 +8,14 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class UsersTests
     {
-        private IUsers _users;
+        private IUsersDAL _users;
         private User _user;
 
         [SetUp]
         [Explicit]
         public async Task Setup()
         {
-            _users = new Users(new ThingsBookContext("mongodb://localhost/ThingsBookTests"));
+            _users = new UsersDAL(new ThingsBookContext("mongodb://localhost/ThingsBookTests"));
             _user = new User { Name = "Sample User setup" };
             await _users.CreateUser(_user);
         }
@@ -83,6 +83,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [TearDown]
+        [Explicit]
         public async Task Final()
         {
             await _users.DeleteUser(_user.Id);

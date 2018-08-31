@@ -7,7 +7,7 @@ namespace ThingsBook.Data.Interface
     /// <summary>
     /// DAL interface for friends.
     /// </summary>
-    public interface IFriends
+    public interface IFriendsDAL
     {
         /// <summary>
         /// Gets the friends.

@@ -12,17 +12,17 @@ namespace ThingsBook.BusinessLogic.Tests
     public class UsersBLTests
     {
         private IUsersBL _usersBL;
-        private Mock<IUsers> _users;
-        private Mock<IFriends> _friends;
-        private Mock<ICategories> _categories;
-        private Mock<IHistory> _history;
-        private Mock<IThings> _things;
-        private Mock<ILends> _lends;
+        private Mock<IUsersDAL> _users;
+        private Mock<IFriendsDAL> _friends;
+        private Mock<ICategoriesDAL> _categories;
+        private Mock<IHistoryDAL> _history;
+        private Mock<IThingsDAL> _things;
+        private Mock<ILendsDAL> _lends;
 
         [SetUp]
         public void Setup()
         {           
-            _users = new Mock<IUsers>();
+            _users = new Mock<IUsersDAL>();
             _users.SetReturnsDefault(Task.Delay(10));
             _users.Setup(t => t.CreateUser(It.IsAny<User>())).Returns(Task.CompletedTask);
             _users.Setup(t => t.UpdateUser(It.IsAny<User>())).Returns(Task.CompletedTask);
@@ -31,15 +31,15 @@ namespace ThingsBook.BusinessLogic.Tests
                 .Returns((Guid id) => Task.FromResult(new User { Id = id, Name = "Mock" }));
             _users.Setup(t => t.GetUsers())
                 .Returns(Task.FromResult((new List<User>()).AsEnumerable()));
-            _history = new Mock<IHistory>();
+            _history = new Mock<IHistoryDAL>();
             _history.Setup(h => h.DeleteUserHistory(It.IsAny<Guid>())).Returns(Task.CompletedTask);
-            _categories = new Mock<ICategories>();
+            _categories = new Mock<ICategoriesDAL>();
             _categories.Setup(c => c.CreateCategory(It.IsAny<Guid>(),It.IsAny<Category>())).Returns(Task.CompletedTask);
-            _friends = new Mock<IFriends>();
+            _friends = new Mock<IFriendsDAL>();
             _friends.Setup(f => f.DeleteFriends(It.IsAny<Guid>())).Returns(Task.CompletedTask);
-            _things = new Mock<IThings>();
+            _things = new Mock<IThingsDAL>();
             _things.Setup(t => t.DeleteThings(It.IsAny<Guid>())).Returns(Task.CompletedTask);
-            _lends = new Mock<ILends>();
+            _lends = new Mock<ILendsDAL>();
             var dal = new CommonDAL(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
             _usersBL = new UsersBL(dal);
         }

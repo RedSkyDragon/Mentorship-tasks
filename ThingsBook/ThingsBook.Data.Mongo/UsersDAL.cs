@@ -10,16 +10,16 @@ namespace ThingsBook.Data.Mongo
     /// <summary>
     /// Mongo implementation of DAL interface for users.
     /// </summary>
-    /// <seealso cref="ThingsBook.Data.Interface.IUsers" />
-    public class Users : IUsers
+    /// <seealso cref="ThingsBook.Data.Interface.IUsersDAL" />
+    public class UsersDAL : IUsersDAL
     {
         private ThingsBookContext _db;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Users"/> class.
+        /// Initializes a new instance of the <see cref="UsersDAL"/> class.
         /// </summary>
         /// <param name="db">The database context.</param>
-        public Users(ThingsBookContext db)
+        public UsersDAL(ThingsBookContext db)
         {
             _db = db;
         }
@@ -32,7 +32,7 @@ namespace ThingsBook.Data.Mongo
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
             return _db.Users.InsertOneAsync(user);
         }
@@ -69,7 +69,7 @@ namespace ThingsBook.Data.Mongo
         {
             var filter = new FilterDefinitionBuilder<User>().Empty;
             var result = await _db.Users.FindAsync(filter);
-            return result.ToEnumerable();
+            return await result.ToListAsync();
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace ThingsBook.Data.Mongo
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
             var update = Builders<User>.Update.Set(u=> u.Name, user.Name);
             return _db.Users.UpdateOneAsync(u => u.Id == user.Id, update);

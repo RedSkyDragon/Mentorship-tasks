@@ -8,8 +8,8 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class FriendsTests
     {
-        private IFriends _friends;
-        private IUsers _users;
+        private IFriendsDAL _friends;
+        private IUsersDAL _users;
         private User _user;
         private Friend _friend;
 
@@ -17,9 +17,9 @@ namespace ThingsBook.Data.Mongo.Tests
         public async Task Setup()
         {
             var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
-            _users = new Users(context);
+            _users = new UsersDAL(context);
             _user = new User { Name = "FriendTest User" };
-            _friends = new Friends(context);
+            _friends = new FriendsDAL(context);
             _friend = new Friend { Name = "Test Friend", Contacts = "Test contacts", UserId = _user.Id };
             await _users.CreateUser(_user);
             await _friends.CreateFriend(_user.Id, _friend);

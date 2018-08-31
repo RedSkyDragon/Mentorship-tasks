@@ -10,16 +10,16 @@ namespace ThingsBook.Data.Mongo
     /// <summary>
     /// Mongo implementation of DAL interface for categories.
     /// </summary>
-    /// <seealso cref="ThingsBook.Data.Interface.ICategories" />
-    public class Categories : ICategories
+    /// <seealso cref="ThingsBook.Data.Interface.ICategoriesDAL" />
+    public class CategoriesDAL : ICategoriesDAL
     {
         private ThingsBookContext _db;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Categories"/> class.
+        /// Initializes a new instance of the <see cref="CategoriesDAL"/> class.
         /// </summary>
         /// <param name="db">The database context.</param>
-        public Categories(ThingsBookContext db)
+        public CategoriesDAL(ThingsBookContext db)
         {
             _db = db;
         }
@@ -33,11 +33,11 @@ namespace ThingsBook.Data.Mongo
         {
             if (category == null)
             {
-                throw new ArgumentNullException("category");
+                throw new ArgumentNullException(nameof(category));
             }
             if (userId != category.UserId)
             {
-                throw new ArgumentException("Param userId must be equal to category.UserId.");
+                throw new ArgumentException("Param userId must be equal to category.UserId.", nameof(userId));
             }
             await _db.Categories.InsertOneAsync(category);
         }
@@ -71,7 +71,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<IEnumerable<Category>> GetCategories(Guid userId)
         {
             var result = await _db.Categories.FindAsync(c => c.UserId == userId);
-            return result.ToEnumerable();
+            return await result.ToListAsync();
         }
 
         /// <summary>
@@ -97,11 +97,11 @@ namespace ThingsBook.Data.Mongo
         {
             if (category == null)
             {
-                throw new ArgumentNullException("category");
+                throw new ArgumentNullException(nameof(category));
             }
             if (userId != category.UserId)
             {
-                throw new ArgumentException("Param userId must be equal to category.UserId.");
+                throw new ArgumentException("Param userId must be equal to category.UserId.", nameof(userId));
             }
             var update = Builders<Category>.Update
                 .Set(c => c.Name, category.Name)

@@ -7,7 +7,7 @@ namespace ThingsBook.Data.Interface
     /// <summary>
     /// DAL interface for things.
     /// </summary>
-    public interface IThings
+    public interface IThingsDAL
     {
         /// <summary>
         /// Gets all things.

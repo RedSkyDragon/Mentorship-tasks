@@ -33,7 +33,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (category == null)
             {
-                throw new ArgumentNullException("category");
+                throw new ArgumentNullException(nameof(category));
             }
             await Data.Categories.CreateCategory(userId, ModelsConverter.ToDataModel(category, userId));
             return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
@@ -51,7 +51,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (thing == null)
             {
-                throw new ArgumentNullException("thing");
+                throw new ArgumentNullException(nameof(thing));
             }
             await Data.Things.CreateThing(userId, ModelsConverter.ToDataModel(thing, userId));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
@@ -172,7 +172,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (category == null)
             {
-                throw new ArgumentNullException("category");
+                throw new ArgumentNullException(nameof(category));
             }
             await Data.Categories.UpdateCategory(userId, ModelsConverter.ToDataModel(category, userId));
             return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
@@ -190,7 +190,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (thing == null)
             {
-                throw new ArgumentNullException("thing");
+                throw new ArgumentNullException(nameof(thing));
             }
             await Data.Things.UpdateThing(userId, ModelsConverter.ToDataModel(thing, userId));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));

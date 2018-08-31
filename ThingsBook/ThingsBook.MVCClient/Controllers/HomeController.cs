@@ -51,7 +51,7 @@ namespace ThingsBook.MVCClient.Controllers
                 Things = await GetThingsInfoFromApi(token)
             };
             return View(model);
-        }
+        }     
 
         /// <summary>
         /// Client login

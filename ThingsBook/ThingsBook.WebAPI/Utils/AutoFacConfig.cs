@@ -29,12 +29,12 @@ namespace ThingsBook.WebAPI.Utils
 
         private static void RegisterDAL(ContainerBuilder buider)
         {
-            buider.RegisterType<Users>().As<IUsers>();
-            buider.RegisterType<Friends>().As<IFriends>();
-            buider.RegisterType<Categories>().As<ICategories>();
-            buider.RegisterType<Things>().As<IThings>();
-            buider.RegisterType<Lends>().As<ILends>();
-            buider.RegisterType<History>().As<IHistory>();
+            buider.RegisterType<UsersDAL>().As<IUsersDAL>();
+            buider.RegisterType<FriendsDAL>().As<IFriendsDAL>();
+            buider.RegisterType<CategoriesDAL>().As<ICategoriesDAL>();
+            buider.RegisterType<ThingsDAL>().As<IThingsDAL>();
+            buider.RegisterType<LendsDAL>().As<ILendsDAL>();
+            buider.RegisterType<HistoryDAL>().As<IHistoryDAL>();
             buider.RegisterType<CommonDAL>().As<CommonDAL>();
         }
 

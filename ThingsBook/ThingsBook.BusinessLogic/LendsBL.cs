@@ -33,7 +33,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (lend == null)
             {
-                throw new ArgumentNullException("lend");
+                throw new ArgumentNullException(nameof(lend));
             }
             await Data.Lends.CreateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
@@ -51,7 +51,7 @@ namespace ThingsBook.BusinessLogic
             var thing = await Data.Things.GetThing(userId, thingId);
             if (thing.Lend == null)
             {
-                throw new ArgumentException("Thing with thingId must has not null lend");
+                throw new ArgumentException("Thing with thingId must has not null lend", nameof(thingId));
             }
             var historyLend = ReturnThing(thing, returnDate);
             await Data.History.CreateHistLend(userId, historyLend);
@@ -128,7 +128,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (lend == null)
             {
-                throw new ArgumentNullException("lend");
+                throw new ArgumentNullException(nameof(lend));
             }
             await Data.Lends.UpdateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));

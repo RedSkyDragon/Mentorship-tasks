@@ -9,16 +9,16 @@ namespace ThingsBook.Data.Mongo
     /// <summary>
     /// Mongo implementation of DAL interface for historical lends.
     /// </summary>
-    /// <seealso cref="ThingsBook.Data.Interface.IHistory" />
-    public class History : IHistory
+    /// <seealso cref="ThingsBook.Data.Interface.IHistoryDAL" />
+    public class HistoryDAL : IHistoryDAL
     {
         private ThingsBookContext _db;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="History"/> class.
+        /// Initializes a new instance of the <see cref="HistoryDAL"/> class.
         /// </summary>
         /// <param name="db">The database context.</param>
-        public History(ThingsBookContext db)
+        public HistoryDAL(ThingsBookContext db)
         {
             _db = db;
         }
@@ -32,11 +32,11 @@ namespace ThingsBook.Data.Mongo
         {
             if (lend == null)
             {
-                throw new ArgumentNullException("lend");
+                throw new ArgumentNullException(nameof(lend));
             }
             if (userId != lend.UserId)
             {
-                throw new ArgumentException("Param userId must be equal to lend.UserId.");
+                throw new ArgumentException("Param userId must be equal to lend.UserId.", nameof(userId));
             }
             await _db.History.InsertOneAsync(lend);
         }
@@ -130,7 +130,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<IEnumerable<HistoricalLend>> GetHistLends(Guid userId)
         {
             var result = await _db.History.FindAsync(h => h.UserId == userId);
-            return result.ToEnumerable();
+            return await result.ToListAsync();
         }
 
         /// <summary>
@@ -169,11 +169,11 @@ namespace ThingsBook.Data.Mongo
         {
             if (lend == null)
             {
-                throw new ArgumentNullException("lend");
+                throw new ArgumentNullException(nameof(lend));
             }
             if (userId != lend.UserId)
             {
-                throw new ArgumentException("Param userId must be equal to lend.UserId.");
+                throw new ArgumentException("Param userId must be equal to lend.UserId.", nameof(userId));
             }
             var update = Builders<HistoricalLend>.Update
                 .Set(h => h.FriendId, lend.FriendId)

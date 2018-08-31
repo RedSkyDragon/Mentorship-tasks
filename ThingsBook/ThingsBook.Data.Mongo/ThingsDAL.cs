@@ -10,16 +10,16 @@ namespace ThingsBook.Data.Mongo
     /// <summary>
     /// Mongo implementation of DAL interface for things.
     /// </summary>
-    /// <seealso cref="ThingsBook.Data.Interface.IThings" />
-    public class Things : IThings
+    /// <seealso cref="ThingsBook.Data.Interface.IThingsDAL" />
+    public class ThingsDAL : IThingsDAL
     {
         private ThingsBookContext _db;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Things"/> class.
+        /// Initializes a new instance of the <see cref="ThingsDAL"/> class.
         /// </summary>
         /// <param name="db">The database context.</param>
-        public Things(ThingsBookContext db)
+        public ThingsDAL(ThingsBookContext db)
         {
             _db = db;
         }
@@ -33,11 +33,11 @@ namespace ThingsBook.Data.Mongo
         {
             if (thing == null)
             {
-                throw new ArgumentNullException("thing");
+                throw new ArgumentNullException(nameof(thing));
             }
             if (userId != thing.UserId)
             {
-                throw new ArgumentException("Param userId must be equal to thing.UserId.");
+                throw new ArgumentException("Param userId must be equal to thing.UserId.", nameof(userId));
             }
             await _db.Things.InsertOneAsync(thing);
         }
@@ -68,10 +68,12 @@ namespace ThingsBook.Data.Mongo
         /// <param name="categoryId">The category identifier.</param>
         public async Task DeleteThingsForCategory(Guid userId, Guid categoryId)
         {
-            var options = new FindOptions<Thing> { Projection = new ProjectionDefinitionBuilder<Thing>().Include(p => p.Id) };
-            var things = (await _db.Things.FindAsync(t => t.UserId == userId && t.CategoryId == categoryId, options)).ToList().Select(t => t.Id);
+            var options = new FindOptions<Thing> { Projection = new ProjectionDefinitionBuilder<Thing>().Include(p => p.Id).Include(p => p.UserId) };
+            var things = (await (await _db.Things.FindAsync(t => t.UserId == userId && t.CategoryId == categoryId, options))
+                .ToListAsync())
+                .Select(t => t.Id);
             await _db.History.DeleteManyAsync(h => h.UserId == userId && things.Contains(h.ThingId));
-            await _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);          
+            await _db.Things.DeleteManyAsync(t => t.UserId == userId && t.CategoryId == categoryId);
         }
 
         /// <summary>
@@ -85,7 +87,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<IEnumerable<Thing>> GetThingsForFriend(Guid userId, Guid friedId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Lend.FriendId == friedId);
-            return result.ToEnumerable();
+            return await result.ToListAsync();
         }
 
         /// <summary>
@@ -112,7 +114,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<IEnumerable<Thing>> GetThings(Guid userId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId);
-            return result.ToEnumerable();
+            return await result.ToListAsync();
         }
 
         /// <summary>
@@ -126,7 +128,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<IEnumerable<Thing>> GetThingsForCategory(Guid userId, Guid categoryId)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.CategoryId == categoryId);
-            return result.ToEnumerable();
+            return await result.ToListAsync();
         }
 
         /// <summary>
@@ -138,11 +140,11 @@ namespace ThingsBook.Data.Mongo
         {
             if (thing == null)
             {
-                throw new ArgumentNullException("thing");
+                throw new ArgumentNullException(nameof(thing));
             }
             if (userId != thing.UserId)
             {
-                throw new ArgumentException("Param userId must be equal to thing.UserId.");
+                throw new ArgumentException("Param userId must be equal to thing.UserId.", nameof(userId));
             }
             var update = Builders<Thing>.Update
                 .Set(t => t.Name, thing.Name)

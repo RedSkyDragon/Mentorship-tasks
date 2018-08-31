@@ -9,8 +9,9 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class ThingsTests
     {
-        private IUsers _users;
-        private IThings _things;
+        private IUsersDAL _users;
+        private IThingsDAL _things;
+        private ICategoriesDAL _categories;
         private Thing _thing;
         private User _user;
 
@@ -18,9 +19,10 @@ namespace ThingsBook.Data.Mongo.Tests
         public async Task Setup()
         {
             var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
-            _users = new Users(context);
+            _users = new UsersDAL(context);
             _user = new User { Name = "ThingsTest User" };
-            _things = new Things(context);
+            _things = new ThingsDAL(context);
+            _categories = new CategoriesDAL(context);
             _thing = new Thing
             {
                 Name = "ThingsTest Thing",
@@ -121,27 +123,28 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteThingsForCategoryTest()
         {
-            var catId = SequentialGuidUtils.CreateGuid();
+            var cat = new Category { Name = "Sample", About = "Sample", UserId = _user.Id };
+            await _categories.CreateCategory(_user.Id, cat);
             var thing1 = new Thing
             {
                 Name = "Test Thing",
                 About = "ThingTest About",
                 UserId = _user.Id,
-                CategoryId = catId
+                CategoryId = cat.Id
             };
             var thing2 = new Thing
             {
                 Name = "Test Thing",
                 About = "ThingTest About",
                 UserId = _user.Id,
-                CategoryId = catId
+                CategoryId = cat.Id
             };
             await _things.CreateThing(_user.Id, thing1);
             await _things.CreateThing(_user.Id, thing2);
-            var dbThings = await _things.GetThingsForCategory(_user.Id, catId);
+            var dbThings = await _things.GetThingsForCategory(_user.Id, cat.Id);
             Assert.NotZero(dbThings.Count());
-            await _things.DeleteThingsForCategory(_user.Id, catId);
-            dbThings = await _things.GetThingsForCategory(_user.Id, catId);
+            await _things.DeleteThingsForCategory(_user.Id, cat.Id);
+            dbThings = await _things.GetThingsForCategory(_user.Id, cat.Id);
             Assert.Zero(dbThings.Count());
         }
 

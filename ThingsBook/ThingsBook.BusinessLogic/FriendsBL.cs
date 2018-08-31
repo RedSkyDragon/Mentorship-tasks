@@ -33,7 +33,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (friend == null)
             {
-                throw new ArgumentNullException("friend");
+                throw new ArgumentNullException(nameof(friend));
             }
             await Data.Friends.CreateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
             return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
@@ -111,7 +111,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (friend == null)
             {
-                throw new ArgumentNullException("friend");
+                throw new ArgumentNullException(nameof(friend));
             }
             await Data.Friends.UpdateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
             return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));

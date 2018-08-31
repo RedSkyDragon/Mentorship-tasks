@@ -7,7 +7,7 @@ namespace ThingsBook.Data.Interface
     /// <summary>
     /// DAL interface for lends.
     /// </summary>
-    public interface ILends
+    public interface ILendsDAL
     {
         /// <summary>
         /// Updates the lend.

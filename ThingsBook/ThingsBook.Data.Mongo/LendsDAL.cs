@@ -8,16 +8,16 @@ namespace ThingsBook.Data.Mongo
     /// <summary>
     /// Mongo implementation of DAL interface for lends.
     /// </summary>
-    /// <seealso cref="ThingsBook.Data.Interface.ILends" />
-    public class Lends : ILends
+    /// <seealso cref="ThingsBook.Data.Interface.ILendsDAL" />
+    public class LendsDAL : ILendsDAL
     {
         private ThingsBookContext _db;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Lends"/> class.
+        /// Initializes a new instance of the <see cref="LendsDAL"/> class.
         /// </summary>
         /// <param name="db">The database context.</param>
-        public Lends(ThingsBookContext db)
+        public LendsDAL(ThingsBookContext db)
         {
             _db = db;
         }
@@ -32,7 +32,7 @@ namespace ThingsBook.Data.Mongo
         {
             if (lend == null)
             {
-                throw new ArgumentNullException("lend");
+                throw new ArgumentNullException(nameof(lend));
             }
             var update = Builders<Thing>.Update.Set(t => t.Lend, lend);
             return _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
@@ -70,7 +70,7 @@ namespace ThingsBook.Data.Mongo
         {
             if (lend == null)
             {
-                throw new ArgumentNullException("lend");
+                throw new ArgumentNullException(nameof(lend));
             }
             var update = Builders<Thing>.Update
                 .Set(t => t.Lend.FriendId, lend.FriendId)

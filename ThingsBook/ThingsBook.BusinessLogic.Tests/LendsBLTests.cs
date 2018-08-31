@@ -11,21 +11,21 @@ namespace ThingsBook.BusinessLogic.Tests
     public class LendsBLTests
     {
         private ILendsBL _lendsBL;
-        private Mock<IUsers> _users;
-        private Mock<IFriends> _friends;
-        private Mock<ICategories> _categories;
-        private Mock<IHistory> _history;
-        private Mock<IThings> _things;
-        private Mock<ILends> _lends;
+        private Mock<IUsersDAL> _users;
+        private Mock<IFriendsDAL> _friends;
+        private Mock<ICategoriesDAL> _categories;
+        private Mock<IHistoryDAL> _history;
+        private Mock<IThingsDAL> _things;
+        private Mock<ILendsDAL> _lends;
 
         [SetUp]
         public void Setup()
         {
-            _friends = new Mock<IFriends>();
+            _friends = new Mock<IFriendsDAL>();
             _friends.Setup(f => f.GetFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userF, Guid idF) => Task.FromResult(new Friend { Id = idF, Name = "Mock" }));
-            _users = new Mock<IUsers>();
-            _history = new Mock<IHistory>();
+            _users = new Mock<IUsersDAL>();
+            _history = new Mock<IHistoryDAL>();
             _history.Setup(h => h.CreateHistLend(It.IsAny<Guid>(), It.IsAny<HistoricalLend>()))
                 .Returns(Task.CompletedTask);
             _history.Setup(h => h.DeleteHistLend(It.IsAny<Guid>(), It.IsAny<Guid>()))
@@ -36,11 +36,11 @@ namespace ThingsBook.BusinessLogic.Tests
                 );
             _history.Setup(h => h.GetHistLends(It.IsAny<Guid>()))
                 .Returns(Task.FromResult(new List<HistoricalLend>() as IEnumerable<HistoricalLend>));
-            _categories = new Mock<ICategories>();
-            _things = new Mock<IThings>();
+            _categories = new Mock<ICategoriesDAL>();
+            _things = new Mock<IThingsDAL>();
             _things.Setup(t => t.GetThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userT, Guid idT) => Task.FromResult(new Thing { Id = idT, Name = "Mock", Lend = new Lend { } }));
-            _lends = new Mock<ILends>();
+            _lends = new Mock<ILendsDAL>();
             _lends.Setup(l => l.CreateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()))
                 .Returns(Task.CompletedTask);
             _lends.Setup(l => l.UpdateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()))
