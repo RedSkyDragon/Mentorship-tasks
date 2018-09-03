@@ -29,7 +29,7 @@ namespace ThingsBook.WebAPI.Controllers
         {
             get
             {
-                var claims = (User as ClaimsPrincipal).Claims.Select(c => new { Type = c.Type, Value = c.Value }).ToList();
+                var claims = (User as ClaimsPrincipal).Claims.Select(c => new { c.Type, c.Value }).ToList();
                 var id = claims.Where(c => c.Type == JwtClaimTypes.Id).FirstOrDefault().Value;
                 var name = claims.Where(c => c.Type == JwtClaimTypes.Name).FirstOrDefault().Value;
                 return new User { Id = Guid.Parse(id), Name = name };

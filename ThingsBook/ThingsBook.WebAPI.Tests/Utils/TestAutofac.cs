@@ -3,9 +3,7 @@ using Autofac.Integration.WebApi;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
@@ -13,8 +11,15 @@ using ThingsBook.BusinessLogic.Models;
 
 namespace ThingsBook.WebAPI.Tests.Utils
 {
+    /// <summary>
+    /// Test autofac configuration
+    /// </summary>
     public class TestAutofac
     {
+        /// <summary>
+        /// Configures the container.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
         public static void ConfigureContainer(HttpConfiguration config)
         {
             var builder = new ContainerBuilder();

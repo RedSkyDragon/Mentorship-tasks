@@ -23,10 +23,9 @@ namespace ThingsBook.BusinessLogic.Tests
         public void Setup()
         {           
             _users = new Mock<IUsersDAL>();
-            _users.SetReturnsDefault(Task.Delay(10));
             _users.Setup(t => t.CreateUser(It.IsAny<User>())).Returns(Task.CompletedTask);
             _users.Setup(t => t.UpdateUser(It.IsAny<User>())).Returns(Task.CompletedTask);
-            _users.Setup(t => t.DeleteUser(It.IsAny<Guid>())).Returns(Task.Delay(10));
+            _users.Setup(t => t.DeleteUser(It.IsAny<Guid>())).Returns(Task.CompletedTask);
             _users.Setup(t => t.GetUser(It.IsAny<Guid>()))
                 .Returns((Guid id) => Task.FromResult(new User { Id = id, Name = "Mock" }));
             _users.Setup(t => t.GetUsers())

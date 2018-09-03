@@ -1,18 +1,28 @@
 ﻿using IdentityModel;
 using Microsoft.Owin;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ThingsBook.WebAPI.Tests.Utils
 {
-    class LoginMiddleware : OwinMiddleware
+    /// <summary>
+    /// Authentication middleware
+    /// </summary>
+    /// <seealso cref="Microsoft.Owin.OwinMiddleware" />
+    class AuthMiddleware : OwinMiddleware
     {
-        public LoginMiddleware(OwinMiddleware next) : base(next) { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthMiddleware"/> class.
+        /// </summary>
+        /// <param name="next"></param>
+        public AuthMiddleware(OwinMiddleware next) : base(next) { }
 
+        /// <summary>
+        /// Process an individual request.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async override Task Invoke(IOwinContext context)
         {
             var userId = new Guid("11111111111111111111111111111111");

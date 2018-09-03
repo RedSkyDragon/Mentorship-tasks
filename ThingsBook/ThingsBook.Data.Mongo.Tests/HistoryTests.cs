@@ -18,6 +18,7 @@ namespace ThingsBook.Data.Mongo.Tests
         private HistoricalLend _lend;
         private User _user;
         private Friend _friend;
+        private const string sample = "Sample";
 
         [SetUp]
         [Explicit]
@@ -25,23 +26,23 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient());
             _users = new UsersDAL(context);
-            _user = new User { Name = "ThingsTest User" };
+            _user = new User { Name = sample };
             _history = new HistoryDAL(context);
             _things = new ThingsDAL(context);
             _thing = new Thing
             {
-                Name = "Test Thing",
-                About = "Test About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = new Guid()
             };
             _friends = new FriendsDAL(context);
-            _friend = new Friend { Name = "Test Friend", Contacts = "Test contacts", UserId = _user.Id };
+            _friend = new Friend { Name = sample, Contacts = sample, UserId = _user.Id };
             _lend = new HistoricalLend
             {
                 LendDate = DateTime.Today,
                 ReturnDate = DateTime.Today,
-                Comment = "Test history",
+                Comment = sample,
                 UserId = _user.Id,
                 FriendId = _friend.Id,
                 ThingId = _thing.Id
@@ -60,7 +61,7 @@ namespace ThingsBook.Data.Mongo.Tests
             {
                 LendDate = DateTime.Today,
                 ReturnDate = DateTime.Today,
-                Comment = "Test history",
+                Comment = sample,
                 UserId = _user.Id,
                 FriendId = SequentialGuidUtils.CreateGuid(),
                 ThingId = SequentialGuidUtils.CreateGuid()
@@ -120,7 +121,7 @@ namespace ThingsBook.Data.Mongo.Tests
             {
                 LendDate = DateTime.Now,
                 ReturnDate = DateTime.Now,
-                Comment = "Test history",
+                Comment = sample,
                 UserId = _user.Id,
                 FriendId = SequentialGuidUtils.CreateGuid(),
                 ThingId = SequentialGuidUtils.CreateGuid()
@@ -148,15 +149,15 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var thing = new Thing
             {
-                Name = "Test",
-                About = "GetTest",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id
             };
             var lend = new HistoricalLend
             {
                 LendDate = DateTime.Now,
                 ReturnDate = DateTime.Now,
-                Comment = "Test history",
+                Comment = sample,
                 UserId = _user.Id,
                 FriendId = _friend.Id,
                 ThingId = thing.Id
@@ -189,15 +190,15 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var friend = new Friend
             {
-                Name = "Test",
-                Contacts = "GetTest",
+                Name = sample,
+                Contacts = sample,
                 UserId = _user.Id
             };
             var lend = new HistoricalLend
             {
                 LendDate = DateTime.Now,
                 ReturnDate = DateTime.Now,
-                Comment = "Test history",
+                Comment = sample,
                 UserId = _user.Id,
                 FriendId = friend.Id,
                 ThingId = _thing.Id

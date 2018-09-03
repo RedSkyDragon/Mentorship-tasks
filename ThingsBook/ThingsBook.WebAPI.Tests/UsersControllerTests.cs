@@ -14,7 +14,7 @@ using ThingsBook.WebAPI.Controllers;
 namespace ThingsBook.WebAPI.Tests
 {
     [TestFixture]
-    class UsersControllerTests
+    public class UsersControllerTests
     {
         private Mock<IUsersBL> _users;
         private ClaimsPrincipal _user;

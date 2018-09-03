@@ -20,13 +20,17 @@ namespace ThingsBook.WebAPI
         {
             ConfigureAuth(app);
             var httpConfiguration = new HttpConfiguration();
-            ConfigureAutoFac(httpConfiguration);       
+            ConfigureDI(httpConfiguration);       
             httpConfiguration.Filters.Add(new CustomExceptionFilter());
             httpConfiguration.MapHttpAttributeRoutes();
             ConfigureSwagger(httpConfiguration);
             app.UseWebApi(httpConfiguration);
         }
 
+        /// <summary>
+        /// Configures the authentication.
+        /// </summary>
+        /// <param name="app">The application.</param>
         protected virtual void ConfigureAuth(IAppBuilder app)
         {
             JwtSecurityTokenHandler.InboundClaimTypeMap = new Dictionary<string, string>();
@@ -38,11 +42,19 @@ namespace ThingsBook.WebAPI
             });
         }
 
-        protected virtual void ConfigureAutoFac(HttpConfiguration httpConfiguration)
+        /// <summary>
+        /// Configures dependency injections.
+        /// </summary>
+        /// <param name="httpConfiguration">The HTTP configuration.</param>
+        protected virtual void ConfigureDI(HttpConfiguration httpConfiguration)
         {
             AutofacConfig.ConfigureContainer(httpConfiguration);
         }
 
+        /// <summary>
+        /// Configures the swagger.
+        /// </summary>
+        /// <param name="httpConfiguration">The HTTP configuration.</param>
         protected virtual void ConfigureSwagger(HttpConfiguration httpConfiguration)
         {
             SwaggerConfig.Register(httpConfiguration);
