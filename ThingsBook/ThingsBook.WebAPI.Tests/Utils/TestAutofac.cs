@@ -49,7 +49,7 @@ namespace ThingsBook.WebAPI.Tests.Utils
             things.Setup(t => t.UpdateThing(It.IsAny<Guid>(), It.IsAny<ThingWithLend>()))
                 .Returns((Guid id, ThingWithLend th) => Task.FromResult(th));
             things.Setup(t => t.GetThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
-                .Returns((Guid id, Guid th) => Task.FromResult(new ThingWithLend { Id = th }));
+                .Returns((Guid id, Guid th) => Task.FromResult(new ThingWithLend { Id = th, Name = "Sample", About = "Sample" }));
             things.Setup(t => t.DeleteThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
             things.Setup(t => t.GetThingLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
@@ -61,7 +61,7 @@ namespace ThingsBook.WebAPI.Tests.Utils
             things.Setup(t => t.UpdateCategory(It.IsAny<Guid>(), It.IsAny<Category>()))
                 .Returns((Guid id, Category cat) => Task.FromResult(cat));
             things.Setup(t => t.GetCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
-                .Returns((Guid id, Guid cat) => Task.FromResult(new Category { Id = cat }));
+                .Returns((Guid id, Guid cat) => Task.FromResult(new Category { Id = cat, Name = "Sample", About = "Sample" }));
             things.Setup(t => t.DeleteCategoryWithThings(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
             things.Setup(t => t.DeleteCategoryWithReplacement(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
@@ -81,7 +81,7 @@ namespace ThingsBook.WebAPI.Tests.Utils
             friends.Setup(t => t.Update(It.IsAny<Guid>(), It.IsAny<Friend>()))
                 .Returns((Guid id, Friend fr) => Task.FromResult(fr));
             friends.Setup(t => t.GetOne(It.IsAny<Guid>(), It.IsAny<Guid>()))
-                .Returns((Guid id, Guid fr) => Task.FromResult(new Friend { Id = fr }));
+                .Returns((Guid id, Guid fr) => Task.FromResult(new Friend { Id = fr, Name = "Sample", Contacts = "Sample" }));
             friends.Setup(t => t.Delete(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
             friends.Setup(t => t.GetFriendLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
