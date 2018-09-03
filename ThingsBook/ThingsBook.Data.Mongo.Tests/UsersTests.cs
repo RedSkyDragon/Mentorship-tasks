@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using MongoDB.Driver;
+using NUnit.Framework;
 using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
@@ -15,7 +16,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task Setup()
         {
-            _users = new UsersDAL(new ThingsBookContext("mongodb://localhost/ThingsBookTests"));
+            _users = new UsersDAL(new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient()));
             _user = new User { Name = "Sample User setup" };
             await _users.CreateUser(_user);
         }

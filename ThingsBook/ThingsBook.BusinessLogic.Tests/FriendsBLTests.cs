@@ -47,7 +47,7 @@ namespace ThingsBook.BusinessLogic.Tests
             _lends = new Mock<ILendsDAL>();
             _lends.Setup(l => l.DeleteFriendLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
-            var dal = new CommonDAL(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
+            var dal = new Storage(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
             _friendsBL = new FriendsBL(dal);
         }
 

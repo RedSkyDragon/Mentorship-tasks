@@ -19,7 +19,7 @@ namespace ThingsBook.BusinessLogic
         /// Initializes a new instance of the <see cref="FriendsBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public FriendsBL(CommonDAL data): base(data) { }
+        public FriendsBL(Storage data): base(data) { }
 
         /// <summary>
         /// Creates the friend.

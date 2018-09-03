@@ -13,13 +13,13 @@ namespace ThingsBook.BusinessLogic
         /// <value>
         /// The data.
         /// </value>
-        protected CommonDAL Data { get; }
+        protected Storage Data { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public BaseBL(CommonDAL data)
+        public BaseBL(Storage data)
         {
             Data = data;
         }

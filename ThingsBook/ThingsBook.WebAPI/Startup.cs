@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Web.Http;
 using IdentityServer3.AccessTokenValidation;
-using Microsoft.Owin;
 using Owin;
 using ThingsBook.WebAPI.Utils;
 
@@ -23,7 +21,7 @@ namespace ThingsBook.WebAPI
             JwtSecurityTokenHandler.InboundClaimTypeMap = new Dictionary<string, string>();
             app.UseIdentityServerBearerTokenAuthentication(new IdentityServerBearerTokenAuthenticationOptions
             {
-                Authority = "http://localhost/thingsbook.identityserver",
+                Authority = "http://localhost/identityserver",
                 RequiredScopes = new[] { "things-book" },
                 ClientId = "ThingsBook.WebAPI"
             });

@@ -48,7 +48,7 @@
     <Compile Include="GuidUtils.cs" />
     <Compile Include="HistoricalLend.cs" />
     <Compile Include="ICategoriesDAL.cs" />
-    <Compile Include="CommonDAL.cs" />
+    <Compile Include="Storage.cs" />
     <Compile Include="IFriendsDAL.cs" />
     <Compile Include="IHistoryDAL.cs" />
     <Compile Include="ILendsDAL.cs" />

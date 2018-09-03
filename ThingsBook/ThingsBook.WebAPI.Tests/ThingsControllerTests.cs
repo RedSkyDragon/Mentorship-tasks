@@ -55,6 +55,7 @@ namespace ThingsBook.WebAPI.Tests
             ThingsController controller = new ThingsController(_things.Object);
             var result = await controller.Get();
             Assert.NotNull(result);
+            _things.Verify(u => u.GetThings(It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
@@ -64,6 +65,7 @@ namespace ThingsBook.WebAPI.Tests
             ThingsController controller = new ThingsController(_things.Object);
             var result = await controller.Get(new Guid());
             Assert.NotNull(result);
+            _things.Verify(u => u.GetThing(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
@@ -75,6 +77,7 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(sample, result.Name);
             Assert.AreEqual(sample, result.About);
+            _things.Verify(u => u.CreateThing(It.IsAny<Guid>(), It.IsAny<ThingWithLend>()), Times.Once());
         }
 
         [Test]
@@ -86,6 +89,7 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(sample, result.Name);
             Assert.AreEqual(sample, result.About);
+            _things.Verify(u => u.UpdateThing(It.IsAny<Guid>(), It.IsAny<ThingWithLend>()), Times.Once());
         }
 
         [Test]
@@ -95,23 +99,23 @@ namespace ThingsBook.WebAPI.Tests
             ThingsController controller = new ThingsController(_things.Object);
             var result = await controller.GetLends(new Guid());
             Assert.NotNull(result);
+            _things.Verify(u => u.GetThingLends(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
-        public Task DeleteThingTest()
+        public async Task DeleteThingTest()
         {
             Thread.CurrentPrincipal = _user;
             ThingsController controller = new ThingsController(_things.Object);
-            return controller.Delete(new Guid());
+            await controller.Delete(new Guid());
+            _things.Verify(u => u.DeleteThing(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
         public void AuthorizeAttributeTest()
         {
-            ThingsController controller = new ThingsController(_things.Object);
-            var type = controller.GetType();
-            var attributes = type.GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
+            var attributes = typeof(ThingsController).GetCustomAttributes(typeof(AuthorizeAttribute), true);
+            Assert.IsTrue(attributes.Any(), "No authorize attribute on ThingsController");
         }
     }
 }

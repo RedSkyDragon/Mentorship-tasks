@@ -57,6 +57,7 @@ namespace ThingsBook.WebAPI.Tests
             CategoriesController controller = new CategoriesController(_things.Object);
             var result = await controller.Get();
             Assert.NotNull(result);
+            _things.Verify(u => u.GetCategories(It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
@@ -66,6 +67,7 @@ namespace ThingsBook.WebAPI.Tests
             CategoriesController controller = new CategoriesController(_things.Object);
             var result = await controller.Get(new Guid());
             Assert.NotNull(result);
+            _things.Verify(u => u.GetCategory(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
@@ -77,6 +79,7 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(sample, result.Name);
             Assert.AreEqual(sample, result.About);
+            _things.Verify(u => u.CreateCategory(It.IsAny<Guid>(), It.IsAny<Category>()), Times.Once());
         }
 
         [Test]
@@ -88,6 +91,7 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(sample, result.Name);
             Assert.AreEqual(sample, result.About);
+            _things.Verify(u => u.UpdateCategory(It.IsAny<Guid>(), It.IsAny<Category>()), Times.Once());
         }
 
         [Test]
@@ -97,30 +101,31 @@ namespace ThingsBook.WebAPI.Tests
             CategoriesController controller = new CategoriesController(_things.Object);
             var result = await controller.GetForCategory(new Guid());
             Assert.NotNull(result);
+            _things.Verify(u => u.GetThingsForCategory(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
-        public Task DeleteCategoryTest()
+        public async Task DeleteCategoryTest()
         {
             Thread.CurrentPrincipal = _user;
             CategoriesController controller = new CategoriesController(_things.Object);
-            return controller.Delete(new Guid());
+            await controller.Delete(new Guid());
+            _things.Verify(u => u.DeleteCategoryWithThings(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
-        public Task DeleteAndReplaceTest()
+        public async Task DeleteAndReplaceTest()
         {
             Thread.CurrentPrincipal = _user;
             CategoriesController controller = new CategoriesController(_things.Object);
-            return controller.DeleteAndReplace(new Guid(), new Guid());
+            await controller.DeleteAndReplace(new Guid(), new Guid());
+            _things.Verify(u => u.DeleteCategoryWithReplacement(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
         public void AuthorizeAttributeTest()
         {
-            CategoriesController controller = new CategoriesController(_things.Object);
-            var type = controller.GetType();
-            var attributes = type.GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
+            var attributes = typeof(CategoriesController).GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
             Assert.IsTrue(attributes.Any());
         }
     }

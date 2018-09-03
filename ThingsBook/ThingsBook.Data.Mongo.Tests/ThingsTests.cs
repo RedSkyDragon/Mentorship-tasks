@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using MongoDB.Driver;
+using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [SetUp]
         public async Task Setup()
         {
-            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
+            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient());
             _users = new UsersDAL(context);
             _user = new User { Name = "ThingsTest User" };
             _things = new ThingsDAL(context);

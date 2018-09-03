@@ -17,7 +17,7 @@ namespace ThingsBook.BusinessLogic
         /// Initializes a new instance of the <see cref="UsersBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public UsersBL(CommonDAL data) : base(data) { }
+        public UsersBL(Storage data) : base(data) { }
 
         /// <summary>
         /// Creates the specified user.

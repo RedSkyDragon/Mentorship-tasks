@@ -59,7 +59,7 @@ namespace ThingsBook.BusinessLogic.Tests
             _things.Setup(t => t.DeleteThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
                .Returns(Task.CompletedTask);
             _lends = new Mock<ILendsDAL>();
-            var dal = new CommonDAL(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
+            var dal = new Storage(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
             _thingsBL = new ThingsBL(dal);
         }
 

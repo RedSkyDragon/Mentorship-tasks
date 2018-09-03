@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Autofac.Integration.WebApi;
+using MongoDB.Driver;
+using System.Configuration;
 using System.Reflection;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
@@ -20,7 +22,10 @@ namespace ThingsBook.WebAPI.Utils
         {
             var builder = new ContainerBuilder();
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-            builder.Register(c => new ThingsBookContext()).As<ThingsBookContext>().InstancePerRequest();
+            builder.RegisterType<MongoClient>().As<IMongoClient>();
+            builder.RegisterType<ThingsBookContext>().AsSelf()
+                .WithParameter("connectionString", ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString)
+                .SingleInstance();
             RegisterDAL(builder);
             RegisterBL(builder);
             var container = builder.Build();
@@ -35,7 +40,7 @@ namespace ThingsBook.WebAPI.Utils
             buider.RegisterType<ThingsDAL>().As<IThingsDAL>();
             buider.RegisterType<LendsDAL>().As<ILendsDAL>();
             buider.RegisterType<HistoryDAL>().As<IHistoryDAL>();
-            buider.RegisterType<CommonDAL>().As<CommonDAL>();
+            buider.RegisterType<Storage>().AsSelf();
         }
 
         private static void RegisterBL(ContainerBuilder buider)

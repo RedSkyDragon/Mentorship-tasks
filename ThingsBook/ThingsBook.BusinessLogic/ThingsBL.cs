@@ -19,7 +19,7 @@ namespace ThingsBook.BusinessLogic
         /// Initializes a new instance of the <see cref="ThingsBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public ThingsBL(CommonDAL data) : base(data) { }
+        public ThingsBL(Storage data) : base(data) { }
 
         /// <summary>
         /// Creates the category.

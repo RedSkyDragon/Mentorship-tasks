@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using System;
-using System.Configuration;
+using System.Collections.Generic;
 using ThingsBook.Data.Interface;
 
 namespace ThingsBook.Data.Mongo
@@ -16,20 +16,23 @@ namespace ThingsBook.Data.Mongo
         private IMongoDatabase _database { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ThingsBookContext"/> class.
+        /// Initializes the <see cref="ThingsBookContext"/> class.
         /// </summary>
-        public ThingsBookContext() : this(ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString) { }
-
-        public ThingsBookContext(string connectionString)
-        {
-            var connection = new MongoUrlBuilder(connectionString);
-            MongoClient client = new MongoClient(connectionString);
-            _database = client.GetDatabase(connection.DatabaseName);
-        }
-
         static ThingsBookContext()
         {
             RegisterClassMaps();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThingsBookContext"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="client">The client.</param>
+        public ThingsBookContext(string connectionString, IMongoClient client)
+        {
+            var connection = new MongoUrlBuilder(connectionString);
+            _database = client.GetDatabase(connection.DatabaseName);
+            CreateIndexes();
         }
 
         /// <summary>
@@ -72,15 +75,7 @@ namespace ThingsBook.Data.Mongo
             get { return Collection<Friend>(); }
         }
 
-        private IMongoCollection<T> Collection<T>() where T: Entity
-        {
-            return _database.GetCollection<T>(typeof(T).Name);
-        }
-
-        /// <summary>
-        /// Registers the class maps.
-        /// </summary>
-        public static void RegisterClassMaps()
+        private static void RegisterClassMaps()
         {
             var conventionPack = new ConventionPack();
             conventionPack.Add(new CamelCaseElementNameConvention());
@@ -120,5 +115,29 @@ namespace ThingsBook.Data.Mongo
                 cm.GetMemberMap(c => c.UserId).SetIsRequired(true);               
             });
         }
+
+        private IMongoCollection<T> Collection<T>() where T : Entity
+        {
+            return _database.GetCollection<T>(typeof(T).Name);
+        }
+
+        private void CreateIndexes()
+        {
+            var options = new CreateIndexOptions { Background = true };
+            Things.Indexes.CreateMany(new List<CreateIndexModel<Thing>>()
+            {
+                new CreateIndexModel<Thing>(Builders<Thing>.IndexKeys.Ascending(t => t.CategoryId), options),
+                new CreateIndexModel<Thing>(Builders<Thing>.IndexKeys.Ascending(t => t.UserId), options)
+            });
+            Categories.Indexes.CreateOne(new CreateIndexModel<Category>(Builders<Category>.IndexKeys.Ascending(t => t.UserId), options));
+            Friends.Indexes.CreateOne(new CreateIndexModel<Friend>(Builders<Friend>.IndexKeys.Ascending(t => t.UserId), options));
+            History.Indexes.CreateMany(new List<CreateIndexModel<HistoricalLend>>()
+            {
+                new CreateIndexModel<HistoricalLend>(Builders<HistoricalLend>.IndexKeys.Ascending(h => h.UserId), options),
+                new CreateIndexModel<HistoricalLend>(Builders<HistoricalLend>.IndexKeys.Ascending(h => h.FriendId), options),
+                new CreateIndexModel<HistoricalLend>(Builders<HistoricalLend>.IndexKeys.Ascending(h => h.ThingId), options)
+            });
+        }
+
     }
 }

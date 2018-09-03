@@ -18,7 +18,7 @@ namespace ThingsBook.BusinessLogic
         /// Initializes a new instance of the <see cref="LendsBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public LendsBL(CommonDAL data) : base(data) { }
+        public LendsBL(Storage data) : base(data) { }
 
         /// <summary>
         /// Creates the lend for specified thing identifier.
