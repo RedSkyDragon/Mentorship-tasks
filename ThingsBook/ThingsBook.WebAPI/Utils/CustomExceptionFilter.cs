@@ -31,21 +31,16 @@ namespace ThingsBook.WebAPI.Utils
             {
                 exceptionMessage = context.Exception.InnerException.Message;
             };
-            if (context.Exception is UnauthorizedAccessException)
+            if (context.Exception is UnauthorizedAccessException || 
+                context.Exception is UserClaimsException)
             {
                 statusCode = HttpStatusCode.Unauthorized;
             }
-            if (context.Exception is ModelValidationException)
+            if (context.Exception is ModelValidationException || 
+                context.Exception is ArgumentException || 
+                context.Exception is ArgumentNullException)
             {
                 statusCode = HttpStatusCode.BadRequest;
-            }
-            if (context.Exception is ArgumentException || context.Exception is ArgumentNullException)
-            {
-                statusCode = HttpStatusCode.BadRequest;
-            }
-            if (context.Exception is UserClaimsException)
-            {
-                statusCode = HttpStatusCode.Unauthorized;
             }
             context.Response = context.Request.CreateErrorResponse(statusCode, exceptionMessage);      
         }

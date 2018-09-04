@@ -85,7 +85,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<Category> GetCategory(Guid userId, Guid id)
         {
             var result = await _db.Categories.FindAsync(c => c.UserId == userId && c.Id == id);
-            return result.FirstOrDefault();
+            return await result.FirstOrDefaultAsync();
         }
 
         /// <summary>

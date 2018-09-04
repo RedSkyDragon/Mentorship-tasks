@@ -56,7 +56,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<User> GetUser(Guid id)
         {
             var result = await _db.Users.FindAsync(u => u.Id == id);
-            return result.FirstOrDefault();
+            return await result.FirstOrDefaultAsync();
         }
 
         /// <summary>

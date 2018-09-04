@@ -117,7 +117,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<HistoricalLend> GetHistLend(Guid userId, Guid id)
         {
             var result = await _db.History.FindAsync(h => h.UserId == userId && h.Id == id);
-            return result.FirstOrDefault();
+            return await result.FirstOrDefaultAsync();
         }
 
         /// <summary>

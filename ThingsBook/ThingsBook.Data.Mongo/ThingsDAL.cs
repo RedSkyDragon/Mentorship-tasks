@@ -101,7 +101,7 @@ namespace ThingsBook.Data.Mongo
         public async Task<Thing> GetThing(Guid userId, Guid id)
         {
             var result = await _db.Things.FindAsync(t => t.UserId == userId && t.Id == id);
-            return result.FirstOrDefault();
+            return await result.FirstOrDefaultAsync();
         }
 
         /// <summary>
