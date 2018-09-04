@@ -110,12 +110,5 @@ namespace ThingsBook.WebAPI.Tests
             await controller.Delete(new Guid());
             _friends.Verify(f => f.Delete(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            var attributes = typeof(FriendsController).GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
-        }
     }
 }

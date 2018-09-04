@@ -76,12 +76,5 @@ namespace ThingsBook.WebAPI.Tests
             await controller.Delete(new Guid(), date);
             _lends.Verify(l => l.Delete(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Once());
         }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            var attributes = typeof(LendsController).GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
-        }
     }
 }

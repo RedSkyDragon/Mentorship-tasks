@@ -16,6 +16,18 @@ namespace ThingsBook.WebAPI.Tests
         private readonly Guid _guid = new Guid("12345678123456781234567812345678");
 
         [Test]
+        public async Task AuthTest()
+        {
+            using (var server = TestServer.Create<TestStartupWithoutAuth>())
+            {
+                var response = await server.HttpClient.GetAsync("/things");
+                var result = await response.Content.ReadAsStringAsync();
+                Assert.IsNotNull(result);
+                Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+            }
+        }
+
+        [Test]
         public async Task GetThingsTest()
         {
             using (var server = TestServer.Create<TestStartup>())
@@ -57,7 +69,8 @@ namespace ThingsBook.WebAPI.Tests
             var values = new Dictionary<string, string>
             {
                 { "Name", "Sample" },
-                { "About", "Sample" }
+                { "About", "Sample" },
+                { "CategoryId", _guid.ToString() }
             };
             using (var server = TestServer.Create<TestStartup>())
             {
@@ -74,7 +87,8 @@ namespace ThingsBook.WebAPI.Tests
             var values = new Dictionary<string, string>
             {
                 { "Name", "Sample" },
-                { "About", "Sample" }
+                { "About", "Sample" },
+                { "CategoryId", _guid.ToString() }
             };
             using (var server = TestServer.Create<TestStartup>())
             {

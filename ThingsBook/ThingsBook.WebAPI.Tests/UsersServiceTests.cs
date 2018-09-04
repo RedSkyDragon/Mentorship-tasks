@@ -12,6 +12,30 @@ namespace ThingsBook.WebAPI.Tests
     public class UsersServiceTests
     {
         [Test]
+        public async Task NoAuthTest()
+        {
+            using (var server = TestServer.Create<TestStartupWithoutAuth>())
+            {
+                var response = await server.HttpClient.GetAsync("/user");
+                var result = await response.Content.ReadAsStringAsync();
+                Assert.IsNotNull(result);
+                Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+            }
+        }
+
+        [Test]
+        public async Task InvalidAuthTest()
+        {
+            using (var server = TestServer.Create<TestStartupInvalidAuth>())
+            {
+                var response = await server.HttpClient.GetAsync("/user");
+                var result = await response.Content.ReadAsStringAsync();
+                Assert.IsNotNull(result);
+                Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+            }
+        }
+
+        [Test]
         public async Task GetUserTest()
         {
             using (var server = TestServer.Create<TestStartup>())

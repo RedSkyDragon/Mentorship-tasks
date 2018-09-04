@@ -17,6 +17,7 @@ namespace ThingsBook.BusinessLogic.Tests
         private Mock<IHistoryDAL> _history;
         private Mock<IThingsDAL> _things;
         private Mock<ILendsDAL> _lends;
+        private const string sample = "Sample";
 
         [SetUp]
         public void Setup()
@@ -54,7 +55,7 @@ namespace ThingsBook.BusinessLogic.Tests
         [Test]
         public async Task CreateFriendTest()
         {
-            var friend = new Models.Friend();
+            var friend = new Models.Friend { Name = sample };
             var result = await _friendsBL.Create(new Guid(), friend);
             Assert.NotNull(result);
             Assert.AreEqual(friend.Id, result.Id);
@@ -62,19 +63,27 @@ namespace ThingsBook.BusinessLogic.Tests
             {
                 return _friendsBL.Create(new Guid(), null);
             });
-            _friends.Verify(f => f.CreateFriend(It.IsAny<Guid>(), It.IsAny<Friend>()), Times.Once());
+            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
+            {
+                return _friendsBL.Create(new Guid(), new Models.Friend());
+            });
+            _friends.Verify(f => f.CreateFriend(It.IsAny<Guid>(), It.IsAny<Data.Interface.Friend>()), Times.Once());
         }
 
         [Test]
         public async Task UpdateFriendTest()
         {
-            var friend = new Models.Friend();
+            var friend = new Models.Friend { Name = sample };
             var result = await _friendsBL.Update(new Guid(), friend);
             Assert.NotNull(result);
             Assert.AreEqual(friend.Id, result.Id);
             Assert.ThrowsAsync<ArgumentNullException>(() =>
             {
                 return _friendsBL.Update(new Guid(), null);
+            });
+            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
+            {
+                return _friendsBL.Update(new Guid(), new Models.Friend());
             });
             _friends.Verify(f => f.UpdateFriend(It.IsAny<Guid>(), It.IsAny<Friend>()), Times.Once());
         }

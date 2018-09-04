@@ -81,12 +81,5 @@ namespace ThingsBook.WebAPI.Tests
             await controller.Delete();
             _users.Verify(u => u.Delete(It.IsAny<Guid>()), Times.Once());
         }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            var attributes = typeof(UsersController).GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
-        }
     }
 }

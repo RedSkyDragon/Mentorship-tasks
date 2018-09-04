@@ -110,12 +110,5 @@ namespace ThingsBook.WebAPI.Tests
             await controller.Delete(new Guid());
             _things.Verify(u => u.DeleteThing(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            var attributes = typeof(ThingsController).GetCustomAttributes(typeof(AuthorizeAttribute), true);
-            Assert.IsTrue(attributes.Any(), "No authorize attribute on ThingsController");
-        }
     }
 }

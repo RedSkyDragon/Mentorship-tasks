@@ -54,22 +54,46 @@ namespace ThingsBook.BusinessLogic.Tests
         [Test]
         public async Task CreateTest()
         {
-            var lend = new Models.Lend { };
+            var lend = new Models.Lend
+            {
+                FriendId = new Guid("12341234123412341234123412341234"),
+                LendDate = DateTime.Now
+            };
             var thingId = SequentialGuidUtils.CreateGuid();
             var res = await _lendsBL.Create(new Guid(), thingId, lend);
             Assert.NotNull(res);
             Assert.AreEqual(thingId, res.Id);
+            Assert.ThrowsAsync<ArgumentNullException>(() =>
+            {
+                return _lendsBL.Create(new Guid(), new Guid(), null);
+            });
+            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
+            {
+                return _lendsBL.Create(new Guid(), new Guid(), new Models.Lend());
+            });
             _lends.Verify(t => t.CreateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()), Times.Once());
         }
 
         [Test]
         public async Task UpdateTest()
         {
-            var lend = new Models.Lend { };
+            var lend = new Models.Lend
+            {
+                FriendId = new Guid("12341234123412341234123412341234"),
+                LendDate = DateTime.Now
+            };
             var thingId = SequentialGuidUtils.CreateGuid();
             var res = await _lendsBL.Update(new Guid(), thingId, lend);
             Assert.NotNull(res);
             Assert.AreEqual(thingId, res.Id);
+            Assert.ThrowsAsync<ArgumentNullException>(() =>
+            {
+                return _lendsBL.Update(new Guid(), new Guid(), null);
+            });
+            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
+            {
+                return _lendsBL.Update(new Guid(), new Guid(), new Models.Lend());
+            });
             _lends.Verify(t => t.UpdateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()), Times.Once());
         }
 

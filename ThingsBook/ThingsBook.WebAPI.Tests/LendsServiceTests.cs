@@ -18,6 +18,18 @@ namespace ThingsBook.WebAPI.Tests
         private readonly Guid _guid = new Guid("12345678123456781234567812345678");
 
         [Test]
+        public async Task AuthTest()
+        {
+            using (var server = TestServer.Create<TestStartupWithoutAuth>())
+            {
+                var response = await server.HttpClient.PostAsync("/lend/" + _guid.ToString(), null);
+                var result = await response.Content.ReadAsStringAsync();
+                Assert.IsNotNull(result);
+                Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+            }
+        }
+
+        [Test]
         public async Task PostLendTest()
         {
             var values = new Dictionary<string, string>

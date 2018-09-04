@@ -17,6 +17,7 @@ namespace ThingsBook.BusinessLogic.Tests
         private Mock<IHistoryDAL> _history;
         private Mock<IThingsDAL> _things;
         private Mock<ILendsDAL> _lends;
+        private const string sample = "Sample";
 
         [SetUp]
         public void Setup()
@@ -66,7 +67,7 @@ namespace ThingsBook.BusinessLogic.Tests
         [Test]
         public async Task CreateThingTest()
         {
-            var thing = new Models.ThingWithLend { };
+            var thing = new Models.ThingWithLend { Name = sample };
             var res = await _thingsBL.CreateThing(new Guid(), thing);
             Assert.NotNull(res);
             Assert.AreEqual(thing.Id, res.Id);
@@ -74,19 +75,27 @@ namespace ThingsBook.BusinessLogic.Tests
             {
                 return _thingsBL.CreateThing(new Guid(), null);
             });
+            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
+            {
+                return _thingsBL.CreateThing(new Guid(), new Models.ThingWithLend());
+            });
             _things.Verify(t => t.CreateThing(It.IsAny<Guid>(), It.IsAny<Thing>()), Times.Once());
         }
 
         [Test]
         public async Task UpdateThingTest()
         {
-            var thing = new Models.ThingWithLend { };
+            var thing = new Models.ThingWithLend { Name = sample };
             var res = await _thingsBL.UpdateThing(new Guid(), thing);
             Assert.NotNull(res);
             Assert.AreEqual(thing.Id, res.Id);
             Assert.ThrowsAsync<ArgumentNullException>(() =>
             {
                 return _thingsBL.UpdateThing(new Guid(), null);
+            });
+            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
+            {
+                return _thingsBL.UpdateThing(new Guid(), new Models.ThingWithLend());
             });
             _things.Verify(t => t.UpdateThing(It.IsAny<Guid>(), It.IsAny<Thing>()), Times.Once());
         }
@@ -137,7 +146,7 @@ namespace ThingsBook.BusinessLogic.Tests
         [Test]
         public async Task CreateCategoryTest()
         {
-            var category = new Models.Category { };
+            var category = new Models.Category { Name = sample };
             var res = await _thingsBL.CreateCategory(new Guid(), category);
             Assert.NotNull(res);
             Assert.AreEqual(category.Id, res.Id);
@@ -145,19 +154,27 @@ namespace ThingsBook.BusinessLogic.Tests
             {
                 return _thingsBL.CreateCategory(new Guid(), null);
             });
+            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
+            {
+                return _thingsBL.CreateCategory(new Guid(), new Models.Category());
+            });
             _categories.Verify(t => t.CreateCategory(It.IsAny<Guid>(), It.IsAny<Category>()), Times.Once());
         }
 
         [Test]
         public async Task UpdateCategoryTest()
         {
-            var category = new Models.Category { };
+            var category = new Models.Category { Name = sample };
             var res = await _thingsBL.UpdateCategory(new Guid(), category);
             Assert.NotNull(res);
             Assert.AreEqual(category.Id, res.Id);
             Assert.ThrowsAsync<ArgumentNullException>(() =>
             {
                 return _thingsBL.UpdateCategory(new Guid(), null);
+            });
+            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
+            {
+                return _thingsBL.UpdateCategory(new Guid(), new Models.Category());
             });
             _categories.Verify(t => t.UpdateCategory(It.IsAny<Guid>(), It.IsAny<Category>()), Times.Once());
         }

@@ -10,7 +10,7 @@ namespace ThingsBook.WebAPI.Tests.Utils
     /// Authentication middleware
     /// </summary>
     /// <seealso cref="Microsoft.Owin.OwinMiddleware" />
-    class AuthMiddleware : OwinMiddleware
+    public class AuthMiddleware : OwinMiddleware
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthMiddleware"/> class.

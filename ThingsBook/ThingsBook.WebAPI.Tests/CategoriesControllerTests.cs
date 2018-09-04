@@ -121,12 +121,5 @@ namespace ThingsBook.WebAPI.Tests
             await controller.DeleteAndReplace(new Guid(), new Guid());
             _things.Verify(u => u.DeleteCategoryWithReplacement(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            var attributes = typeof(CategoriesController).GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
-        }
     }
 }

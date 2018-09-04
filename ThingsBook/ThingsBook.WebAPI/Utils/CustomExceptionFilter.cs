@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Http;
 using System.Web.Http.Filters;
+using ThingsBook.BusinessLogic.Models;
+using ThingsBook.WebAPI.Models;
 
 namespace ThingsBook.WebAPI.Utils
 {
@@ -33,9 +35,17 @@ namespace ThingsBook.WebAPI.Utils
             {
                 statusCode = HttpStatusCode.Unauthorized;
             }
-            if (context.Exception is ArgumentException || context.Exception is ArgumentNullException || context.Exception is ArgumentException)
+            if (context.Exception is ModelValidationException)
             {
                 statusCode = HttpStatusCode.BadRequest;
+            }
+            if (context.Exception is ArgumentException || context.Exception is ArgumentNullException)
+            {
+                statusCode = HttpStatusCode.BadRequest;
+            }
+            if (context.Exception is UserClaimsException)
+            {
+                statusCode = HttpStatusCode.Unauthorized;
             }
             context.Response = context.Request.CreateErrorResponse(statusCode, exceptionMessage);      
         }
