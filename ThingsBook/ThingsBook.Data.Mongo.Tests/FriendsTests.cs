@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using MongoDB.Driver;
+using NUnit.Framework;
 using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
@@ -8,19 +9,20 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class FriendsTests
     {
-        private IFriends _friends;
-        private IUsers _users;
+        private IFriendsDAL _friends;
+        private IUsersDAL _users;
         private User _user;
         private Friend _friend;
+        private const string sample = "Sample";
 
         [SetUp]
         public async Task Setup()
         {
-            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
-            _users = new Users(context);
-            _user = new User { Name = "FriendTest User" };
-            _friends = new Friends(context);
-            _friend = new Friend { Name = "Test Friend", Contacts = "Test contacts", UserId = _user.Id };
+            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient());
+            _users = new UsersDAL(context);
+            _user = new User { Name = sample };
+            _friends = new FriendsDAL(context);
+            _friend = new Friend { Name = sample, Contacts = sample, UserId = _user.Id };
             await _users.CreateUser(_user);
             await _friends.CreateFriend(_user.Id, _friend);
         }
@@ -29,7 +31,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task CreateFriendTest()
         {
-            var friend = new Friend { Name = "Test Friend Create", Contacts = "Test contacts", UserId = _user.Id };
+            var friend = new Friend { Name = sample, Contacts = sample, UserId = _user.Id };
             await _friends.CreateFriend(_user.Id, friend);
             var dbFriend = await _friends.GetFriend(_user.Id, friend.Id);
             Assert.AreEqual(friend.Id, dbFriend.Id);
@@ -64,8 +66,8 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task UpdateFriendTest()
         {
-            _friend.Name = "Updated name";
-            _friend.Contacts = "Updated contacts";
+            _friend.Name = "Updated";
+            _friend.Contacts = "Updated";
             await _friends.UpdateFriend(_user.Id, _friend);
             var updated = await _friends.GetFriend(_user.Id, _friend.Id);
             Assert.AreEqual(_friend.Id, updated.Id);
@@ -78,7 +80,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteFriendTest()
         {
-            var friend = new Friend { Name = "Test Friend Delete", Contacts = "Test contacts", UserId = _user.Id };
+            var friend = new Friend { Name = sample, Contacts = sample, UserId = _user.Id };
             await _friends.CreateFriend(_user.Id, friend);
             await _friends.DeleteFriend(_user.Id, friend.Id);
             var dbFriend = await _friends.GetFriend(_user.Id, friend.Id);
@@ -89,10 +91,10 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteFriendsTest()
         {
-            var user = new User { Name = "Delete Test" };
+            var user = new User { Name = sample };
             await _users.CreateUser(user);
-            var friend1 = new Friend { Name = "Test Friend Delete", Contacts = "Test contacts", UserId = user.Id };
-            var friend2 = new Friend { Name = "Test Friend Delete", Contacts = "Test contacts", UserId = user.Id };
+            var friend1 = new Friend { Name = sample, Contacts = sample, UserId = user.Id };
+            var friend2 = new Friend { Name = sample, Contacts = sample, UserId = user.Id };
             await _friends.CreateFriend(user.Id, friend1);
             await _friends.CreateFriend(user.Id, friend2);
             await _friends.DeleteFriends(user.Id);

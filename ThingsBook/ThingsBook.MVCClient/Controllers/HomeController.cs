@@ -51,7 +51,7 @@ namespace ThingsBook.MVCClient.Controllers
                 Things = await GetThingsInfoFromApi(token)
             };
             return View(model);
-        }
+        }     
 
         /// <summary>
         /// Client login
@@ -111,7 +111,7 @@ namespace ThingsBook.MVCClient.Controllers
         {
             var context = User.Identity as ClaimsIdentity;
             var token = context.BootstrapContext.ToString();
-            var disco = await DiscoveryClient.GetAsync("http://localhost/thingsbook.identityserver");
+            var disco = await DiscoveryClient.GetAsync("http://localhost/identityserver");
             var endSessionUrl = new RequestUrl(disco.EndSessionEndpoint).CreateEndSessionUrl(
                 idTokenHint: token,
                 extra: new { ShowSignoutPrompt = true },
@@ -122,7 +122,7 @@ namespace ThingsBook.MVCClient.Controllers
 
         private async Task<IActionResult> StartAuthentication()
         {
-            var client = new DiscoveryClient("http://localhost/thingsbook.identityserver");
+            var client = new DiscoveryClient("http://localhost/identityserver");
             client.Policy.RequireHttps = false;
             var disco = await client.GetAsync();
             var authorizeUrl = new RequestUrl(disco.AuthorizeEndpoint).CreateAuthorizeUrl(
@@ -165,7 +165,7 @@ namespace ThingsBook.MVCClient.Controllers
 
         private static async Task<ClaimsPrincipal> ValidateJwt(string jwt)
         {
-            var disco = await DiscoveryClient.GetAsync("http://localhost/thingsbook.identityserver");
+            var disco = await DiscoveryClient.GetAsync("http://localhost/identityserver");
             var keys = new List<SecurityKey>();
             foreach (var webKey in disco.KeySet.Keys)
             {

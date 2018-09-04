@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Autofac.Integration.WebApi;
+using MongoDB.Driver;
+using System.Configuration;
 using System.Reflection;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
@@ -20,7 +22,10 @@ namespace ThingsBook.WebAPI.Utils
         {
             var builder = new ContainerBuilder();
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-            builder.Register(c => new ThingsBookContext()).As<ThingsBookContext>().InstancePerRequest();
+            builder.RegisterType<MongoClient>().As<IMongoClient>();
+            builder.RegisterType<ThingsBookContext>().AsSelf()
+                .WithParameter("connectionString", ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString)
+                .SingleInstance();
             RegisterDAL(builder);
             RegisterBL(builder);
             var container = builder.Build();
@@ -29,13 +34,13 @@ namespace ThingsBook.WebAPI.Utils
 
         private static void RegisterDAL(ContainerBuilder buider)
         {
-            buider.RegisterType<Users>().As<IUsers>();
-            buider.RegisterType<Friends>().As<IFriends>();
-            buider.RegisterType<Categories>().As<ICategories>();
-            buider.RegisterType<Things>().As<IThings>();
-            buider.RegisterType<Lends>().As<ILends>();
-            buider.RegisterType<History>().As<IHistory>();
-            buider.RegisterType<CommonDAL>().As<CommonDAL>();
+            buider.RegisterType<UsersDAL>().As<IUsersDAL>();
+            buider.RegisterType<FriendsDAL>().As<IFriendsDAL>();
+            buider.RegisterType<CategoriesDAL>().As<ICategoriesDAL>();
+            buider.RegisterType<ThingsDAL>().As<IThingsDAL>();
+            buider.RegisterType<LendsDAL>().As<ILendsDAL>();
+            buider.RegisterType<HistoryDAL>().As<IHistoryDAL>();
+            buider.RegisterType<Storage>().AsSelf();
         }
 
         private static void RegisterBL(ContainerBuilder buider)

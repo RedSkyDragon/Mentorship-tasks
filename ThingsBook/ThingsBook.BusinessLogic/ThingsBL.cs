@@ -19,7 +19,7 @@ namespace ThingsBook.BusinessLogic
         /// Initializes a new instance of the <see cref="ThingsBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public ThingsBL(CommonDAL data) : base(data) { }
+        public ThingsBL(Storage data) : base(data) { }
 
         /// <summary>
         /// Creates the category.
@@ -31,10 +31,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Category> CreateCategory(Guid userId, Models.Category category)
         {
-            if (category == null)
-            {
-                throw new ArgumentNullException("category");
-            }
+            CheckCategory(category);
             await Data.Categories.CreateCategory(userId, ModelsConverter.ToDataModel(category, userId));
             return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
         }
@@ -49,10 +46,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<ThingWithLend> CreateThing(Guid userId, ThingWithLend thing)
         {
-            if (thing == null)
-            {
-                throw new ArgumentNullException("thing");
-            }
+            CheckThing(thing);
             await Data.Things.CreateThing(userId, ModelsConverter.ToDataModel(thing, userId));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
         }
@@ -170,10 +164,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Category> UpdateCategory(Guid userId, Models.Category category)
         {
-            if (category == null)
-            {
-                throw new ArgumentNullException("category");
-            }
+            CheckCategory(category);
             await Data.Categories.UpdateCategory(userId, ModelsConverter.ToDataModel(category, userId));
             return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
         }
@@ -188,10 +179,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<ThingWithLend> UpdateThing(Guid userId, ThingWithLend thing)
         {
-            if (thing == null)
-            {
-                throw new ArgumentNullException("thing");
-            }
+            CheckThing(thing);
             await Data.Things.UpdateThing(userId, ModelsConverter.ToDataModel(thing, userId));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
         }
@@ -256,6 +244,42 @@ namespace ThingsBook.BusinessLogic
             lendBL.Friend = ModelsConverter.ToBLModel(friend);
             lendBL.Thing = thingMapper.Map<Models.Thing>(thing);
             return lendBL;
+        }
+
+        /// <summary>
+        /// Checks the category.
+        /// </summary>
+        /// <param name="category">The category.</param>
+        /// <exception cref="ArgumentNullException">Category must not be null. - category</exception>
+        /// <exception cref="ModelValidationException">Category must not be empty.</exception>
+        private void CheckCategory(Models.Category category)
+        {
+            if (category == null)
+            {
+                throw new ArgumentNullException("Category must not be null.", nameof(category));
+            }
+            if (string.IsNullOrEmpty(category.Name) && string.IsNullOrEmpty(category.About))
+            {
+                throw new ModelValidationException("Category must not be empty.");
+            }
+        }
+
+        /// <summary>
+        /// Checks the thing.
+        /// </summary>
+        /// <param name="thing">The thing.</param>
+        /// <exception cref="ArgumentNullException">Thing must not be null. - thing</exception>
+        /// <exception cref="ModelValidationException">Thing must not be empty.</exception>
+        private void CheckThing(ThingWithLend thing)
+        {
+            if (thing == null)
+            {
+                throw new ArgumentNullException("Thing must not be null.", nameof(thing));
+            }
+            if (string.IsNullOrEmpty(thing.Name) && string.IsNullOrEmpty(thing.About))
+            {
+                throw new ModelValidationException("Thing must not be empty.");
+            }
         }
     }
 }

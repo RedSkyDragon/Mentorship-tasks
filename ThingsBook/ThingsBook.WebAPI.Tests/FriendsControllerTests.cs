@@ -15,7 +15,7 @@ using ThingsBook.WebAPI.Controllers;
 namespace ThingsBook.WebAPI.Tests
 {
     [TestFixture]
-    class FriendsControllerTests
+    public class FriendsControllerTests
     {
         private Mock<IFriendsBL> _friends;
         private ClaimsPrincipal _user;
@@ -55,6 +55,7 @@ namespace ThingsBook.WebAPI.Tests
             FriendsController controller = new FriendsController(_friends.Object);
             var result = await controller.Get();
             Assert.NotNull(result);
+            _friends.Verify(f => f.GetAll(It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
@@ -64,6 +65,7 @@ namespace ThingsBook.WebAPI.Tests
             FriendsController controller = new FriendsController(_friends.Object);
             var result = await controller.Get(new Guid());
             Assert.NotNull(result);
+            _friends.Verify(f => f.GetOne(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
@@ -75,6 +77,7 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(sample, result.Name);
             Assert.AreEqual(sample, result.Contacts);
+            _friends.Verify(f => f.Create(It.IsAny<Guid>(), It.IsAny<Friend>()), Times.Once());
         }
 
         [Test]
@@ -86,32 +89,26 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(sample, result.Name);
             Assert.AreEqual(sample, result.Contacts);
+            _friends.Verify(f => f.Update(It.IsAny<Guid>(), It.IsAny<Friend>()), Times.Once());
         }
 
         [Test]
-        public async Task GetThingsTest()
+        public async Task GetLendsTest()
         {
             Thread.CurrentPrincipal = _user;
             FriendsController controller = new FriendsController(_friends.Object);
             var result = await controller.GetLends(new Guid());
             Assert.NotNull(result);
+            _friends.Verify(f => f.GetFriendLends(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
-        public Task DeleteFriendTest()
+        public async Task DeleteFriendTest()
         {
             Thread.CurrentPrincipal = _user;
             FriendsController controller = new FriendsController(_friends.Object);
-            return controller.Delete(new Guid());
-        }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            FriendsController controller = new FriendsController(_friends.Object);
-            var type = controller.GetType();
-            var attributes = type.GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
+            await controller.Delete(new Guid());
+            _friends.Verify(f => f.Delete(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
     }
 }

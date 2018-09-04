@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using MongoDB.Driver;
+using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,22 +10,25 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class ThingsTests
     {
-        private IUsers _users;
-        private IThings _things;
+        private IUsersDAL _users;
+        private IThingsDAL _things;
+        private ICategoriesDAL _categories;
         private Thing _thing;
         private User _user;
+        private const string sample = "Sample";
 
         [SetUp]
         public async Task Setup()
         {
-            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests");
-            _users = new Users(context);
-            _user = new User { Name = "ThingsTest User" };
-            _things = new Things(context);
+            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient());
+            _users = new UsersDAL(context);
+            _user = new User { Name = sample };
+            _things = new ThingsDAL(context);
+            _categories = new CategoriesDAL(context);
             _thing = new Thing
             {
-                Name = "ThingsTest Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = new Guid()
             };
@@ -38,8 +42,8 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var thing = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = SequentialGuidUtils.CreateGuid()
             };
@@ -57,8 +61,8 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task UpdateThingTest()
         {
-            _thing.Name = "Updated Name";
-            _thing.About = "Updated About";
+            _thing.Name = "Updated";
+            _thing.About = "Updated";
             _thing.CategoryId = SequentialGuidUtils.CreateGuid();
             await _things.UpdateThing(_user.Id, _thing);
             var updated = await _things.GetThing(_user.Id, _thing.Id);
@@ -77,15 +81,15 @@ namespace ThingsBook.Data.Mongo.Tests
             var catId = SequentialGuidUtils.CreateGuid();
             var thing1 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = catId
             };
             var thing2 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = catId
             };
@@ -104,8 +108,8 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var thing = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = SequentialGuidUtils.CreateGuid()
             };
@@ -121,27 +125,28 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteThingsForCategoryTest()
         {
-            var catId = SequentialGuidUtils.CreateGuid();
+            var cat = new Category { Name = sample, About = sample, UserId = _user.Id };
+            await _categories.CreateCategory(_user.Id, cat);
             var thing1 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
-                CategoryId = catId
+                CategoryId = cat.Id
             };
             var thing2 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
-                CategoryId = catId
+                CategoryId = cat.Id
             };
             await _things.CreateThing(_user.Id, thing1);
             await _things.CreateThing(_user.Id, thing2);
-            var dbThings = await _things.GetThingsForCategory(_user.Id, catId);
+            var dbThings = await _things.GetThingsForCategory(_user.Id, cat.Id);
             Assert.NotZero(dbThings.Count());
-            await _things.DeleteThingsForCategory(_user.Id, catId);
-            dbThings = await _things.GetThingsForCategory(_user.Id, catId);
+            await _things.DeleteThingsForCategory(_user.Id, cat.Id);
+            dbThings = await _things.GetThingsForCategory(_user.Id, cat.Id);
             Assert.Zero(dbThings.Count());
         }
 
@@ -152,15 +157,15 @@ namespace ThingsBook.Data.Mongo.Tests
             var user = new User { };
             var thing1 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = user.Id,
                 CategoryId = new Guid()
             };
             var thing2 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = user.Id,
                 CategoryId = new Guid()
             };
@@ -194,8 +199,8 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var thing = new Thing
             {
-                Name = "Test GetThings",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = new Guid()
             };
@@ -221,15 +226,15 @@ namespace ThingsBook.Data.Mongo.Tests
             var catId = SequentialGuidUtils.CreateGuid();
             var thing1 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = catId
             };
             var thing2 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 CategoryId = catId
             };
@@ -256,16 +261,16 @@ namespace ThingsBook.Data.Mongo.Tests
             var lend = new Lend { FriendId = friendId };
             var thing1 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 Lend = lend,
                 CategoryId = new Guid()
             };
             var thing2 = new Thing
             {
-                Name = "Test Thing",
-                About = "ThingTest About",
+                Name = sample,
+                About = sample,
                 UserId = _user.Id,
                 Lend = lend,
                 CategoryId = new Guid()

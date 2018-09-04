@@ -15,7 +15,7 @@ using ThingsBook.WebAPI.Controllers;
 namespace ThingsBook.WebAPI.Tests
 {
     [TestFixture]
-    class LendsHistoryControllerTests
+    public class LendsHistoryControllerTests
     {
         private Mock<ILendsBL> _lends;
         private ClaimsPrincipal _user;
@@ -49,6 +49,7 @@ namespace ThingsBook.WebAPI.Tests
             LendsHistoryController controller = new LendsHistoryController(_lends.Object);
             var result = await controller.Get(new Guid());
             Assert.NotNull(result);
+            _lends.Verify(l => l.GetHistoricalLend(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
@@ -58,23 +59,16 @@ namespace ThingsBook.WebAPI.Tests
             LendsHistoryController controller = new LendsHistoryController(_lends.Object);
             var result = await controller.Get();
             Assert.NotNull(result);
+            _lends.Verify(l => l.GetHistoricalLends(It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
-        public Task DeleteLendTest()
+        public async Task DeleteLendTest()
         {
             Thread.CurrentPrincipal = _user;
             LendsHistoryController controller = new LendsHistoryController(_lends.Object);
-            return controller.Delete(new Guid());
-        }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            LendsHistoryController controller = new LendsHistoryController(_lends.Object);
-            var type = controller.GetType();
-            var attributes = type.GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
+            await controller.Delete(new Guid());
+            _lends.Verify(l => l.DeleteHistoricalLend(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
         }
     }
 }

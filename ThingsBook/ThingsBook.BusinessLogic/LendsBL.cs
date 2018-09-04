@@ -18,7 +18,7 @@ namespace ThingsBook.BusinessLogic
         /// Initializes a new instance of the <see cref="LendsBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public LendsBL(CommonDAL data) : base(data) { }
+        public LendsBL(Storage data) : base(data) { }
 
         /// <summary>
         /// Creates the lend for specified thing identifier.
@@ -31,10 +31,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<ThingWithLend> Create(Guid userId, Guid thingId, Models.Lend lend)
         {
-            if (lend == null)
-            {
-                throw new ArgumentNullException("lend");
-            }
+            CheckLend(lend);
             await Data.Lends.CreateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
         }
@@ -51,7 +48,7 @@ namespace ThingsBook.BusinessLogic
             var thing = await Data.Things.GetThing(userId, thingId);
             if (thing.Lend == null)
             {
-                throw new ArgumentException("Thing with thingId must has not null lend");
+                throw new ArgumentException("Thing with thingId must has not null lend", nameof(thingId));
             }
             var historyLend = ReturnThing(thing, returnDate);
             await Data.History.CreateHistLend(userId, historyLend);
@@ -126,10 +123,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<ThingWithLend> Update(Guid userId, Guid thingId, Models.Lend lend)
         {
-            if (lend == null)
-            {
-                throw new ArgumentNullException("lend");
-            }
+            CheckLend(lend);
             await Data.Lends.UpdateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
             return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
         }
@@ -148,6 +142,32 @@ namespace ThingsBook.BusinessLogic
             hist.UserId = thing.UserId;
             hist.ThingId = thing.Id;
             return hist;
+        }
+
+        /// <summary>
+        /// Checks the lend.
+        /// </summary>
+        /// <param name="lend">The lend.</param>
+        /// <exception cref="ArgumentNullException">Lend must not be null. - lend</exception>
+        /// <exception cref="ModelValidationException">
+        /// Friend id must not be empty/default.
+        /// or
+        /// Lend date must not be empty/default.
+        /// </exception>
+        private void CheckLend(Models.Lend lend)
+        {
+            if (lend == null)
+            {
+                throw new ArgumentNullException("Lend must not be null.", nameof(lend));
+            }
+            if (lend.FriendId == default(Guid))
+            {
+                throw new ModelValidationException("Friend id must not be empty/default.");
+            }
+            if (lend.LendDate == default(DateTime))
+            {
+                throw new ModelValidationException("Lend date must not be empty/default.");
+            }
         }
     }
 }

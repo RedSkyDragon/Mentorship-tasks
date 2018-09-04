@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using MongoDB.Driver;
+using NUnit.Framework;
 using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
@@ -8,15 +9,16 @@ namespace ThingsBook.Data.Mongo.Tests
     [TestFixture]
     public class UsersTests
     {
-        private IUsers _users;
+        private IUsersDAL _users;
         private User _user;
+        private const string sample = "Sample";
 
         [SetUp]
         [Explicit]
         public async Task Setup()
         {
-            _users = new Users(new ThingsBookContext("mongodb://localhost/ThingsBookTests"));
-            _user = new User { Name = "Sample User setup" };
+            _users = new UsersDAL(new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient()));
+            _user = new User { Name = sample };
             await _users.CreateUser(_user);
         }
 
@@ -24,7 +26,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task CreateUserTest()
         {
-            var user = new User { Name = "Test User" };
+            var user = new User { Name = sample };
             await _users.CreateUser(user);
             var dbUser = await _users.GetUser(user.Id);
             Assert.AreEqual(user.Id, dbUser.Id);
@@ -57,9 +59,9 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task GetAllUsersTest()
         {
-            var user1 = new User { Name = "Sample User1" };
+            var user1 = new User { Name = sample + "1" };
             await _users.CreateUser(user1);
-            var user2 = new User { Name = "Sample User2" };
+            var user2 = new User { Name = sample + "1" };
             await _users.CreateUser(user2);
             var users = (await _users.GetUsers()).ToList();
             Assert.NotNull(users);
@@ -75,7 +77,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteUserTest()
         {
-            var user = new User { Name = "DeleteSample User" };
+            var user = new User { Name = sample };
             await _users.CreateUser(user);
             await _users.DeleteUser(user.Id);
             var res = await _users.GetUser(user.Id);
@@ -83,6 +85,7 @@ namespace ThingsBook.Data.Mongo.Tests
         }
 
         [TearDown]
+        [Explicit]
         public async Task Final()
         {
             await _users.DeleteUser(_user.Id);

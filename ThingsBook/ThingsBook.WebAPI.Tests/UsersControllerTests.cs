@@ -14,7 +14,7 @@ using ThingsBook.WebAPI.Controllers;
 namespace ThingsBook.WebAPI.Tests
 {
     [TestFixture]
-    class UsersControllerTests
+    public class UsersControllerTests
     {
         private Mock<IUsersBL> _users;
         private ClaimsPrincipal _user;
@@ -46,6 +46,7 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(_apiUser.Id, result.Id);
             Assert.AreEqual(_apiUser.Name, result.Name);
+            _users.Verify(u => u.Get(It.IsAny<Guid>()), Times.Once());
         }
 
         [Test]
@@ -57,6 +58,7 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(_apiUser.Id, result.Id);
             Assert.AreEqual(_apiUser.Name, result.Name);
+            _users.Verify(u => u.CreateOrUpdate(It.IsAny<User>()), Times.Once());
         }
 
         [Test]
@@ -68,23 +70,16 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(_apiUser.Id, result.Id);
             Assert.AreEqual(_apiUser.Name, result.Name);
+            _users.Verify(u => u.CreateOrUpdate(It.IsAny<User>()), Times.Once());
         }
 
         [Test]
-        public Task DeleteUserTest()
+        public async Task DeleteUserTest()
         {
             Thread.CurrentPrincipal = _user;
             UsersController controller = new UsersController(_users.Object);
-            return controller.Delete();
-        }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            UsersController controller = new UsersController(_users.Object);
-            var type = controller.GetType();
-            var attributes = type.GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
+            await controller.Delete();
+            _users.Verify(u => u.Delete(It.IsAny<Guid>()), Times.Once());
         }
     }
 }

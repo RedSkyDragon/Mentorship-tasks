@@ -19,7 +19,7 @@ namespace ThingsBook.BusinessLogic
         /// Initializes a new instance of the <see cref="FriendsBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public FriendsBL(CommonDAL data): base(data) { }
+        public FriendsBL(Storage data): base(data) { }
 
         /// <summary>
         /// Creates the friend.
@@ -31,10 +31,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Friend> Create(Guid userId, Models.Friend friend)
         {
-            if (friend == null)
-            {
-                throw new ArgumentNullException("friend");
-            }
+            CheckFriend(friend);
             await Data.Friends.CreateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
             return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
         }
@@ -109,10 +106,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Friend> Update(Guid userId, Models.Friend friend)
         {
-            if (friend == null)
-            {
-                throw new ArgumentNullException("friend");
-            }
+            CheckFriend(friend);
             await Data.Friends.UpdateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
             return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
         }
@@ -159,6 +153,24 @@ namespace ThingsBook.BusinessLogic
                 lends.Add(lend);
             }
             return lends;
+        }
+
+        /// <summary>
+        /// Checks the friend.
+        /// </summary>
+        /// <param name="friend">The friend.</param>
+        /// <exception cref="ArgumentNullException">Friend must not be null. - friend</exception>
+        /// <exception cref="ModelValidationException">Friend must not be empty.</exception>
+        private void CheckFriend(Models.Friend friend)
+        {
+            if (friend == null)
+            {
+                throw new ArgumentNullException("Friend must not be null.", nameof(friend));
+            }
+            if (string.IsNullOrEmpty(friend.Name) && string.IsNullOrEmpty(friend.Contacts))
+            {
+                throw new ModelValidationException("Friend must not be empty.");
+            }
         }
     }
 }

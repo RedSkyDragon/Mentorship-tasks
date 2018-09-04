@@ -17,7 +17,7 @@ namespace ThingsBook.BusinessLogic
         /// Initializes a new instance of the <see cref="UsersBL"/> class.
         /// </summary>
         /// <param name="data">The data.</param>
-        public UsersBL(CommonDAL data) : base(data) { }
+        public UsersBL(Storage data) : base(data) { }
 
         /// <summary>
         /// Creates the specified user.
@@ -30,7 +30,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
             await Data.Users.CreateUser(ModelsConverter.ToDataModel(user));
             await Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
@@ -48,7 +48,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
             var current = await Get(user.Id);
             if (current == null)
@@ -68,10 +68,10 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         public async Task Delete(Guid id)
         {
+            await Data.History.DeleteUserHistory(id);
             await Data.Things.DeleteThings(id);
             await Data.Friends.DeleteFriends(id);
             await Data.Categories.DeleteCategories(id);
-            await Data.History.DeleteUserHistory(id);
             await Data.Users.DeleteUser(id);
         }
 
@@ -110,7 +110,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
             await Data.Users.UpdateUser(ModelsConverter.ToDataModel(user));
             return ModelsConverter.ToBLModel(await Data.Users.GetUser(user.Id));

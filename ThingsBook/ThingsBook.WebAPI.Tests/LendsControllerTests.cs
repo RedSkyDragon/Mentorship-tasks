@@ -14,7 +14,7 @@ using ThingsBook.WebAPI.Controllers;
 namespace ThingsBook.WebAPI.Tests
 {
     [TestFixture]
-    class LendsControllerTests
+    public class LendsControllerTests
     {
         private Mock<ILendsBL> _lends;
         private ClaimsPrincipal _user;
@@ -51,6 +51,7 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(sample, result.Lend.Comment);
             Assert.AreEqual(date, result.Lend.LendDate);
+            _lends.Verify(l => l.Create(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()), Times.Once());
         }
 
         [Test]
@@ -63,24 +64,17 @@ namespace ThingsBook.WebAPI.Tests
             Assert.NotNull(result);
             Assert.AreEqual(sample, result.Lend.Comment);
             Assert.AreEqual(date, result.Lend.LendDate);
+            _lends.Verify(l => l.Update(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()), Times.Once());
         }
 
         [Test]
-        public Task DeleteLendTest()
+        public async Task DeleteLendTest()
         {
             Thread.CurrentPrincipal = _user;
             LendsController controller = new LendsController(_lends.Object);
             var date = DateTime.Now;
-            return controller.Delete(new Guid(), date);
-        }
-
-        [Test]
-        public void AuthorizeAttributeTest()
-        {
-            LendsController controller = new LendsController(_lends.Object);
-            var type = controller.GetType();
-            var attributes = type.GetCustomAttributes(typeof(AuthorizeAttribute), true).ToList();
-            Assert.IsTrue(attributes.Any());
+            await controller.Delete(new Guid(), date);
+            _lends.Verify(l => l.Delete(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Once());
         }
     }
 }
