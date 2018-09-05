@@ -1,4 +1,4 @@
-﻿namespace IdentityServer.UI
+﻿namespace IdentityServer.Models
 {
     /// <summary>
     /// Logged out view model.

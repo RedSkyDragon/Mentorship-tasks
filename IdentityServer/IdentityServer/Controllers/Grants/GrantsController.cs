@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Controllers
 {
     /// <summary>
     /// Grants controller for identity server

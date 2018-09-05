@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Models
 {
     /// <summary>
     /// Consent view model.
     /// </summary>
-    /// <seealso cref="IdentityServer.UI.ConsentInputModel" />
+    /// <seealso cref="ConsentInputModel" />
     public class ConsentViewModel : ConsentInputModel
     {
         /// <summary>

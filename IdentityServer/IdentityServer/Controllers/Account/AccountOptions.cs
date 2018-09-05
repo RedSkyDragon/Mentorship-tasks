@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Controllers
 {
     /// <summary>
     /// Account options for account controller

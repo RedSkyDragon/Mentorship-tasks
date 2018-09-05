@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer.Models;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Controllers
 {
     /// <summary>
     /// Consent controller for identity server
@@ -86,11 +87,11 @@ namespace IdentityServer.UI
             var result = new ProcessConsentResult();
 
             ConsentResponse grantedConsent = null;
-            if (model.Button == "no")
+            if (model != null && model.Button == "no")
             {
                 grantedConsent = ConsentResponse.Denied;
             }
-            else if (model.Button == "yes" && model != null)
+            else if (model != null && model.Button == "yes")
             {
                 if (model.ScopesConsented != null && model.ScopesConsented.Any())
                 {
@@ -123,7 +124,7 @@ namespace IdentityServer.UI
             }
             else
             {
-                result.ViewModel = await BuildViewModelAsync(model.ReturnUrl, model);
+                result.ViewModel = await BuildViewModelAsync(model?.ReturnUrl, model);
             }
             return result;
         }
@@ -139,7 +140,7 @@ namespace IdentityServer.UI
                     var resources = await _resourceStore.FindEnabledResourcesByScopeAsync(request.ScopesRequested);
                     if (resources != null && (resources.IdentityResources.Any() || resources.ApiResources.Any()))
                     {
-                        return CreateConsentViewModel(model, returnUrl, request, client, resources);
+                        return CreateConsentViewModel(model, returnUrl, client, resources);
                     }
                     else
                     {
@@ -158,21 +159,23 @@ namespace IdentityServer.UI
             return null;
         }
 
-        private ConsentViewModel CreateConsentViewModel(ConsentInputModel model, string returnUrl, AuthorizationRequest request, Client client, Resources resources)
+        private ConsentViewModel CreateConsentViewModel(ConsentInputModel model, string returnUrl, Client client, Resources resources)
         {
-            var vm = new ConsentViewModel();
-            vm.RememberConsent = model?.RememberConsent ?? true;
-            vm.ScopesConsented = model?.ScopesConsented ?? Enumerable.Empty<string>();
-            vm.ReturnUrl = returnUrl;
-            vm.ClientName = client.ClientName ?? client.ClientId;
-            vm.ClientUrl = client.ClientUri;
-            vm.ClientLogoUrl = client.LogoUri;
-            vm.AllowRememberConsent = client.AllowRememberConsent;
+            var vm = new ConsentViewModel
+            {
+                RememberConsent = model?.RememberConsent ?? true,
+                ScopesConsented = model?.ScopesConsented ?? Enumerable.Empty<string>(),
+                ReturnUrl = returnUrl,
+                ClientName = client.ClientName ?? client.ClientId,
+                ClientUrl = client.ClientUri,
+                ClientLogoUrl = client.LogoUri,
+                AllowRememberConsent = client.AllowRememberConsent
+            };
             vm.IdentityScopes = resources.IdentityResources.Select(x => CreateScopeViewModel(x, vm.ScopesConsented.Contains(x.Name) || model == null)).ToArray();
             vm.ResourceScopes = resources.ApiResources.SelectMany(x => x.Scopes).Select(x => CreateScopeViewModel(x, vm.ScopesConsented.Contains(x.Name) || model == null)).ToArray();
             if (ConsentOptions.EnableOfflineAccess && resources.OfflineAccess)
             {
-                vm.ResourceScopes = vm.ResourceScopes.Union(new ScopeViewModel[] {
+                vm.ResourceScopes = vm.ResourceScopes.Union(new[] {
                     GetOfflineAccessScope(vm.ScopesConsented.Contains(IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess) || model == null)
                 });
             }

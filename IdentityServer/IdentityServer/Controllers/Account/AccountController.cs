@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using IdentityServer4.Extensions;
 using IdentityServer.Models;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Controllers
 {
     [SecurityHeaders]
     public class AccountController : Controller
@@ -139,7 +139,7 @@ namespace IdentityServer.UI
             {
                 AutomaticRedirectAfterSignOut = AccountOptions.AutomaticRedirectAfterSignOut,
                 PostLogoutRedirectUri = logout?.PostLogoutRedirectUri,
-                ClientName = string.IsNullOrEmpty(logout?.ClientName) ? logout?.ClientId : logout?.ClientName,
+                ClientName = string.IsNullOrEmpty(logout?.ClientName) ? logout?.ClientId : logout.ClientName,
                 LogoutId = logoutId
             };
             return vm;

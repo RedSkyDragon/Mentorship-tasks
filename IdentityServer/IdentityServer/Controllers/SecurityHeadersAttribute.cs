@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Controllers
 {
     /// <summary>
     /// Security headers attribute for controllers

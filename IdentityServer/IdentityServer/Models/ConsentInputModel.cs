@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Models
 {
     /// <summary>
     /// Consent input model
