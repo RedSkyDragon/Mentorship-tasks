@@ -18,7 +18,7 @@ namespace ThingsBook.WebAPI.Tests
         [Test]
         public async Task AuthTest()
         {
-            using (var server = TestServer.Create<TestStartupWithoutAuth>())
+            using (var server = TestServer.Create<TestStartupNoAuth>())
             {
                 var response = await server.HttpClient.GetAsync("/categories");
                 var result = await response.Content.ReadAsStringAsync();
@@ -44,7 +44,7 @@ namespace ThingsBook.WebAPI.Tests
         {
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.GetAsync("/category/" + _guid.ToString());
+                var response = await server.HttpClient.GetAsync("/category/" + _guid);
                 var result = await response.Content.ReadAsAsync<Category>();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -56,7 +56,7 @@ namespace ThingsBook.WebAPI.Tests
         {
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.GetAsync("/category/" + _guid.ToString() + "/things");
+                var response = await server.HttpClient.GetAsync("/category/" + _guid + "/things");
                 var result = await response.Content.ReadAsAsync<IEnumerable<ThingWithLend>>();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -90,7 +90,7 @@ namespace ThingsBook.WebAPI.Tests
             };
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.PutAsync("/category/" + _guid.ToString(), new FormUrlEncodedContent(values));
+                var response = await server.HttpClient.PutAsync("/category/" + _guid, new FormUrlEncodedContent(values));
                 var result = await response.Content.ReadAsAsync<Category>();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -102,7 +102,7 @@ namespace ThingsBook.WebAPI.Tests
         {
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.DeleteAsync("/category/" + _guid.ToString());
+                var response = await server.HttpClient.DeleteAsync("/category/" + _guid);
                 Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
             }
         }
@@ -113,7 +113,7 @@ namespace ThingsBook.WebAPI.Tests
             using (var server = TestServer.Create<TestStartup>())
             {
                 var response = await server.HttpClient.DeleteAsync
-                    ("/category/" + _guid.ToString() + "/replace?replacementId=" + _guid.ToString());
+                    ("/category/" + _guid + "/replace?replacementId=" + _guid);
                 Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
             }
         }

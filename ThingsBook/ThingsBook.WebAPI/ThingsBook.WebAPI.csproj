@@ -155,6 +155,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\AutoFacConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
@@ -163,6 +164,8 @@
     <Compile Include="Controllers\LendsHistoryController.cs" />
     <Compile Include="Controllers\ThingsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Infrastructure\CustomExceptionLogger.cs" />
+    <Compile Include="Infrastructure\ErrorResult.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Friend.cs" />
     <Compile Include="Models\Thing.cs" />
@@ -170,8 +173,7 @@
     <Compile Include="Models\UserClaimsException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utils\AutoFacConfig.cs" />
-    <Compile Include="Utils\CustomExceptionFilter.cs" />
+    <Compile Include="Infrastructure\CustomExceptionHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -182,9 +184,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ThingsBook.BusinessLogic\ThingsBook.BusinessLogic.csproj">
       <Project>{303e1461-ffad-48fb-ac59-22a42257478a}</Project>

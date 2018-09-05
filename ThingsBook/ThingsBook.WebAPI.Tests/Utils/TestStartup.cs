@@ -24,7 +24,8 @@ namespace ThingsBook.WebAPI.Tests.Utils
         /// <param name="httpConfiguration">The HTTP configuration.</param>
         protected override void ConfigureDI(HttpConfiguration httpConfiguration)
         {
-            TestAutofac.ConfigureContainer(httpConfiguration);
+            var autoFac = new TestAutoFac();
+            autoFac.ConfigureContainer(httpConfiguration);
         }
 
         /// <summary>

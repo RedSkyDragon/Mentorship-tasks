@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using System.Configuration;
+using MongoDB.Driver;
 using NUnit.Framework;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,16 +14,16 @@ namespace ThingsBook.Data.Mongo.Tests
         private IUsersDAL _users;
         private User _user;
         private Category _category;
-        private const string sample = "Sample";
+        private const string Sample = "Sample";
 
         [SetUp]
         public async Task Setup()
         {
-            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient());
+            var context = new ThingsBookContext(ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString, new MongoClient());
             _users = new UsersDAL(context);
-            _user = new User { Name = sample };
+            _user = new User { Name = Sample };
             _categories = new CategoriesDAL(context);
-            _category = new Category { Name = sample, About = sample, UserId = _user.Id };
+            _category = new Category { Name = Sample, About = Sample, UserId = _user.Id };
             await _users.CreateUser(_user);
             await _categories.CreateCategory(_user.Id, _category);
         }
@@ -31,7 +32,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task CreateCategoryTest()
         {
-            var category = new Category { Name = sample, About = sample, UserId = _user.Id };
+            var category = new Category { Name = Sample, About = Sample, UserId = _user.Id };
             await _categories.CreateCategory(_user.Id, category);
             var dbCategory = await _categories.GetCategory(_user.Id, category.Id);
             Assert.AreEqual(category.Id, dbCategory.Id);
@@ -59,7 +60,7 @@ namespace ThingsBook.Data.Mongo.Tests
         public async Task GetAllCategoriesTest()
         {
             var categories = await _categories.GetCategories(_user.Id);
-            Assert.True(categories.Count() > 0);
+            Assert.True(categories.Any());
         }
 
         [Test]
@@ -80,7 +81,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteCategoryTest()
         {
-            var category = new Category { Name = sample, About = sample, UserId = _user.Id };
+            var category = new Category { Name = Sample, About = Sample, UserId = _user.Id };
             await _categories.CreateCategory(_user.Id, category);
             await _categories.DeleteCategory(_user.Id, category.Id);
             var dbCategory = await _categories.GetCategory(_user.Id, category.Id);
@@ -91,15 +92,15 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteCategoriesTest()
         {
-            var user = new User { Name = sample };
+            var user = new User { Name = Sample };
             await _users.CreateUser(user);
-            var category1 = new Category { Name = sample, About = sample, UserId = user.Id };
-            var category2 = new Category { Name = sample, About = sample, UserId = user.Id };
+            var category1 = new Category { Name = Sample, About = Sample, UserId = user.Id };
+            var category2 = new Category { Name = Sample, About = Sample, UserId = user.Id };
             await _categories.CreateCategory(user.Id, category1);
             await _categories.CreateCategory(user.Id, category2);
             await _categories.DeleteCategories(user.Id);
             var categories = (await _categories.GetCategories(user.Id)).ToList();
-            Assert.True(categories.Count() == 0);
+            Assert.True(!categories.Any());
             await _users.DeleteUser(user.Id);
         }
 

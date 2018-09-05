@@ -15,7 +15,7 @@ namespace ThingsBook.WebAPI.Controllers
     [Authorize]
     public class FriendsController : BaseController
     {
-        private IFriendsBL _friends;
+        private readonly IFriendsBL _friends;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FriendsController"/> class.
@@ -44,7 +44,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Friend</returns>
         [HttpGet]
         [Route("{friendId:guid}")]
-        public Task<Friend> Get([FromUri]Guid friendId)
+        public Task<Friend> Get(Guid friendId)
         {
             return _friends.GetOne(ApiUser.Id, friendId);
         }
@@ -56,7 +56,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Filtered lends with active records and history</returns>
         [HttpGet]
         [Route("{friendId:guid}/lends")]
-        public Task<FilteredLends> GetLends([FromUri]Guid friendId)
+        public Task<FilteredLends> GetLends(Guid friendId)
         {
             return _friends.GetFriendLends(ApiUser.Id, friendId);
         }
@@ -70,7 +70,7 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("")]
         public Task<Friend> Post([FromBody]Models.Friend friend)
         {
-            Friend friendBL = new Friend
+            var friendBL = new Friend
             {
                 Name = friend.Name,
                 Contacts = friend.Contacts
@@ -86,9 +86,9 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Updated friend.</returns>
         [HttpPut]
         [Route("{friendId:guid}")]
-        public Task<Friend> Put([FromUri]Guid friendId, [FromBody]Models.Friend friend)
+        public Task<Friend> Put(Guid friendId, [FromBody]Models.Friend friend)
         {
-            Friend friendBL = new Friend
+            var friendBL = new Friend
             {
                 Id = friendId,
                 Name = friend.Name,
@@ -104,7 +104,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{friendId:guid}")]
-        public Task Delete([FromUri]Guid friendId)
+        public Task Delete(Guid friendId)
         {
             return _friends.Delete(ApiUser.Id, friendId);
         }

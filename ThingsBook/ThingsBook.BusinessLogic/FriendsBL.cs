@@ -18,8 +18,8 @@ namespace ThingsBook.BusinessLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="FriendsBL"/> class.
         /// </summary>
-        /// <param name="data">The data.</param>
-        public FriendsBL(Storage data): base(data) { }
+        /// <param name="storage">The storage.</param>
+        public FriendsBL(Storage storage): base(storage) { }
 
         /// <summary>
         /// Creates the friend.
@@ -32,8 +32,8 @@ namespace ThingsBook.BusinessLogic
         public async Task<Models.Friend> Create(Guid userId, Models.Friend friend)
         {
             CheckFriend(friend);
-            await Data.Friends.CreateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
-            return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
+            await Storage.Friends.CreateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
+            return ModelsConverter.ToBLModel(await Storage.Friends.GetFriend(userId, friend.Id));
         }
 
         /// <summary>
@@ -44,9 +44,9 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         public async Task Delete(Guid userId, Guid id)
         {
-            await Data.Lends.DeleteFriendLends(userId, id);
-            await Data.History.DeleteFriendHistory(userId, id);
-            await Data.Friends.DeleteFriend(userId, id);
+            await Storage.Lends.DeleteFriendLends(userId, id);
+            await Storage.History.DeleteFriendHistory(userId, id);
+            await Storage.Friends.DeleteFriend(userId, id);
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<IEnumerable<Models.Friend>> GetAll(Guid userId)
         {
-            var friends = await Data.Friends.GetFriends(userId);
-            return friends.Select(t => ModelsConverter.ToBLModel(t));
+            var friends = await Storage.Friends.GetFriends(userId);
+            return friends.Select(ModelsConverter.ToBLModel);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<FilteredLends> GetFriendLends(Guid userId, Guid friendId)
         {
-            var friend = ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friendId));
+            var friend = ModelsConverter.ToBLModel(await Storage.Friends.GetFriend(userId, friendId));
             var active = GetActiveLends(userId, friend);
             var history = GetHistoryLends(userId, friend);
             await Task.WhenAll(active, history);
@@ -93,7 +93,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Friend> GetOne(Guid userId, Guid id)
         {
-            return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, id));
+            return ModelsConverter.ToBLModel(await Storage.Friends.GetFriend(userId, id));
         }
 
         /// <summary>
@@ -107,8 +107,8 @@ namespace ThingsBook.BusinessLogic
         public async Task<Models.Friend> Update(Guid userId, Models.Friend friend)
         {
             CheckFriend(friend);
-            await Data.Friends.UpdateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
-            return ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, friend.Id));
+            await Storage.Friends.UpdateFriend(userId, ModelsConverter.ToDataModel(friend, userId));
+            return ModelsConverter.ToBLModel(await Storage.Friends.GetFriend(userId, friend.Id));
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, Models.Friend friend)
         {
-            var history = await Data.History.GetFriendHistLends(userId, friend.Id);
+            var history = await Storage.History.GetFriendHistLends(userId, friend.Id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
             var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
             var lends = new List<HistLend>();
@@ -141,7 +141,7 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         private async Task<IEnumerable<ActiveLend>> GetActiveLends(Guid userId, Models.Friend friend)
         {
-            var things = await Data.Things.GetThingsForFriend(userId, friend.Id);
+            var things = await Storage.Things.GetThingsForFriend(userId, friend.Id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Lend, ActiveLend>()).CreateMapper();
             var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
             var lends = new List<ActiveLend>();
@@ -165,7 +165,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (friend == null)
             {
-                throw new ArgumentNullException("Friend must not be null.", nameof(friend));
+                throw new ArgumentNullException(nameof(friend), "Friend must not be null.");
             }
             if (string.IsNullOrEmpty(friend.Name) && string.IsNullOrEmpty(friend.Contacts))
             {

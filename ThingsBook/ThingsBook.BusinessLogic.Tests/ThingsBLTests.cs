@@ -17,48 +17,64 @@ namespace ThingsBook.BusinessLogic.Tests
         private Mock<IHistoryDAL> _history;
         private Mock<IThingsDAL> _things;
         private Mock<ILendsDAL> _lends;
-        private const string sample = "Sample";
+        private const string Sample = "Sample";
 
         [SetUp]
         public void Setup()
         {
             _friends = new Mock<IFriendsDAL>();
-            _friends.Setup(f => f.GetFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _friends
+                .Setup(f => f.GetFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userF, Guid idF) => Task.FromResult(new Friend { Id = idF, Name = "Mock" }));
             _users = new Mock<IUsersDAL>();
             _history = new Mock<IHistoryDAL>();
-            _history.Setup(h => h.DeleteThingHistory(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _history
+                .Setup(h => h.DeleteThingHistory(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
-            _history.Setup(h => h.GetThingHistLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _history
+                .Setup(h => h.GetThingHistLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.FromResult(new Dictionary<HistoricalLend, Friend>() as IDictionary<HistoricalLend, Friend>));
             _categories = new Mock<ICategoriesDAL>();
-            _categories.Setup(c => c.GetCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _categories
+                .Setup(c => c.GetCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userC, Guid idC) => Task.FromResult(new Category { Id = idC, Name = "Mock" }));
-            _categories.Setup(c => c.GetCategories(It.IsAny<Guid>()))
+            _categories
+                .Setup(c => c.GetCategories(It.IsAny<Guid>()))
                 .Returns((Guid userC) => Task.FromResult(new List<Category>() as IEnumerable<Category>));
-            _categories.Setup(c => c.CreateCategory(It.IsAny<Guid>(), It.IsAny<Category>()))
+            _categories
+                .Setup(c => c.CreateCategory(It.IsAny<Guid>(), It.IsAny<Category>()))
                 .Returns(Task.CompletedTask);
-            _categories.Setup(c => c.UpdateCategory(It.IsAny<Guid>(), It.IsAny<Category>()))
+            _categories
+                .Setup(c => c.UpdateCategory(It.IsAny<Guid>(), It.IsAny<Category>()))
                 .Returns(Task.CompletedTask);
-            _categories.Setup(c => c.DeleteCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _categories
+                .Setup(c => c.DeleteCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
             _things = new Mock<IThingsDAL>();
-            _things.Setup(t => t.CreateThing(It.IsAny<Guid>(), It.IsAny<Thing>()))
+            _things
+                .Setup(t => t.CreateThing(It.IsAny<Guid>(), It.IsAny<Thing>()))
                 .Returns(Task.CompletedTask);
-            _things.Setup(t => t.UpdateThing(It.IsAny<Guid>(), It.IsAny<Thing>()))
+            _things
+                .Setup(t => t.UpdateThing(It.IsAny<Guid>(), It.IsAny<Thing>()))
                 .Returns(Task.CompletedTask);
-            _things.Setup(t => t.UpdateThingsCategory(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _things
+                .Setup(t => t.UpdateThingsCategory(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
                .Returns(Task.CompletedTask);
-            _things.Setup(t => t.GetThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _things
+                .Setup(t => t.GetThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userT, Guid idT) => Task.FromResult(new Thing { Id = idT, Name = "Mock" }));
-            _things.Setup(t => t.GetThingsForCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _things
+                .Setup(t => t.GetThingsForCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userT, Guid idT) => Task.FromResult(new List<Thing>() as IEnumerable<Thing>));
-            _things.Setup(t => t.GetThings(It.IsAny<Guid>()))
+            _things
+                .Setup(t => t.GetThings(It.IsAny<Guid>()))
                 .Returns((Guid userT) => Task.FromResult(new List<Thing>() as IEnumerable<Thing>));
-            _things.Setup(t => t.DeleteThingsForCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
-               .Returns(Task.CompletedTask);
-            _things.Setup(t => t.DeleteThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
-               .Returns(Task.CompletedTask);
+            _things
+                .Setup(t => t.DeleteThingsForCategory(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .Returns(Task.CompletedTask);
+            _things
+                .Setup(t => t.DeleteThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .Returns(Task.CompletedTask);
             _lends = new Mock<ILendsDAL>();
             var dal = new Storage(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
             _thingsBL = new ThingsBL(dal);
@@ -67,36 +83,24 @@ namespace ThingsBook.BusinessLogic.Tests
         [Test]
         public async Task CreateThingTest()
         {
-            var thing = new Models.ThingWithLend { Name = sample };
+            var thing = new Models.ThingWithLend { Name = Sample };
             var res = await _thingsBL.CreateThing(new Guid(), thing);
             Assert.NotNull(res);
             Assert.AreEqual(thing.Id, res.Id);
-            Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _thingsBL.CreateThing(new Guid(), null);
-            });
-            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
-            {
-                return _thingsBL.CreateThing(new Guid(), new Models.ThingWithLend());
-            });
+            Assert.ThrowsAsync<ArgumentNullException>(() => _thingsBL.CreateThing(new Guid(), null));
+            Assert.ThrowsAsync<Models.ModelValidationException>(() => _thingsBL.CreateThing(new Guid(), new Models.ThingWithLend()));
             _things.Verify(t => t.CreateThing(It.IsAny<Guid>(), It.IsAny<Thing>()), Times.Once());
         }
 
         [Test]
         public async Task UpdateThingTest()
         {
-            var thing = new Models.ThingWithLend { Name = sample };
+            var thing = new Models.ThingWithLend { Name = Sample };
             var res = await _thingsBL.UpdateThing(new Guid(), thing);
             Assert.NotNull(res);
             Assert.AreEqual(thing.Id, res.Id);
-            Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _thingsBL.UpdateThing(new Guid(), null);
-            });
-            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
-            {
-                return _thingsBL.UpdateThing(new Guid(), new Models.ThingWithLend());
-            });
+            Assert.ThrowsAsync<ArgumentNullException>(() => _thingsBL.UpdateThing(new Guid(), null));
+            Assert.ThrowsAsync<Models.ModelValidationException>(() => _thingsBL.UpdateThing(new Guid(), new Models.ThingWithLend()));
             _things.Verify(t => t.UpdateThing(It.IsAny<Guid>(), It.IsAny<Thing>()), Times.Once());
         }
 
@@ -146,36 +150,24 @@ namespace ThingsBook.BusinessLogic.Tests
         [Test]
         public async Task CreateCategoryTest()
         {
-            var category = new Models.Category { Name = sample };
+            var category = new Models.Category { Name = Sample };
             var res = await _thingsBL.CreateCategory(new Guid(), category);
             Assert.NotNull(res);
             Assert.AreEqual(category.Id, res.Id);
-            Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _thingsBL.CreateCategory(new Guid(), null);
-            });
-            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
-            {
-                return _thingsBL.CreateCategory(new Guid(), new Models.Category());
-            });
+            Assert.ThrowsAsync<ArgumentNullException>(() => _thingsBL.CreateCategory(new Guid(), null));
+            Assert.ThrowsAsync<Models.ModelValidationException>(() => _thingsBL.CreateCategory(new Guid(), new Models.Category()));
             _categories.Verify(t => t.CreateCategory(It.IsAny<Guid>(), It.IsAny<Category>()), Times.Once());
         }
 
         [Test]
         public async Task UpdateCategoryTest()
         {
-            var category = new Models.Category { Name = sample };
+            var category = new Models.Category { Name = Sample };
             var res = await _thingsBL.UpdateCategory(new Guid(), category);
             Assert.NotNull(res);
             Assert.AreEqual(category.Id, res.Id);
-            Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _thingsBL.UpdateCategory(new Guid(), null);
-            });
-            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
-            {
-                return _thingsBL.UpdateCategory(new Guid(), new Models.Category());
-            });
+            Assert.ThrowsAsync<ArgumentNullException>(() => _thingsBL.UpdateCategory(new Guid(), null));
+            Assert.ThrowsAsync<Models.ModelValidationException>(() => _thingsBL.UpdateCategory(new Guid(), new Models.Category()));
             _categories.Verify(t => t.UpdateCategory(It.IsAny<Guid>(), It.IsAny<Category>()), Times.Once());
         }
 

@@ -4,7 +4,7 @@ using System;
 namespace ThingsBook.BusinessLogic
 {
     /// <summary>
-    /// Static methods for model convertation.
+    /// Static methods for model conversion.
     /// </summary>
     public static class ModelsConverter
     {

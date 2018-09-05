@@ -18,7 +18,7 @@ namespace ThingsBook.WebAPI.Tests
         [Test]
         public async Task AuthTest()
         {
-            using (var server = TestServer.Create<TestStartupWithoutAuth>())
+            using (var server = TestServer.Create<TestStartupNoAuth>())
             {
                 var response = await server.HttpClient.GetAsync("/friends");
                 var result = await response.Content.ReadAsStringAsync();
@@ -44,7 +44,7 @@ namespace ThingsBook.WebAPI.Tests
         {
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.GetAsync("/friend/" + _guid.ToString());
+                var response = await server.HttpClient.GetAsync("/friend/" + _guid);
                 var result = await response.Content.ReadAsAsync<Friend>();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -56,7 +56,7 @@ namespace ThingsBook.WebAPI.Tests
         {
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.GetAsync("/friend/" + _guid.ToString() + "/lends");
+                var response = await server.HttpClient.GetAsync("/friend/" + _guid + "/lends");
                 var result = await response.Content.ReadAsAsync<FilteredLends>();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -90,7 +90,7 @@ namespace ThingsBook.WebAPI.Tests
             };
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.PutAsync("/friend/" + _guid.ToString(), new FormUrlEncodedContent(values));
+                var response = await server.HttpClient.PutAsync("/friend/" + _guid, new FormUrlEncodedContent(values));
                 var result = await response.Content.ReadAsAsync<Friend>();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -102,7 +102,7 @@ namespace ThingsBook.WebAPI.Tests
         {
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.DeleteAsync("/friend/" + _guid.ToString());
+                var response = await server.HttpClient.DeleteAsync("/friend/" + _guid);
                 Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
             }
         }

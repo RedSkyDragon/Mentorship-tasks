@@ -16,7 +16,7 @@ namespace ThingsBook.WebAPI.Controllers
     [Authorize]
     public class ThingsController : BaseController
     {
-        private IThingsBL _things;
+        private readonly IThingsBL _things;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThingsController"/> class.
@@ -45,7 +45,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Thing</returns>
         [HttpGet]
         [Route("{thingId:guid}")]
-        public Task<ThingWithLend> Get([FromUri]Guid thingId)
+        public Task<ThingWithLend> Get(Guid thingId)
         {
             return _things.GetThing(ApiUser.Id, thingId);
         }
@@ -57,7 +57,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Filtered lends</returns>
         [HttpGet]
         [Route("{thingId:guid}/lends")]
-        public Task<FilteredLends> GetLends([FromUri]Guid thingId)
+        public Task<FilteredLends> GetLends(Guid thingId)
         {
             return _things.GetThingLends(ApiUser.Id, thingId);
         }
@@ -88,7 +88,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Updated thing</returns>
         [HttpPut]
         [Route("{thingId:guid}")]
-        public Task<ThingWithLend> Put([FromUri]Guid thingId, [FromBody]Models.Thing thing)
+        public Task<ThingWithLend> Put(Guid thingId, [FromBody]Models.Thing thing)
         {
             var thingBL = new ThingWithLend
             {
@@ -107,7 +107,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{thingId:guid}")]
-        public Task Delete([FromUri]Guid thingId)
+        public Task Delete(Guid thingId)
         {
             return _things.DeleteThing(ApiUser.Id, thingId);
         }

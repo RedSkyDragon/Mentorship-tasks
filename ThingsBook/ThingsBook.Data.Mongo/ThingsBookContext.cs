@@ -38,48 +38,35 @@ namespace ThingsBook.Data.Mongo
         /// <summary>
         /// Gets the historical lends collection.
         /// </summary>
-        public IMongoCollection<HistoricalLend> History
-        {
-            get { return Collection<HistoricalLend>(); }
-        }
+        public IMongoCollection<HistoricalLend> History => Collection<HistoricalLend>();
 
         /// <summary>
         /// Gets the users collection.
         /// </summary>
-        public IMongoCollection<User> Users
-        {
-            get { return Collection<User>(); }
-        }
+        public IMongoCollection<User> Users => Collection<User>();
 
         /// <summary>
         /// Gets the things collection.
         /// </summary>
-        public IMongoCollection<Thing> Things
-        {
-            get { return Collection<Thing>(); }
-        }
+        public IMongoCollection<Thing> Things => Collection<Thing>();
 
         /// <summary>
         /// Gets the categories collection.
         /// </summary>
-        public IMongoCollection<Category> Categories
-        {
-            get { return Collection<Category>(); }
-        }
+        public IMongoCollection<Category> Categories => Collection<Category>();
 
         /// <summary>
         /// Gets the friends collection.
         /// </summary>
-        public IMongoCollection<Friend> Friends
-        {
-            get { return Collection<Friend>(); }
-        }
+        public IMongoCollection<Friend> Friends => Collection<Friend>();
 
         private static void RegisterClassMaps()
         {
-            var conventionPack = new ConventionPack();
-            conventionPack.Add(new CamelCaseElementNameConvention());
-            conventionPack.Add(new IgnoreIfNullConvention(true));
+            var conventionPack = new ConventionPack
+            {
+                new CamelCaseElementNameConvention(),
+                new IgnoreIfNullConvention(true)
+            };
             ConventionRegistry.Register("conventions", conventionPack, t => true);
             BsonClassMap.RegisterClassMap<User>(cm =>
             {
@@ -138,6 +125,5 @@ namespace ThingsBook.Data.Mongo
                 new CreateIndexModel<HistoricalLend>(Builders<HistoricalLend>.IndexKeys.Ascending(h => h.ThingId), options)
             });
         }
-
     }
 }

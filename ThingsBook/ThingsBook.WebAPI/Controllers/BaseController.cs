@@ -20,7 +20,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <value>
         /// The logger.
         /// </value>
-        protected ILog Logger { get { return LogManager.GetLogger(GetType()); } }
+        protected ILog Logger => LogManager.GetLogger(GetType());
 
         /// <summary>
         /// Gets the API user.
@@ -31,16 +31,19 @@ namespace ThingsBook.WebAPI.Controllers
         {
             get
             {
-                var claims = (User as ClaimsPrincipal).Claims.Select(c => new { c.Type, c.Value }).ToList();
-                var idClaim = claims.Where(c => c.Type == JwtClaimTypes.Id);
-                var nameClaim = claims.Where(c => c.Type == JwtClaimTypes.Name);               
-                if (idClaim.Count() == 0 || nameClaim.Count() == 0)
+                if (!(User is ClaimsPrincipal claimsPrincipal))
                 {
                     throw new Models.UserClaimsException();
                 }
-                Guid id;
-                var name = nameClaim.FirstOrDefault().Value;
-                if (!Guid.TryParse(idClaim.FirstOrDefault().Value, out id) || string.IsNullOrEmpty(name))
+                var claims = claimsPrincipal.Claims.Select(c => new { c.Type, c.Value }).ToList();
+                var idClaim = claims.FirstOrDefault(c => c.Type == JwtClaimTypes.Id);
+                var nameClaim = claims.FirstOrDefault(c => c.Type == JwtClaimTypes.Name);               
+                if (idClaim == null || nameClaim == null)
+                {
+                    throw new Models.UserClaimsException();
+                }
+                var name = nameClaim.Value;
+                if (!Guid.TryParse(idClaim.Value, out var id) || string.IsNullOrEmpty(name))
                 {
                     throw new Models.UserClaimsException();
                 }

@@ -11,7 +11,7 @@ namespace ThingsBook.Data.Mongo
     /// <seealso cref="ThingsBook.Data.Interface.ILendsDAL" />
     public class LendsDAL : ILendsDAL
     {
-        private ThingsBookContext _db;
+        private readonly ThingsBookContext _db;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LendsDAL"/> class.

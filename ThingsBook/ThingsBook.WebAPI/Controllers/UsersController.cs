@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
 using ThingsBook.BusinessLogic.Models;
@@ -14,7 +15,7 @@ namespace ThingsBook.WebAPI.Controllers
     [Authorize]
     public class UsersController : BaseController
     {
-        private IUsersBL _users;
+        private readonly IUsersBL _users;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.

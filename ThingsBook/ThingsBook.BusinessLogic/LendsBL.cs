@@ -17,8 +17,8 @@ namespace ThingsBook.BusinessLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="LendsBL"/> class.
         /// </summary>
-        /// <param name="data">The data.</param>
-        public LendsBL(Storage data) : base(data) { }
+        /// <param name="storage">The storage.</param>
+        public LendsBL(Storage storage) : base(storage) { }
 
         /// <summary>
         /// Creates the lend for specified thing identifier.
@@ -32,8 +32,8 @@ namespace ThingsBook.BusinessLogic
         public async Task<ThingWithLend> Create(Guid userId, Guid thingId, Models.Lend lend)
         {
             CheckLend(lend);
-            await Data.Lends.CreateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
-            return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
+            await Storage.Lends.CreateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
+            return ModelsConverter.ToBLModel(await Storage.Things.GetThing(userId, thingId));
         }
 
         /// <summary>
@@ -45,14 +45,14 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         public async Task Delete(Guid userId, Guid thingId, DateTime returnDate)
         {
-            var thing = await Data.Things.GetThing(userId, thingId);
+            var thing = await Storage.Things.GetThing(userId, thingId);
             if (thing.Lend == null)
             {
                 throw new ArgumentException("Thing with thingId must has not null lend", nameof(thingId));
             }
             var historyLend = ReturnThing(thing, returnDate);
-            await Data.History.CreateHistLend(userId, historyLend);
-            await Data.Lends.DeleteLend(userId, thingId);
+            await Storage.History.CreateHistLend(userId, historyLend);
+            await Storage.Lends.DeleteLend(userId, thingId);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         public Task DeleteHistoricalLend(Guid userId, Guid id)
         {
-            return Data.History.DeleteHistLend(userId, id);
+            return Storage.History.DeleteHistLend(userId, id);
         }
 
         /// <summary>
@@ -76,12 +76,12 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<HistLend> GetHistoricalLend(Guid userId, Guid id)
         {
-            var hist = await Data.History.GetHistLend(userId, id);
+            var hist = await Storage.History.GetHistLend(userId, id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
             var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
             var histLend = lendMapper.Map<HistoricalLend, HistLend>(hist);
-            var friend = ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, hist.FriendId));
-            var thing = await Data.Things.GetThing(userId, hist.ThingId);
+            var friend = ModelsConverter.ToBLModel(await Storage.Friends.GetFriend(userId, hist.FriendId));
+            var thing = await Storage.Things.GetThing(userId, hist.ThingId);
             histLend.Friend = friend;
             histLend.Thing = thingMapper.Map<Models.Thing>(thing);
             return histLend;
@@ -96,14 +96,14 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<IEnumerable<HistLend>> GetHistoricalLends(Guid userId)
         {
-            var hists = await Data.History.GetHistLends(userId);
+            var hists = await Storage.History.GetHistLends(userId);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
             var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
             var histLends = new List<HistLend>();
             foreach (var hist in hists)
             {
-                var friend = ModelsConverter.ToBLModel(await Data.Friends.GetFriend(userId, hist.FriendId));
-                var thing = await Data.Things.GetThing(userId, hist.ThingId);
+                var friend = ModelsConverter.ToBLModel(await Storage.Friends.GetFriend(userId, hist.FriendId));
+                var thing = await Storage.Things.GetThing(userId, hist.ThingId);
                 var histLend = lendMapper.Map<HistoricalLend, HistLend>(hist);
                 histLend.Friend = friend;
                 histLend.Thing = thingMapper.Map<Models.Thing>(thing);
@@ -124,8 +124,8 @@ namespace ThingsBook.BusinessLogic
         public async Task<ThingWithLend> Update(Guid userId, Guid thingId, Models.Lend lend)
         {
             CheckLend(lend);
-            await Data.Lends.UpdateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
-            return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
+            await Storage.Lends.UpdateLend(userId, thingId, ModelsConverter.ToDataModel(lend));
+            return ModelsConverter.ToBLModel(await Storage.Things.GetThing(userId, thingId));
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (lend == null)
             {
-                throw new ArgumentNullException("Lend must not be null.", nameof(lend));
+                throw new ArgumentNullException(nameof(lend), "Lend must not be null.");
             }
             if (lend.FriendId == default(Guid))
             {
