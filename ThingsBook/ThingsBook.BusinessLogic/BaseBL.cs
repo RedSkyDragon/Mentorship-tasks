@@ -8,20 +8,17 @@ namespace ThingsBook.BusinessLogic
     public class BaseBL
     {
         /// <summary>
-        /// Gets the data.
+        /// Gets the storage.
         /// </summary>
-        /// <value>
-        /// The data.
-        /// </value>
-        protected Storage Data { get; }
+        protected Storage Storage { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseBL"/> class.
         /// </summary>
-        /// <param name="data">The data.</param>
-        public BaseBL(Storage data)
+        /// <param name="storage">The storage.</param>
+        public BaseBL(Storage storage)
         {
-            Data = data;
+            Storage = storage;
         }
     }
 }

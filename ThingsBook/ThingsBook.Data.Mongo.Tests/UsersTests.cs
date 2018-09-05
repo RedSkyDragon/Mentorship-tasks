@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using System.Configuration;
+using MongoDB.Driver;
 using NUnit.Framework;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,14 +12,14 @@ namespace ThingsBook.Data.Mongo.Tests
     {
         private IUsersDAL _users;
         private User _user;
-        private const string sample = "Sample";
+        private const string Sample = "Sample";
 
         [SetUp]
         [Explicit]
         public async Task Setup()
         {
-            _users = new UsersDAL(new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient()));
-            _user = new User { Name = sample };
+            _users = new UsersDAL(new ThingsBookContext(ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString, new MongoClient()));
+            _user = new User { Name = Sample };
             await _users.CreateUser(_user);
         }
 
@@ -26,7 +27,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task CreateUserTest()
         {
-            var user = new User { Name = sample };
+            var user = new User { Name = Sample };
             await _users.CreateUser(user);
             var dbUser = await _users.GetUser(user.Id);
             Assert.AreEqual(user.Id, dbUser.Id);
@@ -59,9 +60,9 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task GetAllUsersTest()
         {
-            var user1 = new User { Name = sample + "1" };
+            var user1 = new User { Name = Sample + "1" };
             await _users.CreateUser(user1);
-            var user2 = new User { Name = sample + "1" };
+            var user2 = new User { Name = Sample + "1" };
             await _users.CreateUser(user2);
             var users = (await _users.GetUsers()).ToList();
             Assert.NotNull(users);
@@ -77,7 +78,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteUserTest()
         {
-            var user = new User { Name = sample };
+            var user = new User { Name = Sample };
             await _users.CreateUser(user);
             await _users.DeleteUser(user.Id);
             var res = await _users.GetUser(user.Id);

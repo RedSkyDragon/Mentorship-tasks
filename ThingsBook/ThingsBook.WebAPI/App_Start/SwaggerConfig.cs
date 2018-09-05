@@ -15,8 +15,8 @@ namespace ThingsBook.WebAPI
         public static void Register(HttpConfiguration config)
         {
             var thisAssembly = typeof(SwaggerConfig).Assembly;
-
-            config.EnableSwagger(c =>
+            config
+                .EnableSwagger(c =>
                 {
                     c.RootUrl(rec => "http://localhost/ThingsBook.WebAPI");
                     c.SingleApiVersion("v1", "ThingsBook.WebAPI");

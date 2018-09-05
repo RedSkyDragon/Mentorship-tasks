@@ -22,30 +22,39 @@ namespace ThingsBook.BusinessLogic.Tests
         public void Setup()
         {
             _friends = new Mock<IFriendsDAL>();
-            _friends.Setup(f => f.GetFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _friends
+                .Setup(f => f.GetFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userF, Guid idF) => Task.FromResult(new Friend { Id = idF, Name = "Mock" }));
             _users = new Mock<IUsersDAL>();
             _history = new Mock<IHistoryDAL>();
-            _history.Setup(h => h.CreateHistLend(It.IsAny<Guid>(), It.IsAny<HistoricalLend>()))
+            _history
+                .Setup(h => h.CreateHistLend(It.IsAny<Guid>(), It.IsAny<HistoricalLend>()))
                 .Returns(Task.CompletedTask);
-            _history.Setup(h => h.DeleteHistLend(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _history
+                .Setup(h => h.DeleteHistLend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
-            _history.Setup(h => h.GetHistLend(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _history
+                .Setup(h => h.GetHistLend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid userId, Guid id) => 
                     Task.FromResult(new HistoricalLend { Id = id, FriendId = new Guid(), ThingId = new Guid() })
                 );
-            _history.Setup(h => h.GetHistLends(It.IsAny<Guid>()))
+            _history
+                .Setup(h => h.GetHistLends(It.IsAny<Guid>()))
                 .Returns(Task.FromResult(new List<HistoricalLend>() as IEnumerable<HistoricalLend>));
             _categories = new Mock<ICategoriesDAL>();
             _things = new Mock<IThingsDAL>();
-            _things.Setup(t => t.GetThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
-                .Returns((Guid userT, Guid idT) => Task.FromResult(new Thing { Id = idT, Name = "Mock", Lend = new Lend { } }));
+            _things
+                .Setup(t => t.GetThing(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .Returns((Guid userT, Guid idT) => Task.FromResult(new Thing { Id = idT, Name = "Mock", Lend = new Lend()}));
             _lends = new Mock<ILendsDAL>();
-            _lends.Setup(l => l.CreateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()))
+            _lends
+                .Setup(l => l.CreateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()))
                 .Returns(Task.CompletedTask);
-            _lends.Setup(l => l.UpdateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()))
+            _lends
+                .Setup(l => l.UpdateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()))
                 .Returns(Task.CompletedTask);
-            _lends.Setup(l => l.DeleteLend(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _lends
+                .Setup(l => l.DeleteLend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
             var dal = new Storage(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
             _lendsBL = new LendsBL(dal);
@@ -63,14 +72,8 @@ namespace ThingsBook.BusinessLogic.Tests
             var res = await _lendsBL.Create(new Guid(), thingId, lend);
             Assert.NotNull(res);
             Assert.AreEqual(thingId, res.Id);
-            Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _lendsBL.Create(new Guid(), new Guid(), null);
-            });
-            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
-            {
-                return _lendsBL.Create(new Guid(), new Guid(), new Models.Lend());
-            });
+            Assert.ThrowsAsync<ArgumentNullException>(() => _lendsBL.Create(new Guid(), new Guid(), null));
+            Assert.ThrowsAsync<Models.ModelValidationException>(() => _lendsBL.Create(new Guid(), new Guid(), new Models.Lend()));
             _lends.Verify(t => t.CreateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()), Times.Once());
         }
 
@@ -86,14 +89,8 @@ namespace ThingsBook.BusinessLogic.Tests
             var res = await _lendsBL.Update(new Guid(), thingId, lend);
             Assert.NotNull(res);
             Assert.AreEqual(thingId, res.Id);
-            Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _lendsBL.Update(new Guid(), new Guid(), null);
-            });
-            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
-            {
-                return _lendsBL.Update(new Guid(), new Guid(), new Models.Lend());
-            });
+            Assert.ThrowsAsync<ArgumentNullException>(() => _lendsBL.Update(new Guid(), new Guid(), null));
+            Assert.ThrowsAsync<Models.ModelValidationException>(() => _lendsBL.Update(new Guid(), new Guid(), new Models.Lend()));
             _lends.Verify(t => t.UpdateLend(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Lend>()), Times.Once());
         }
 

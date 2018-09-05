@@ -2,7 +2,7 @@
 
 namespace ThingsBook.WebAPI.Tests.Utils
 {
-    public class TestStartupWithoutAuth: TestStartup
+    public class TestStartupNoAuth: TestStartup
     {
         /// <summary>
         /// Configures the authentication (no auth).

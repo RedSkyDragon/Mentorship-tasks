@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using MongoDB.Driver;
 using ThingsBook.Data.Interface;
 using System.Threading.Tasks;
@@ -13,7 +12,7 @@ namespace ThingsBook.Data.Mongo
     /// <seealso cref="ThingsBook.Data.Interface.ICategoriesDAL" />
     public class CategoriesDAL : ICategoriesDAL
     {
-        private ThingsBookContext _db;
+        private readonly ThingsBookContext _db;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoriesDAL"/> class.

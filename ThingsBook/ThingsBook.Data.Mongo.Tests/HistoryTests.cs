@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using NUnit.Framework;
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
@@ -18,31 +19,31 @@ namespace ThingsBook.Data.Mongo.Tests
         private HistoricalLend _lend;
         private User _user;
         private Friend _friend;
-        private const string sample = "Sample";
+        private const string Sample = "Sample";
 
         [SetUp]
         [Explicit]
         public async Task Setup()
         {
-            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient());
+            var context = new ThingsBookContext(ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString, new MongoClient());
             _users = new UsersDAL(context);
-            _user = new User { Name = sample };
+            _user = new User { Name = Sample };
             _history = new HistoryDAL(context);
             _things = new ThingsDAL(context);
             _thing = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = new Guid()
             };
             _friends = new FriendsDAL(context);
-            _friend = new Friend { Name = sample, Contacts = sample, UserId = _user.Id };
+            _friend = new Friend { Name = Sample, Contacts = Sample, UserId = _user.Id };
             _lend = new HistoricalLend
             {
                 LendDate = DateTime.Today,
                 ReturnDate = DateTime.Today,
-                Comment = sample,
+                Comment = Sample,
                 UserId = _user.Id,
                 FriendId = _friend.Id,
                 ThingId = _thing.Id
@@ -61,7 +62,7 @@ namespace ThingsBook.Data.Mongo.Tests
             {
                 LendDate = DateTime.Today,
                 ReturnDate = DateTime.Today,
-                Comment = sample,
+                Comment = Sample,
                 UserId = _user.Id,
                 FriendId = SequentialGuidUtils.CreateGuid(),
                 ThingId = SequentialGuidUtils.CreateGuid()
@@ -121,7 +122,7 @@ namespace ThingsBook.Data.Mongo.Tests
             {
                 LendDate = DateTime.Now,
                 ReturnDate = DateTime.Now,
-                Comment = sample,
+                Comment = Sample,
                 UserId = _user.Id,
                 FriendId = SequentialGuidUtils.CreateGuid(),
                 ThingId = SequentialGuidUtils.CreateGuid()
@@ -129,7 +130,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(_user.Id, lend);
             var lends1 = (await _history.GetHistLends(_user.Id)).ToList();
             var lends2 = (await _history.GetHistLends(_user.Id)).ToList();
-            Assert.AreEqual(lends1.Count, lends2.Count());
+            Assert.AreEqual(lends1.Count, lends2.Count);
             var count = lends1.Count;
             for (int i = 0; i<count; i++)
             {
@@ -149,15 +150,15 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var thing = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id
             };
             var lend = new HistoricalLend
             {
                 LendDate = DateTime.Now,
                 ReturnDate = DateTime.Now,
-                Comment = sample,
+                Comment = Sample,
                 UserId = _user.Id,
                 FriendId = _friend.Id,
                 ThingId = thing.Id
@@ -166,7 +167,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(_user.Id, lend);
             var lends1 = (await _history.GetFriendHistLends(_user.Id, _friend.Id)).ToList();
             var lends2 = (await _history.GetFriendHistLends(_user.Id, _friend.Id)).ToList();
-            Assert.AreEqual(lends1.Count, lends2.Count());
+            Assert.AreEqual(lends1.Count, lends2.Count);
             var count = lends1.Count;
             for (int i = 0; i < count; i++)
             {
@@ -190,15 +191,15 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var friend = new Friend
             {
-                Name = sample,
-                Contacts = sample,
+                Name = Sample,
+                Contacts = Sample,
                 UserId = _user.Id
             };
             var lend = new HistoricalLend
             {
                 LendDate = DateTime.Now,
                 ReturnDate = DateTime.Now,
-                Comment = sample,
+                Comment = Sample,
                 UserId = _user.Id,
                 FriendId = friend.Id,
                 ThingId = _thing.Id
@@ -207,7 +208,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(_user.Id, lend);
             var lends1 = (await _history.GetThingHistLends(_user.Id, _thing.Id)).ToList();
             var lends2 = (await _history.GetThingHistLends(_user.Id, _thing.Id)).ToList();
-            Assert.AreEqual(lends1.Count, lends2.Count());
+            Assert.AreEqual(lends1.Count, lends2.Count);
             var count = lends1.Count;
             for (int i = 0; i < count; i++)
             {
@@ -240,7 +241,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteHistLendsTest()
         {
-            var user = new User { };
+            var user = new User();
             await _users.CreateUser(user);
             var lend1 = new HistoricalLend { UserId = user.Id };
             var lend2 = new HistoricalLend { UserId = user.Id };
@@ -256,7 +257,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteFriendHistLendsTest()
         {
-            var user = new User { };
+            var user = new User();
             await _users.CreateUser(user);
             var lend1 = new HistoricalLend { UserId = user.Id, FriendId = SequentialGuidUtils.CreateGuid() };
             var lend2 = new HistoricalLend { UserId = user.Id, FriendId = lend1.FriendId };
@@ -264,7 +265,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(user.Id, lend2);
             await _history.DeleteFriendHistory(user.Id, lend1.FriendId);
             var dbLends = await _history.GetFriendHistLends(user.Id, lend1.FriendId);
-            Assert.Zero(dbLends.Count());
+            Assert.Zero(dbLends.Count);
             await _users.DeleteUser(user.Id);
         }
 
@@ -272,7 +273,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteThingHistLendsTest()
         {
-            var user = new User { };
+            var user = new User();
             await _users.CreateUser(user);
             var lend1 = new HistoricalLend { UserId = user.Id, ThingId = SequentialGuidUtils.CreateGuid() };
             var lend2 = new HistoricalLend { UserId = user.Id, ThingId = lend1.ThingId };
@@ -280,7 +281,7 @@ namespace ThingsBook.Data.Mongo.Tests
             await _history.CreateHistLend(user.Id, lend2);
             await _history.DeleteThingHistory(user.Id, lend1.ThingId);
             var dbLends = await _history.GetThingHistLends(user.Id, lend1.ThingId);
-            Assert.Zero(dbLends.Count());
+            Assert.Zero(dbLends.Count);
             await _users.DeleteUser(user.Id);
         }
 

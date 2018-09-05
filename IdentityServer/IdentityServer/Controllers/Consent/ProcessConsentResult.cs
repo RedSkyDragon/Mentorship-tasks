@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.UI
+﻿using IdentityServer.Models;
+
+namespace IdentityServer.Controllers
 {
     /// <summary>
     /// Model of process consent result.

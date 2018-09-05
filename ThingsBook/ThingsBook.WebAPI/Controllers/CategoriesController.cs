@@ -15,7 +15,7 @@ namespace ThingsBook.WebAPI.Controllers
     [Authorize]
     public class CategoriesController : BaseController
     {
-        private IThingsBL _things;
+        private readonly IThingsBL _things;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoriesController"/> class.
@@ -44,7 +44,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Category</returns>
         [HttpGet]
         [Route("{categoryId:guid}")]
-        public Task<Category> Get([FromUri]Guid categoryId)
+        public Task<Category> Get(Guid categoryId)
         {
             return _things.GetCategory(ApiUser.Id, categoryId);
         }
@@ -57,7 +57,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>List of things</returns>
         [HttpGet]
         [Route("{categoryId:guid}/things")]
-        public Task<IEnumerable<ThingWithLend>> GetForCategory([FromUri]Guid categoryId)
+        public Task<IEnumerable<ThingWithLend>> GetForCategory(Guid categoryId)
         {
             return _things.GetThingsForCategory(ApiUser.Id, categoryId);
         }
@@ -71,7 +71,7 @@ namespace ThingsBook.WebAPI.Controllers
         [Route("")]
         public Task<Category> Post([FromBody]Models.Category category)
         {
-            Category categoryBL = new Category
+            var categoryBL = new Category
             {
                 Name = category.Name,
                 About = category.About
@@ -87,9 +87,9 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Updated category</returns>
         [HttpPut]
         [Route("{categoryId:guid}")]
-        public Task<Category> Put([FromUri]Guid categoryId, [FromBody]Models.Category category)
+        public Task<Category> Put(Guid categoryId, [FromBody]Models.Category category)
         {
-            Category categoryBL = new Category
+            var categoryBL = new Category
             {
                 Id = categoryId,
                 Name = category.Name,
@@ -105,7 +105,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{categoryId:guid}")]
-        public Task Delete([FromUri]Guid categoryId)
+        public Task Delete(Guid categoryId)
         {
             return _things.DeleteCategoryWithThings(ApiUser.Id, categoryId);
         }
@@ -118,7 +118,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{categoryId:guid}/replace")]
-        public Task DeleteAndReplace([FromUri]Guid categoryId, [FromUri]Guid replacementId)
+        public Task DeleteAndReplace(Guid categoryId, [FromUri]Guid replacementId)
         {
             return _things.DeleteCategoryWithReplacement(ApiUser.Id, categoryId, replacementId);
         }

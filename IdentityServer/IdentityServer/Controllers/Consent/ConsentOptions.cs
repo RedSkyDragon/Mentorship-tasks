@@ -1,7 +1,7 @@
-﻿namespace IdentityServer.UI
+﻿namespace IdentityServer.Controllers
 {
     /// <summary>
-    /// Consent comtroller options.
+    /// Consent controller options.
     /// </summary>
     public class ConsentOptions
     {

@@ -18,8 +18,8 @@ namespace ThingsBook.BusinessLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="ThingsBL"/> class.
         /// </summary>
-        /// <param name="data">The data.</param>
-        public ThingsBL(Storage data) : base(data) { }
+        /// <param name="storage">The storage.</param>
+        public ThingsBL(Storage storage) : base(storage) { }
 
         /// <summary>
         /// Creates the category.
@@ -32,8 +32,8 @@ namespace ThingsBook.BusinessLogic
         public async Task<Models.Category> CreateCategory(Guid userId, Models.Category category)
         {
             CheckCategory(category);
-            await Data.Categories.CreateCategory(userId, ModelsConverter.ToDataModel(category, userId));
-            return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
+            await Storage.Categories.CreateCategory(userId, ModelsConverter.ToDataModel(category, userId));
+            return ModelsConverter.ToBLModel(await Storage.Categories.GetCategory(userId, category.Id));
         }
 
         /// <summary>
@@ -47,8 +47,8 @@ namespace ThingsBook.BusinessLogic
         public async Task<ThingWithLend> CreateThing(Guid userId, ThingWithLend thing)
         {
             CheckThing(thing);
-            await Data.Things.CreateThing(userId, ModelsConverter.ToDataModel(thing, userId));
-            return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
+            await Storage.Things.CreateThing(userId, ModelsConverter.ToDataModel(thing, userId));
+            return ModelsConverter.ToBLModel(await Storage.Things.GetThing(userId, thing.Id));
         }
 
         /// <summary>
@@ -60,8 +60,8 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         public async Task DeleteCategoryWithReplacement(Guid userId, Guid categoryId, Guid replacementId)
         {
-            await Data.Things.UpdateThingsCategory(userId, categoryId, replacementId);
-            await Data.Categories.DeleteCategory(userId, categoryId);
+            await Storage.Things.UpdateThingsCategory(userId, categoryId, replacementId);
+            await Storage.Categories.DeleteCategory(userId, categoryId);
         }
 
         /// <summary>
@@ -72,8 +72,8 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         public async Task DeleteCategoryWithThings(Guid userId, Guid id)
         {
-            await Data.Things.DeleteThingsForCategory(userId, id);
-            await Data.Categories.DeleteCategory(userId, id);
+            await Storage.Things.DeleteThingsForCategory(userId, id);
+            await Storage.Categories.DeleteCategory(userId, id);
         }
 
         /// <summary>
@@ -84,8 +84,8 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         public async Task DeleteThing(Guid userId, Guid id)
         {
-            await Data.History.DeleteThingHistory(userId, id);
-            await Data.Things.DeleteThing(userId, id);
+            await Storage.History.DeleteThingHistory(userId, id);
+            await Storage.Things.DeleteThing(userId, id);
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<IEnumerable<Models.Category>> GetCategories(Guid userId)
         {
-            var result = await Data.Categories.GetCategories(userId);     
-            return result.Select(r => ModelsConverter.ToBLModel(r));
+            var result = await Storage.Categories.GetCategories(userId);     
+            return result.Select(ModelsConverter.ToBLModel);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.Category> GetCategory(Guid userId, Guid id)
         {
-            return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, id));
+            return ModelsConverter.ToBLModel(await Storage.Categories.GetCategory(userId, id));
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<ThingWithLend> GetThing(Guid userId, Guid id)
         {
-            return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, id));
+            return ModelsConverter.ToBLModel(await Storage.Things.GetThing(userId, id));
         }
 
         /// <summary>
@@ -136,8 +136,8 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<IEnumerable<ThingWithLend>> GetThings(Guid userId)
         {
-            var result = await Data.Things.GetThings(userId);
-            return result.Select(r => ModelsConverter.ToBLModel(r));
+            var result = await Storage.Things.GetThings(userId);
+            return result.Select(ModelsConverter.ToBLModel);
         }
 
         /// <summary>
@@ -150,8 +150,8 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<IEnumerable<ThingWithLend>> GetThingsForCategory(Guid userId, Guid categoryId)
         {
-            var result = await Data.Things.GetThingsForCategory(userId, categoryId);
-            return result.Select(r => ModelsConverter.ToBLModel(r));
+            var result = await Storage.Things.GetThingsForCategory(userId, categoryId);
+            return result.Select(ModelsConverter.ToBLModel);
         }
 
         /// <summary>
@@ -165,8 +165,8 @@ namespace ThingsBook.BusinessLogic
         public async Task<Models.Category> UpdateCategory(Guid userId, Models.Category category)
         {
             CheckCategory(category);
-            await Data.Categories.UpdateCategory(userId, ModelsConverter.ToDataModel(category, userId));
-            return ModelsConverter.ToBLModel(await Data.Categories.GetCategory(userId, category.Id));
+            await Storage.Categories.UpdateCategory(userId, ModelsConverter.ToDataModel(category, userId));
+            return ModelsConverter.ToBLModel(await Storage.Categories.GetCategory(userId, category.Id));
         }
 
         /// <summary>
@@ -180,8 +180,8 @@ namespace ThingsBook.BusinessLogic
         public async Task<ThingWithLend> UpdateThing(Guid userId, ThingWithLend thing)
         {
             CheckThing(thing);
-            await Data.Things.UpdateThing(userId, ModelsConverter.ToDataModel(thing, userId));
-            return ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thing.Id));
+            await Storage.Things.UpdateThing(userId, ModelsConverter.ToDataModel(thing, userId));
+            return ModelsConverter.ToBLModel(await Storage.Things.GetThing(userId, thing.Id));
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace ThingsBook.BusinessLogic
         public async Task<FilteredLends> GetThingLends(Guid userId, Guid thingId)
         {
             var activeLends = new List<ActiveLend>();
-            var thing = ModelsConverter.ToBLModel(await Data.Things.GetThing(userId, thingId));
+            var thing = ModelsConverter.ToBLModel(await Storage.Things.GetThing(userId, thingId));
             if (thing.Lend != null)
             {
                 activeLends.Add(await GetActiveLends(userId, thing));
@@ -215,7 +215,7 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         private async Task<IEnumerable<HistLend>> GetHistoryLends(Guid userId, ThingWithLend thing)
         {
-            var history = await Data.History.GetThingHistLends(userId, thing.Id);
+            var history = await Storage.History.GetThingHistLends(userId, thing.Id);
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<HistoricalLend, HistLend>()).CreateMapper();
             var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<ThingWithLend, Models.Thing>()).CreateMapper();
             var lends = new List<HistLend>();
@@ -240,7 +240,7 @@ namespace ThingsBook.BusinessLogic
             var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Models.Lend, ActiveLend>()).CreateMapper();
             var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<ThingWithLend, Models.Thing>()).CreateMapper();
             var lendBL = lendMapper.Map<Models.Lend, ActiveLend>(thing.Lend);
-            var friend = await Data.Friends.GetFriend(userId, thing.Lend.FriendId);
+            var friend = await Storage.Friends.GetFriend(userId, thing.Lend.FriendId);
             lendBL.Friend = ModelsConverter.ToBLModel(friend);
             lendBL.Thing = thingMapper.Map<Models.Thing>(thing);
             return lendBL;
@@ -256,7 +256,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (category == null)
             {
-                throw new ArgumentNullException("Category must not be null.", nameof(category));
+                throw new ArgumentNullException(nameof(category), "Category must not be null.");
             }
             if (string.IsNullOrEmpty(category.Name) && string.IsNullOrEmpty(category.About))
             {
@@ -274,7 +274,7 @@ namespace ThingsBook.BusinessLogic
         {
             if (thing == null)
             {
-                throw new ArgumentNullException("Thing must not be null.", nameof(thing));
+                throw new ArgumentNullException(nameof(thing), "Thing must not be null.");
             }
             if (string.IsNullOrEmpty(thing.Name) && string.IsNullOrEmpty(thing.About))
             {

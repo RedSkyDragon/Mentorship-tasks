@@ -17,36 +17,46 @@ namespace ThingsBook.BusinessLogic.Tests
         private Mock<IHistoryDAL> _history;
         private Mock<IThingsDAL> _things;
         private Mock<ILendsDAL> _lends;
-        private const string sample = "Sample";
+        private const string Sample = "Sample";
 
         [SetUp]
         public void Setup()
         {
             _friends = new Mock<IFriendsDAL>();
-            _friends.Setup(f => f.DeleteFriends(It.IsAny<Guid>()))
+            _friends
+                .Setup(f => f.DeleteFriends(It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
-            _friends.Setup(f => f.CreateFriend(It.IsAny<Guid>(), It.IsAny<Friend>()))
+            _friends
+                .Setup(f => f.CreateFriend(It.IsAny<Guid>(), It.IsAny<Friend>()))
                 .Returns(Task.CompletedTask);
-            _friends.Setup(f => f.UpdateFriend(It.IsAny<Guid>(), It.IsAny<Friend>()))
+            _friends
+                .Setup(f => f.UpdateFriend(It.IsAny<Guid>(), It.IsAny<Friend>()))
                 .Returns(Task.CompletedTask);
-            _friends.Setup(f => f.DeleteFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _friends
+                .Setup(f => f.DeleteFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
-            _friends.Setup(f => f.GetFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _friends
+                .Setup(f => f.GetFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns((Guid user, Guid id) => Task.FromResult(new Friend{ Id = id, Name = "Mock" }));
-            _friends.Setup(f => f.GetFriends(It.IsAny<Guid>()))
+            _friends
+                .Setup(f => f.GetFriends(It.IsAny<Guid>()))
                 .Returns((Guid id) => Task.FromResult(new List<Friend>() as IEnumerable<Friend>));
             _users = new Mock<IUsersDAL>();
             _history = new Mock<IHistoryDAL>();
-            _history.Setup(h => h.DeleteFriendHistory(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _history
+                .Setup(h => h.DeleteFriendHistory(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
-            _history.Setup(h => h.GetFriendHistLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _history
+                .Setup(h => h.GetFriendHistLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.FromResult(new Dictionary<HistoricalLend, Thing>() as IDictionary<HistoricalLend, Thing>));
             _categories = new Mock<ICategoriesDAL>();
             _things = new Mock<IThingsDAL>();
-            _things.Setup(t => t.GetThingsForFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _things
+                .Setup(t => t.GetThingsForFriend(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.FromResult(new List<Thing>() as IEnumerable<Thing>));
             _lends = new Mock<ILendsDAL>();
-            _lends.Setup(l => l.DeleteFriendLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            _lends
+                .Setup(l => l.DeleteFriendLends(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask);
             var dal = new Storage(_users.Object, _friends.Object, _categories.Object, _things.Object, _lends.Object, _history.Object);
             _friendsBL = new FriendsBL(dal);
@@ -55,36 +65,24 @@ namespace ThingsBook.BusinessLogic.Tests
         [Test]
         public async Task CreateFriendTest()
         {
-            var friend = new Models.Friend { Name = sample };
+            var friend = new Models.Friend { Name = Sample };
             var result = await _friendsBL.Create(new Guid(), friend);
             Assert.NotNull(result);
             Assert.AreEqual(friend.Id, result.Id);
-            Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _friendsBL.Create(new Guid(), null);
-            });
-            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
-            {
-                return _friendsBL.Create(new Guid(), new Models.Friend());
-            });
-            _friends.Verify(f => f.CreateFriend(It.IsAny<Guid>(), It.IsAny<Data.Interface.Friend>()), Times.Once());
+            Assert.ThrowsAsync<ArgumentNullException>(() => _friendsBL.Create(new Guid(), null));
+            Assert.ThrowsAsync<Models.ModelValidationException>(() => _friendsBL.Create(new Guid(), new Models.Friend()));
+            _friends.Verify(f => f.CreateFriend(It.IsAny<Guid>(), It.IsAny<Friend>()), Times.Once());
         }
 
         [Test]
         public async Task UpdateFriendTest()
         {
-            var friend = new Models.Friend { Name = sample };
+            var friend = new Models.Friend { Name = Sample };
             var result = await _friendsBL.Update(new Guid(), friend);
             Assert.NotNull(result);
             Assert.AreEqual(friend.Id, result.Id);
-            Assert.ThrowsAsync<ArgumentNullException>(() =>
-            {
-                return _friendsBL.Update(new Guid(), null);
-            });
-            Assert.ThrowsAsync<Models.ModelValidationException>(() =>
-            {
-                return _friendsBL.Update(new Guid(), new Models.Friend());
-            });
+            Assert.ThrowsAsync<ArgumentNullException>(() => _friendsBL.Update(new Guid(), null));
+            Assert.ThrowsAsync<Models.ModelValidationException>(() => _friendsBL.Update(new Guid(), new Models.Friend()));
             _friends.Verify(f => f.UpdateFriend(It.IsAny<Guid>(), It.IsAny<Friend>()), Times.Once());
         }
 

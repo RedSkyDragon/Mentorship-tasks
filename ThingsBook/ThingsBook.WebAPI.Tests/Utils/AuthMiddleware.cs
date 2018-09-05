@@ -23,11 +23,11 @@ namespace ThingsBook.WebAPI.Tests.Utils
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async override Task Invoke(IOwinContext context)
+        public override async Task Invoke(IOwinContext context)
         {
             var userId = new Guid("11111111111111111111111111111111");
             var identity = new ClaimsIdentity("TestType");
-            var claims = new Claim[]
+            var claims = new[]
             {
                 new Claim(JwtClaimTypes.Id, userId.ToString()),
                 new Claim(JwtClaimTypes.Name, "UserName")

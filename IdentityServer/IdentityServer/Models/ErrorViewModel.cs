@@ -1,6 +1,6 @@
 ﻿using IdentityServer4.Models;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Models
 {
     /// <summary>
     /// Error view model.

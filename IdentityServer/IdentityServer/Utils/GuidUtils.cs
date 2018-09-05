@@ -15,8 +15,7 @@ namespace IdentityServer.Utils
         /// <exception cref="Exception">Error generating sequential GUID</exception>
         public static Guid CreateGuid()
         {
-            Guid guid;
-            int result = NativeMethods.UuidCreateSequential(out guid);
+            int result = NativeMethods.UuidCreateSequential(out var guid);
             if (result != 0)
             {
                 throw new Exception("Error generating sequential GUID");

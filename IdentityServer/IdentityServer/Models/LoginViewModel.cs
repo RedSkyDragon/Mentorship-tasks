@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Models
 {
     /// <summary>
     /// Login view model

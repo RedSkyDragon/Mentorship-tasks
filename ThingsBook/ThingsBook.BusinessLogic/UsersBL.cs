@@ -16,8 +16,8 @@ namespace ThingsBook.BusinessLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersBL"/> class.
         /// </summary>
-        /// <param name="data">The data.</param>
-        public UsersBL(Storage data) : base(data) { }
+        /// <param name="storage">The storage.</param>
+        public UsersBL(Storage storage) : base(storage) { }
 
         /// <summary>
         /// Creates the specified user.
@@ -32,9 +32,15 @@ namespace ThingsBook.BusinessLogic
             {
                 throw new ArgumentNullException(nameof(user));
             }
-            await Data.Users.CreateUser(ModelsConverter.ToDataModel(user));
-            await Data.Categories.CreateCategory(user.Id, new Category { Name = "Other", About = "Things which are difficult to classify", UserId = user.Id });
-            return ModelsConverter.ToBLModel(await Data.Users.GetUser(user.Id));
+            await Storage.Users.CreateUser(ModelsConverter.ToDataModel(user));
+            await Storage.Categories.CreateCategory
+                (user.Id, new Category
+                {
+                    Name = "Other",
+                    About = "Things which are difficult to classify",
+                    UserId = user.Id
+                });
+            return ModelsConverter.ToBLModel(await Storage.Users.GetUser(user.Id));
         }
 
         /// <summary>
@@ -55,10 +61,7 @@ namespace ThingsBook.BusinessLogic
             {
                 return await Create(user);
             }
-            else
-            {
-                return await Update(user);
-            }
+            return await Update(user);
         }
 
         /// <summary>
@@ -68,11 +71,11 @@ namespace ThingsBook.BusinessLogic
         /// <returns></returns>
         public async Task Delete(Guid id)
         {
-            await Data.History.DeleteUserHistory(id);
-            await Data.Things.DeleteThings(id);
-            await Data.Friends.DeleteFriends(id);
-            await Data.Categories.DeleteCategories(id);
-            await Data.Users.DeleteUser(id);
+            await Storage.History.DeleteUserHistory(id);
+            await Storage.Things.DeleteThings(id);
+            await Storage.Friends.DeleteFriends(id);
+            await Storage.Categories.DeleteCategories(id);
+            await Storage.Users.DeleteUser(id);
         }
 
         /// <summary>
@@ -84,7 +87,7 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<Models.User> Get(Guid id)
         {
-            return ModelsConverter.ToBLModel(await Data.Users.GetUser(id));
+            return ModelsConverter.ToBLModel(await Storage.Users.GetUser(id));
         }
 
         /// <summary>
@@ -95,8 +98,8 @@ namespace ThingsBook.BusinessLogic
         /// </returns>
         public async Task<IEnumerable<Models.User>> GetAll()
         {
-            var result = await Data.Users.GetUsers();
-            return result.Select(r => ModelsConverter.ToBLModel(r));
+            var result = await Storage.Users.GetUsers();
+            return result.Select(ModelsConverter.ToBLModel);
         }
 
         /// <summary>
@@ -112,8 +115,8 @@ namespace ThingsBook.BusinessLogic
             {
                 throw new ArgumentNullException(nameof(user));
             }
-            await Data.Users.UpdateUser(ModelsConverter.ToDataModel(user));
-            return ModelsConverter.ToBLModel(await Data.Users.GetUser(user.Id));
+            await Storage.Users.UpdateUser(ModelsConverter.ToDataModel(user));
+            return ModelsConverter.ToBLModel(await Storage.Users.GetUser(user.Id));
         }
     }
 }

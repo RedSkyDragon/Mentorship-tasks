@@ -2,10 +2,9 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using ThingsBook.BusinessLogic.Models;
 using ThingsBook.WebAPI.Tests.Utils;
@@ -20,9 +19,9 @@ namespace ThingsBook.WebAPI.Tests
         [Test]
         public async Task AuthTest()
         {
-            using (var server = TestServer.Create<TestStartupWithoutAuth>())
+            using (var server = TestServer.Create<TestStartupNoAuth>())
             {
-                var response = await server.HttpClient.PostAsync("/lend/" + _guid.ToString(), null);
+                var response = await server.HttpClient.PostAsync("/lend/" + _guid, null);
                 var result = await response.Content.ReadAsStringAsync();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -35,12 +34,12 @@ namespace ThingsBook.WebAPI.Tests
             var values = new Dictionary<string, string>
             {
                 { "FriendId", _guid.ToString() },
-                { "LendDate", DateTime.Now.ToString() },
+                { "LendDate", DateTime.Now.ToString(CultureInfo.CurrentCulture) },
                 { "Comment", "Sample" }
             };
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.PostAsync("/lend/" + _guid.ToString(), new FormUrlEncodedContent(values));
+                var response = await server.HttpClient.PostAsync("/lend/" + _guid, new FormUrlEncodedContent(values));
                 var result = await response.Content.ReadAsAsync<ThingWithLend>();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -53,12 +52,12 @@ namespace ThingsBook.WebAPI.Tests
             var values = new Dictionary<string, string>
             {
                 { "FriendId", _guid.ToString() },
-                { "LendDate", DateTime.Now.ToString() },
+                { "LendDate", DateTime.Now.ToString(CultureInfo.CurrentCulture) },
                 { "Comment", "Sample" }
             };
             using (var server = TestServer.Create<TestStartup>())
             {
-                var response = await server.HttpClient.PutAsync("/lend/" + _guid.ToString(), new FormUrlEncodedContent(values));
+                var response = await server.HttpClient.PutAsync("/lend/" + _guid, new FormUrlEncodedContent(values));
                 var result = await response.Content.ReadAsAsync<ThingWithLend>();
                 Assert.IsNotNull(result);
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -71,7 +70,7 @@ namespace ThingsBook.WebAPI.Tests
             using (var server = TestServer.Create<TestStartup>())
             {
                 var response = await server.HttpClient.DeleteAsync
-                    ("/lend/" + _guid.ToString() + "?returnDate=" + DateTime.Now.ToString());
+                    ("/lend/" + _guid + "?returnDate=" + DateTime.Now.ToString(CultureInfo.CurrentCulture));
                 Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
             }
         }

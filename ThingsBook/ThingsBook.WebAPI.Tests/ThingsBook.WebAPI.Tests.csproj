@@ -113,13 +113,13 @@
     <Compile Include="ThingsServiceTests.cs" />
     <Compile Include="Utils\AuthMiddleware.cs" />
     <Compile Include="Utils\InvalidAuthMiddleware.cs" />
-    <Compile Include="Utils\TestAutofac.cs" />
+    <Compile Include="Utils\TestAutoFac.cs" />
     <Compile Include="Utils\TestStartupInvalidAuth.cs" />
     <Compile Include="Utils\TestStartup.cs" />
     <Compile Include="ThingsControllerTests.cs" />
     <Compile Include="UsersServiceTests.cs" />
     <Compile Include="UsersControllerTests.cs" />
-    <Compile Include="Utils\TestStartupWithoutAuth.cs" />
+    <Compile Include="Utils\TestStartupNoAuth.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

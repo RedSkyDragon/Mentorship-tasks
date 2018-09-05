@@ -1,16 +1,17 @@
-﻿using IdentityModel;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
+using IdentityModel;
+using IdentityServer.Models;
+using IdentityServer.Utils;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Security.Claims;
-using IdentityServer.Models;
 
-namespace IdentityServer.Utils
+namespace IdentityServer.Data
 {
     /// <summary>
     /// Initialize methods for database.
@@ -31,7 +32,7 @@ namespace IdentityServer.Utils
         /// Initializes the users.
         /// </summary>
         /// <param name="app">The application.</param>
-        /// <exception cref="System.Exception">
+        /// <exception cref="Exception">
         /// </exception>
         private static void InitializeUsers(IApplicationBuilder app)
         {
@@ -55,7 +56,7 @@ namespace IdentityServer.Utils
                         throw new Exception(result.Errors.First().Description);
                     }
 
-                    result = userMgr.AddClaimsAsync(alex, new Claim[]{
+                    result = userMgr.AddClaimsAsync(alex, new[]{
                             new Claim(JwtClaimTypes.Id, SequentialGuidUtils.CreateGuid().ToString()),
                             new Claim(JwtClaimTypes.Name, "Alex"),
                             new Claim(JwtClaimTypes.GivenName, "Alexandra"),
@@ -80,7 +81,7 @@ namespace IdentityServer.Utils
                         throw new Exception(result.Errors.First().Description);
                     }
 
-                    result = userMgr.AddClaimsAsync(jacob, new Claim[]{
+                    result = userMgr.AddClaimsAsync(jacob, new[]{
                         new Claim(JwtClaimTypes.Id, SequentialGuidUtils.CreateGuid().ToString()),
                         new Claim(JwtClaimTypes.Name, "Jacob Frye"),
                         new Claim(JwtClaimTypes.GivenName, "Jacob"),
@@ -105,7 +106,7 @@ namespace IdentityServer.Utils
                         throw new Exception(result.Errors.First().Description);
                     }
 
-                    result = userMgr.AddClaimsAsync(max, new Claim[]{
+                    result = userMgr.AddClaimsAsync(max, new[]{
                         new Claim(JwtClaimTypes.Id, SequentialGuidUtils.CreateGuid().ToString()),
                         new Claim(JwtClaimTypes.Name, "Maxwell Roth"),
                         new Claim(JwtClaimTypes.GivenName, "Maxwell"),

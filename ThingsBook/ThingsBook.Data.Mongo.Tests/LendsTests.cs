@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using NUnit.Framework;
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
@@ -16,19 +17,18 @@ namespace ThingsBook.Data.Mongo.Tests
         private Thing _thing;
         private User _user;
         private Lend _lend;
-        private const string sample = "Sample";
+        private const string Sample = "Sample";
 
         [SetUp]
         public async Task Setup()
         {
-            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient());
+            var context = new ThingsBookContext(ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString, new MongoClient());
             _users = new UsersDAL(context);
-            _user = new User { Name = sample };
+            _user = new User { Name = Sample };
             _things = new ThingsDAL(context);
-            _thing = new Thing { Name = sample, About = sample, UserId = _user.Id, CategoryId = new Guid() };
+            _thing = new Thing { Name = Sample, About = Sample, UserId = _user.Id, CategoryId = new Guid() };
             _lends = new LendsDAL(context);
-            string date = "2018-08-20";
-            _lend = new Lend { LendDate = DateTime.Parse(date), Comment = sample, FriendId = SequentialGuidUtils.CreateGuid() };
+            _lend = new Lend { LendDate = DateTime.Parse("2018-08-20"), Comment = Sample, FriendId = SequentialGuidUtils.CreateGuid() };
             await _users.CreateUser(_user);
             await _things.CreateThing(_user.Id, _thing);
         }
@@ -66,7 +66,7 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteLendTest()
         {
-            var thing = new Thing { UserId = _user.Id, Name = sample };
+            var thing = new Thing { UserId = _user.Id, Name = Sample };
             var lend = new Lend { LendDate = DateTime.Now, FriendId = new Guid() };
             await _things.CreateThing(_user.Id, thing);
             await _lends.CreateLend(_user.Id, thing.Id, lend);
@@ -81,9 +81,9 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteFriendLendsTest()
         {
-            var thing1 = new Thing { UserId = _user.Id, Name = sample };
+            var thing1 = new Thing { UserId = _user.Id, Name = Sample };
             var lend1 = new Lend { LendDate = DateTime.Now, FriendId = new Guid() };
-            var thing2 = new Thing { UserId = _user.Id, Name = sample };
+            var thing2 = new Thing { UserId = _user.Id, Name = Sample };
             var lend2 = new Lend { LendDate = DateTime.Now, FriendId = new Guid() };
             await _things.CreateThing(_user.Id, thing1);
             await _lends.CreateLend(_user.Id, thing1.Id, lend1);

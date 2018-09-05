@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using NUnit.Framework;
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
@@ -15,20 +16,20 @@ namespace ThingsBook.Data.Mongo.Tests
         private ICategoriesDAL _categories;
         private Thing _thing;
         private User _user;
-        private const string sample = "Sample";
+        private const string Sample = "Sample";
 
         [SetUp]
         public async Task Setup()
         {
-            var context = new ThingsBookContext("mongodb://localhost/ThingsBookTests", new MongoClient());
+            var context = new ThingsBookContext(ConfigurationManager.ConnectionStrings["MongoDb"].ConnectionString, new MongoClient());
             _users = new UsersDAL(context);
-            _user = new User { Name = sample };
+            _user = new User { Name = Sample };
             _things = new ThingsDAL(context);
             _categories = new CategoriesDAL(context);
             _thing = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = new Guid()
             };
@@ -42,8 +43,8 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var thing = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = SequentialGuidUtils.CreateGuid()
             };
@@ -81,15 +82,15 @@ namespace ThingsBook.Data.Mongo.Tests
             var catId = SequentialGuidUtils.CreateGuid();
             var thing1 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = catId
             };
             var thing2 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = catId
             };
@@ -108,8 +109,8 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var thing = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = SequentialGuidUtils.CreateGuid()
             };
@@ -125,19 +126,19 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteThingsForCategoryTest()
         {
-            var cat = new Category { Name = sample, About = sample, UserId = _user.Id };
+            var cat = new Category { Name = Sample, About = Sample, UserId = _user.Id };
             await _categories.CreateCategory(_user.Id, cat);
             var thing1 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = cat.Id
             };
             var thing2 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = cat.Id
             };
@@ -154,18 +155,18 @@ namespace ThingsBook.Data.Mongo.Tests
         [Explicit]
         public async Task DeleteThingsTest()
         {
-            var user = new User { };
+            var user = new User();
             var thing1 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = user.Id,
                 CategoryId = new Guid()
             };
             var thing2 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = user.Id,
                 CategoryId = new Guid()
             };
@@ -199,16 +200,16 @@ namespace ThingsBook.Data.Mongo.Tests
         {
             var thing = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = new Guid()
             };
             await _things.CreateThing(_user.Id, thing);
             var first = (await _things.GetThings(_user.Id)).ToList();
             var second = (await _things.GetThings(_user.Id)).ToList();
-            Assert.AreEqual(first.Count(), second.Count());
-            var count = first.Count();
+            Assert.AreEqual(first.Count, second.Count);
+            var count = first.Count;
             for (int i = 0; i < count; i++)
             {
                 Assert.AreEqual(first.ElementAt(i).Id, second.ElementAt(i).Id);
@@ -226,15 +227,15 @@ namespace ThingsBook.Data.Mongo.Tests
             var catId = SequentialGuidUtils.CreateGuid();
             var thing1 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = catId
             };
             var thing2 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 CategoryId = catId
             };
@@ -242,8 +243,8 @@ namespace ThingsBook.Data.Mongo.Tests
             await _things.CreateThing(_user.Id, thing2);
             var first = (await _things.GetThingsForCategory(_user.Id, catId)).ToList();
             var second = (await _things.GetThingsForCategory(_user.Id, catId)).ToList();
-            Assert.AreEqual(first.Count(), second.Count());
-            for (int i = 0; i < first.Count(); i++)
+            Assert.AreEqual(first.Count, second.Count);
+            for (int i = 0; i < first.Count; i++)
             {
                 Assert.AreEqual(first.ElementAt(i).Id, second.ElementAt(i).Id);
                 Assert.AreEqual(first.ElementAt(i).Name, second.ElementAt(i).Name);
@@ -261,16 +262,16 @@ namespace ThingsBook.Data.Mongo.Tests
             var lend = new Lend { FriendId = friendId };
             var thing1 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 Lend = lend,
                 CategoryId = new Guid()
             };
             var thing2 = new Thing
             {
-                Name = sample,
-                About = sample,
+                Name = Sample,
+                About = Sample,
                 UserId = _user.Id,
                 Lend = lend,
                 CategoryId = new Guid()
@@ -279,8 +280,8 @@ namespace ThingsBook.Data.Mongo.Tests
             await _things.CreateThing(_user.Id, thing2);
             var first = (await _things.GetThingsForFriend(_user.Id, friendId)).ToList();
             var second = (await _things.GetThingsForFriend(_user.Id, friendId)).ToList();
-            Assert.AreEqual(first.Count(), second.Count());
-            for (int i = 0; i < first.Count(); i++)
+            Assert.AreEqual(first.Count, second.Count);
+            for (int i = 0; i < first.Count; i++)
             {
                 Assert.AreEqual(first.ElementAt(i).Id, second.ElementAt(i).Id);
                 Assert.AreEqual(first.ElementAt(i).Name, second.ElementAt(i).Name);

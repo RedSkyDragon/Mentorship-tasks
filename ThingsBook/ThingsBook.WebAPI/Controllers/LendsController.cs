@@ -14,7 +14,7 @@ namespace ThingsBook.WebAPI.Controllers
     [Authorize]
     public class LendsController : BaseController
     {
-        private ILendsBL _lends;
+        private readonly ILendsBL _lends;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LendsController"/> class.
@@ -33,7 +33,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Lended thing</returns>
         [HttpPost]
         [Route("{thingId:guid}")]
-        public Task<ThingWithLend> Post([FromUri]Guid thingId, [FromBody]Lend lend)
+        public Task<ThingWithLend> Post(Guid thingId, [FromBody]Lend lend)
         {
             return _lends.Create(ApiUser.Id, thingId, lend);
         }
@@ -46,7 +46,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>Updated thing</returns>
         [HttpPut]
         [Route("{thingId:guid}")]
-        public Task<ThingWithLend> Put([FromUri]Guid thingId, [FromBody]Lend lend)
+        public Task<ThingWithLend> Put(Guid thingId, [FromBody]Lend lend)
         {
             return _lends.Update(ApiUser.Id, thingId, lend);
         }
@@ -59,7 +59,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{thingId:guid}")]
-        public Task Delete([FromUri]Guid thingId, [FromBody]DateTime? returnDate)
+        public Task Delete(Guid thingId, [FromUri]DateTime? returnDate)
         {
             if (!returnDate.HasValue)
             {

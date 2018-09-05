@@ -1,8 +1,9 @@
 ﻿using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using IdentityServer.Models;
 
-namespace IdentityServer.UI
+namespace IdentityServer.Controllers
 {
     /// <summary>
     /// Home controller for identity server

@@ -16,7 +16,7 @@ namespace ThingsBook.WebAPI.Controllers
     [Authorize]
     public class LendsHistoryController : BaseController
     {
-        private ILendsBL _lends;
+        private readonly ILendsBL _lends;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LendsHistoryController"/> class.
@@ -45,7 +45,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>History record</returns>
         [HttpGet]
         [Route("{lendId:guid}")]
-        public Task<HistLend> Get([FromUri]Guid lendId)
+        public Task<HistLend> Get(Guid lendId)
         {
             return _lends.GetHistoricalLend(ApiUser.Id, lendId);
         }
@@ -57,7 +57,7 @@ namespace ThingsBook.WebAPI.Controllers
         /// <returns>204(no content)</returns>
         [HttpDelete]
         [Route("{lendId:guid}")]
-        public Task Delete([FromUri]Guid lendId)
+        public Task Delete(Guid lendId)
         {
             return _lends.DeleteHistoricalLend(ApiUser.Id, lendId);
         }

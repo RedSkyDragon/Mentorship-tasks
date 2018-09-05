@@ -12,7 +12,7 @@ namespace ThingsBook.Data.Mongo
     /// <seealso cref="ThingsBook.Data.Interface.IHistoryDAL" />
     public class HistoryDAL : IHistoryDAL
     {
-        private ThingsBookContext _db;
+        private readonly ThingsBookContext _db;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HistoryDAL"/> class.

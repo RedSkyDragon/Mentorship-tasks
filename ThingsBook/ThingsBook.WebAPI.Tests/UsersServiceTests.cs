@@ -14,7 +14,7 @@ namespace ThingsBook.WebAPI.Tests
         [Test]
         public async Task NoAuthTest()
         {
-            using (var server = TestServer.Create<TestStartupWithoutAuth>())
+            using (var server = TestServer.Create<TestStartupNoAuth>())
             {
                 var response = await server.HttpClient.GetAsync("/user");
                 var result = await response.Content.ReadAsStringAsync();
