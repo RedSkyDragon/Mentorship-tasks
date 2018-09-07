@@ -1,5 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,7 +15,7 @@ import { ThingsPageComponent } from './things-page/things-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { routing } from './app.routing';
-import { LoginComponent } from './login/login.component';
+import { AuthComponent } from './auth/auth.component';
 
 @NgModule({
   declarations: [
@@ -25,13 +27,15 @@ import { LoginComponent } from './login/login.component';
     ThingsPageComponent,
     HomePageComponent,
     UnauthorizedComponent,
-    LoginComponent
+    AuthComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     LayoutModule,
     routing,
+    OAuthModule.forRoot(),
+    HttpClientModule,
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,

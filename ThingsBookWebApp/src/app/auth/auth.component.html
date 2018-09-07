@@ -1,0 +1,12 @@
+<div *ngIf="isAuthorized">
+  <span>Hello, {{userName}}!</span>
+  &nbsp;&nbsp;&nbsp;
+  <button type="button" mat-raised-button color="accent" (click)="this.Logout()">
+    <span>Logout</span>
+  </button>
+</div>
+<div *ngIf="!isAuthorized">
+  <button type="button" mat-raised-button color="accent" (click)="this.Login()">
+    <span>Login</span>
+  </button>
+</div>
