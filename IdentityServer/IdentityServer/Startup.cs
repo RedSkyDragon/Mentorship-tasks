@@ -63,6 +63,13 @@ namespace IdentityServer
                 app.UseDeveloperExceptionPage();
             }
             app.UseStaticFiles();
+            app.UseCors(options =>
+            {
+                options
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins("http://localhost:4200");
+            });
             app.UseIdentityServer();
             app.UseMvcWithDefaultRoute();
         }
