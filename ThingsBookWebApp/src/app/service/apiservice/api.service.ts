@@ -10,7 +10,6 @@ import { catchError } from 'rxjs/operators';
 })
 export class ApiService {
   constructor(private authService: AuthenticationService, private http: HttpClient) {
-    console.log(this.authService.accessToken);
     this.headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.authService.accessToken,
       'ContentType': 'application/json'
@@ -23,10 +22,9 @@ export class ApiService {
 
   public getCategories(): Observable<Category[]> {
     const url = this.baseUrl + 'categories';
-    console.log(this.headers);
     return this.http.get<Category[]>(url, { headers: this.headers })
       .pipe(
-        catchError(this.handleError('getHeroes', []))
+        catchError(this.handleError('getCategories', []))
       );
   }
 

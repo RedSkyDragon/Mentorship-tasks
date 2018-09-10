@@ -42,6 +42,6 @@ import { AuthComponent } from './auth/auth.component';
     MatTableModule
   ],
   providers: [ OAuthService ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }

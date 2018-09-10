@@ -19,7 +19,8 @@ export class CategoriesPageComponent implements OnInit {
 
   private getCategories(): void {
     this.api.getCategories()
-      .subscribe(cats => this.categories = cats);
-    console.log(this.categories);
+      .subscribe(cats => {
+        this.categories = cats;
+      });
   }
 }

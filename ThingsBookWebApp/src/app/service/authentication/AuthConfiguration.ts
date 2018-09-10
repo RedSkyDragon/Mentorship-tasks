@@ -6,6 +6,6 @@ export const AuthConfiguration: AuthConfig = {
     clientId: 'AngularClient',
     scope: 'openid profile things-book',
     postLogoutRedirectUri: 'http://localhost:4200',
-    oidc: true
+    silentRefreshRedirectUri: 'http://localhost:4200/silent-refresh.html'
 };
 

@@ -68,6 +68,7 @@ namespace ThingsBook.WebAPI
         /// <param name="httpConfiguration">The HTTP configuration.</param>
         protected virtual void ConfigureWebApi(HttpConfiguration httpConfiguration)
         {
+            httpConfiguration.EnableCors();
             httpConfiguration.Services.Add(typeof(IExceptionLogger), new CustomExceptionLogger());
             httpConfiguration.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
             httpConfiguration.MapHttpAttributeRoutes();
