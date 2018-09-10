@@ -13,7 +13,7 @@ const appRoutes: Routes = [
     { path: 'friends', component: FriendsPageComponent, canActivate: [AuthGuard] },
     { path: 'categories', component: CategoriesPageComponent, canActivate: [AuthGuard] },
     { path: 'history', component: HistoryPageComponent, canActivate: [AuthGuard] },
-    { path: '**', redirectTo: ''}
+    // { path: '**', redirectTo: ''}
   ];
 
 export const routing = RouterModule.forRoot(appRoutes);
