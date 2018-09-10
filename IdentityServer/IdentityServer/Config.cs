@@ -60,7 +60,7 @@ namespace IdentityServer
                 {
                     ClientId = "AngularClient",
                     ClientName = "ThingsBook Angular client",
-                    AccessTokenType = AccessTokenType.Reference,
+                    AccessTokenType = AccessTokenType.Jwt,
                     AllowedGrantTypes = GrantTypes.Implicit,
                     RedirectUris = { "http://localhost:4200" },
                     PostLogoutRedirectUris = { "http://localhost:4200/Unauthorized" },

@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using ThingsBook.BusinessLogic.Models;
 
 namespace ThingsBook.WebAPI.Controllers
@@ -12,6 +13,7 @@ namespace ThingsBook.WebAPI.Controllers
     /// Base for controllers with logger
     /// </summary>
     /// <seealso cref="System.Web.Http.ApiController" />
+    [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
     public class BaseController : ApiController
     {
         /// <summary>

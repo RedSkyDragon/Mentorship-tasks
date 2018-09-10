@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthService } from 'angular-oauth2-oidc';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,7 +13,6 @@ import { CategoriesPageComponent } from './categories-page/categories-page.compo
 import { FriendsPageComponent } from './friends-page/friends-page.component';
 import { ThingsPageComponent } from './things-page/things-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
-import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { routing } from './app.routing';
 import { AuthComponent } from './auth/auth.component';
 
@@ -26,7 +25,6 @@ import { AuthComponent } from './auth/auth.component';
     FriendsPageComponent,
     ThingsPageComponent,
     HomePageComponent,
-    UnauthorizedComponent,
     AuthComponent
   ],
   imports: [
@@ -43,7 +41,7 @@ import { AuthComponent } from './auth/auth.component';
     MatListModule,
     MatTableModule
   ],
-  providers: [],
+  providers: [ OAuthService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

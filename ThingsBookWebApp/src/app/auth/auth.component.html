@@ -1,12 +1,15 @@
-<div *ngIf="isAuthorized">
-  <span>Hello, {{userName}}!</span>
+<div *ngIf="this.isAuth; else elseButton">
+  <span *ngIf="this.userName; else elseHello">Hello, {{userName}}!</span>
   &nbsp;&nbsp;&nbsp;
   <button type="button" mat-raised-button color="accent" (click)="this.Logout()">
     <span>Logout</span>
   </button>
 </div>
-<div *ngIf="!isAuthorized">
+<ng-template #elseButton>
   <button type="button" mat-raised-button color="accent" (click)="this.Login()">
     <span>Login</span>
   </button>
-</div>
+</ng-template>
+<ng-template #elseHello>
+  <span>Welcome!</span>
+</ng-template>

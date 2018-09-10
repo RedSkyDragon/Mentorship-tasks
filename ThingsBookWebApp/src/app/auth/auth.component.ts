@@ -7,9 +7,15 @@ import { AuthenticationService } from '../service/authentication/authentication.
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
-  isAuthorized: boolean;
-  userName = 'Sample';
   constructor(private authService: AuthenticationService) { }
+
+  public get isAuth() {
+    return this.authService.isAuthorized;
+  }
+
+  public get userName() {
+    return localStorage.getItem('name');
+  }
 
   ngOnInit() {
   }
@@ -21,5 +27,4 @@ export class AuthComponent implements OnInit {
   Logout() {
     this.authService.logout();
   }
-
 }

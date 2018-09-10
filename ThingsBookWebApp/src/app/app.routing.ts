@@ -5,16 +5,14 @@ import { CategoriesPageComponent } from './categories-page/categories-page.compo
 import { FriendsPageComponent } from './friends-page/friends-page.component';
 import { ThingsPageComponent } from './things-page/things-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
-import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
-import { AuthGuard } from './_guards';
+import { AuthGuard } from './guards';
 
 const appRoutes: Routes = [
     { path: '', component: HomePageComponent },
-    { path: 'things', component: ThingsPageComponent },
+    { path: 'things', component: ThingsPageComponent, canActivate: [AuthGuard] },
     { path: 'friends', component: FriendsPageComponent, canActivate: [AuthGuard] },
-    { path: 'categories', component: CategoriesPageComponent },
-    { path: 'history', component: HistoryPageComponent },
-    { path: 'unauthorized', component: UnauthorizedComponent},
+    { path: 'categories', component: CategoriesPageComponent, canActivate: [AuthGuard] },
+    { path: 'history', component: HistoryPageComponent, canActivate: [AuthGuard] },
     { path: '**', redirectTo: ''}
   ];
 

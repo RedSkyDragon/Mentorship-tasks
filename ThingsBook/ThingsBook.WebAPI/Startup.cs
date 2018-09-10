@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.ExceptionHandling;
 using IdentityServer3.AccessTokenValidation;
 using Owin;
