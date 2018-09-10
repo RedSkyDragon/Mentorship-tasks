@@ -55,6 +55,27 @@ namespace IdentityServer
                         "things-book"
                     },
                     AllowAccessTokensViaBrowser = true
+                },
+                new Client
+                {
+                    ClientId = "AngularClient",
+                    ClientName = "ThingsBook Angular client",
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    RedirectUris = { "http://localhost:4200" },
+                    PostLogoutRedirectUris = { "http://localhost:4200/Unauthorized" },
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        "https://localhost:4200",
+                        "http://localhost:4200"
+                    },
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "things-book"
+                    },
+                    AllowAccessTokensViaBrowser = true
                 }
             };
         }

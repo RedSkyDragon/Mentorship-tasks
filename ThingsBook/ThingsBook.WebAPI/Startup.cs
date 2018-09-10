@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.ExceptionHandling;
 using IdentityServer3.AccessTokenValidation;
 using Owin;
@@ -67,6 +68,7 @@ namespace ThingsBook.WebAPI
         /// <param name="httpConfiguration">The HTTP configuration.</param>
         protected virtual void ConfigureWebApi(HttpConfiguration httpConfiguration)
         {
+            httpConfiguration.EnableCors();
             httpConfiguration.Services.Add(typeof(IExceptionLogger), new CustomExceptionLogger());
             httpConfiguration.Services.Replace(typeof(IExceptionHandler), new CustomExceptionHandler());
             httpConfiguration.MapHttpAttributeRoutes();
