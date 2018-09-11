@@ -5,3 +5,9 @@ mat-icon
 {
     padding-right: 16px;
 }
+.header {
+    display: block;
+    width: 100%;
+    font-size: 1.1em;
+    padding: 20px 15px;
+}

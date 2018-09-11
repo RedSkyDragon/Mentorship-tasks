@@ -6,6 +6,7 @@ import { FriendsPageComponent } from './friends-page/friends-page.component';
 import { ThingsPageComponent } from './things-page/things-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { AuthGuard } from './guards';
+import { SilentRefreshComponent } from './silent-refresh/silent-refresh.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomePageComponent },
@@ -13,6 +14,7 @@ const appRoutes: Routes = [
     { path: 'friends', component: FriendsPageComponent, canActivate: [AuthGuard] },
     { path: 'categories', component: CategoriesPageComponent, canActivate: [AuthGuard] },
     { path: 'history', component: HistoryPageComponent, canActivate: [AuthGuard] },
+    { path: 'silent-refresh', component: SilentRefreshComponent }
     // { path: '**', redirectTo: ''}
   ];
 
