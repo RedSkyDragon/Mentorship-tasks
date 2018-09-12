@@ -9,3 +9,12 @@ td {
 th.mat-sort-header-sorted {
     color: black;
 }
+.check-box{
+    margin: 0px 20px 0px 0px;
+}
+.vertical {
+    padding-top: 20px;
+}
+.delete {
+    margin: 20px 0px;
+}

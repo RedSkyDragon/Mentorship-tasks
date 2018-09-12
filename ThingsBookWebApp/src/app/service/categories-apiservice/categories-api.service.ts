@@ -9,7 +9,7 @@ import { ThingWithLend } from '../../models/thing-with-lend';
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
+export class CategoriesApiService {
   constructor(private authService: AuthenticationService, private http: HttpClient) {
     this.headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.authService.accessToken,
@@ -53,11 +53,19 @@ export class ApiService {
     );
   }
 
+  public deleteAndReplaceCategory(Id: string, replace: string): Observable<any> {
+    const url = this.baseUrl + 'category/' + Id + '/replace?replacementId=' + replace;
+    return this.http.delete(url, { headers: this.headers })
+    .pipe(
+      catchError(this.handleError<any>('deleteAndReplaceCategory'))
+    );
+  }
+
   public getThings(Id: string): Observable<ThingWithLend[]> {
     const url = this.baseUrl + 'category/' + Id + '/things';
     return this.http.get<ThingWithLend[]>(url, { headers: this.headers })
       .pipe(
-        catchError(this.handleError('getThingsForCategory', []))
+        catchError(this.handleError<ThingWithLend[]>('getThingsForCategory', []))
       );
   }
 

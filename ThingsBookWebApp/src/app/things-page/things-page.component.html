@@ -1,3 +1,164 @@
-<p>
-  things-page works!
-</p>
+<div class="main">
+  <div class="header">
+    <span>Things</span>
+  </div>
+
+  <div class="block">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="things" matSort>
+        <ng-container matColumnDef="Name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="About">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> About </th>
+          <td mat-cell *matCellDef="let element"> {{element.About}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Lended">
+          <th mat-header-cell *matHeaderCellDef> Lended </th>
+          <td mat-cell *matCellDef="let element" [innerHTML] = "element.Lend !== null ? lendIcon : null "></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onSelect(row);" [class.selected]="row === selectedThing"></tr>
+      </table> 
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+
+  <div class="block">
+    <mat-tab-group mat-stretch-tabs color="accent" (selectedTabChange)="onTabSelect($event.index)">
+        <mat-tab label="Add thing"> 
+          <div class="tab">
+              <form class="form">
+                  <mat-form-field class="full-width" color="accent">
+                    <input matInput placeholder="Name" #thingNameAdd>
+                  </mat-form-field>               
+                  <mat-form-field class="full-width" color="accent">
+                    <textarea matInput placeholder="About" #thingAboutAdd></textarea>
+                  </mat-form-field>
+                  <mat-form-field class="full-width" color="accent">
+                    <mat-select placeholder="Category" #thingCategoryAdd [value]="firstCategory">
+                      <mat-option *ngFor="let cat of categories" [value]="cat.Id">{{cat.Name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </form>
+              <button mat-raised-button type="button" color="accent" 
+                (click)="add(thingNameAdd.value, thingAboutAdd.value, thingCategoryAdd.value); thingNameAdd.value=''; thingAboutAdd.value=''">
+                Add
+              </button>
+          </div>
+        </mat-tab>
+        <mat-tab label="View thing"> 
+          <div class="tab" *ngIf="selectedThing; else noSelection">
+              <form class="form">
+                  <mat-form-field class="full-width" color="accent">
+                    <input matInput placeholder="Name" #thingNameUpd value="{{selectedThing.Name}}">
+                  </mat-form-field>               
+                  <mat-form-field class="full-width" color="accent">
+                    <textarea matInput placeholder="About" #thingAboutUpd value="{{selectedThing.About}}"></textarea>
+                  </mat-form-field>
+                  <mat-form-field class="full-width" color="accent">
+                    <mat-select placeholder="Category" [value]="selectedThing.CategoryId" #thingCategoryUpd>
+                      <mat-option *ngFor="let cat of categories" [value]="cat.Id">{{cat.Name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+              </form>
+              <button mat-button type="button" color="accent" 
+                (click)="thingNameUpd.value=selectedThing.Name; thingAboutUpd.value=selectedThing.About; thingCategoryUpd.value=selectedThing.CategoryId">
+                Clear changes
+              </button>
+              <button mat-raised-button type="button" color="accent" 
+                (click)="update(selectedThing.Id, thingNameUpd.value, thingAboutUpd.value, thingCategoryUpd.value);">
+                Save
+              </button>
+              <button mat-raised-button type="button" color="warn" class="right"
+                (click)="delete(selectedThing.Id);">
+                Delete
+              </button>
+          </div>
+        </mat-tab>
+        <mat-tab label="Lend">
+            <div class="tab" *ngIf="selectedThing; else noSelection">
+              <div class="lend-info" *ngIf="selectedThing.Lend; else noLend">
+                  <form class="form">                    
+                    <mat-form-field class="full-width" color="accent">
+                        <mat-select placeholder="Friend" [value]="selectedThing.Lend.FriendId" #lendFriendUpd>
+                          <mat-option *ngFor="let friend of friends" [value]="friend.Id">{{friend.Name}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field>
+                        <input class="full-width" color="accent" matInput [matDatepicker]="picker" [value]="selectedThing.Lend.LendDate" placeholder="Choose a lend date" #lendDateUpd>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>              
+                      <mat-form-field class="full-width" color="accent">
+                        <textarea matInput placeholder="Comment" #lendCommentUpd [value]="selectedThing.Lend.Comment"></textarea>
+                      </mat-form-field>
+                  </form>
+                  <button mat-button type="button" color="accent" 
+                    (click)="lendFriendUpd.value=selectedThing.Lend.FriendId; lendDateUpd.value=selectedThing.Lend.LendDate; lendCommentUpd.value=selectedThing.Lend.Comment">
+                    Clear changes
+                  </button>
+                  <button mat-raised-button type="button" color="accent" 
+                    (click)="updateLend(lendDateUpd.value, lendCommentUpd.value, lendFriendUpd.value);">
+                    Save
+                  </button>
+                  <!-- <button mat-raised-button type="button" color="warn" class="right"
+                    (click)="delete(selectedThing.Id);">
+                    Delete
+                  </button> -->
+              </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="Lends history">
+          <!-- <div class="tab" *ngIf="selectedThing; else noSelection">
+            <div class="mat-elevation-z8" *ngIf="this.things && this.things.data.length; else emptyThings">
+                <table mat-table [dataSource]="things">
+                  <ng-container matColumnDef="Name">
+                    <th mat-header-cell *matHeaderCellDef>Name</th>
+                    <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="About">
+                    <th mat-header-cell *matHeaderCellDef> About </th>
+                    <td mat-cell *matCellDef="let element"> {{element.About}} </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div> -->
+        </mat-tab>
+      </mat-tab-group>
+  </div>
+  <div class="clear"></div>
+</div>
+
+<ng-template #noSelection>
+  <div class="tab"><p>Please select some thing</p></div>
+</ng-template>
+
+<ng-template #emptyThings>
+  <div><p>This thing did not have any lend</p></div>
+</ng-template>
+
+<ng-template #noLend>
+  <div class="lend-info">
+    <p>This thing has not lended yet. Lend it!</p>
+    <form class="form">
+      <mat-form-field class="full-width" color="accent">
+        <mat-select placeholder="Friend" [value]="firstFriend" #lendFriendAdd>
+          <mat-option *ngFor="let friend of friends" [value]="friend.Id">{{friend.Name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input class="full-width" color="accent" matInput [matDatepicker]="picker" [formControl]="date" placeholder="Choose a lend date" #lendDateAdd>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>              
+      <mat-form-field class="full-width" color="accent">
+        <textarea matInput placeholder="Comment" #lendCommentAdd></textarea>
+      </mat-form-field>
+    </form>
+    <button mat-raised-button type="button" color="accent" class="right" (click)="addLend(lendDateAdd.value, lendCommentAdd.value, lendFriendAdd.value)">Lend</button>
+  </div>
+</ng-template>

@@ -9,7 +9,8 @@ import { MainNavComponent } from './main-nav/main-nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule,
   MatTableModule, MatGridListModule, MatFormFieldModule, MatPaginatorModule, MatTabsModule,
-  MatSortModule, MatInput, MatInputModule } from '@angular/material';
+  MatSortModule, MatInputModule, MatCheckboxModule, MatSelectModule, MatDatepickerModule, 
+  MatNativeDateModule } from '@angular/material';
 import { HistoryPageComponent } from './history-page/history-page.component';
 import { CategoriesPageComponent } from './categories-page/categories-page.component';
 import { FriendsPageComponent } from './friends-page/friends-page.component';
@@ -18,7 +19,7 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { routing } from './app.routing';
 import { AuthComponent } from './auth/auth.component';
 import { SilentRefreshComponent } from './silent-refresh/silent-refresh.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { FormsModule } from '@angular/forms';
     OAuthModule.forRoot(),
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,
@@ -51,7 +53,11 @@ import { FormsModule } from '@angular/forms';
     MatPaginatorModule,
     MatTabsModule,
     MatSortModule,
-    MatInputModule
+    MatInputModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [ OAuthService ],
   bootstrap: [ AppComponent ]

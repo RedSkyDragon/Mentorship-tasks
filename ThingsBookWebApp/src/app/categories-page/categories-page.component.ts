@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnChanges } from '@angular/core';
 import { Category } from '../models/category';
-import { ApiService } from '../service/apiservice/api.service';
+import { CategoriesApiService } from '../service/categories-apiservice/categories-api.service';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { ThingWithLend } from '../models/thing-with-lend';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-categories-page',
@@ -14,13 +15,16 @@ export class CategoriesPageComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private api: ApiService) { }
+  constructor(private api: CategoriesApiService) { }
 
   private categories: MatTableDataSource<Category>;
   private things: MatTableDataSource<ThingWithLend>;
   private thingsCatId: string;
   private selectedTab: number;
   public selectedCategory: Category;
+  public enableSelect = new FormControl(true);
+  public replacement: Category[];
+  public replace: string;
 
   ngOnInit() {
     this.getCategories();
@@ -63,13 +67,23 @@ export class CategoriesPageComponent implements OnInit {
       });
   }
 
-  private delete(Id: string): void {
-    this.api.deleteCategory(Id)
+  private delete(Id: string, replace: boolean): void {
+    if (replace) {
+      this.api.deleteAndReplaceCategory(Id, this.replace)
+      .subscribe( () => {
+        const index = this.categories.data.findIndex(c => c.Id === Id);
+        this.categories.data.splice(index, 1);
+        this.categories._updateChangeSubscription();
+        this.getThings(Id);
+      });
+    } else {
+      this.api.deleteCategory(Id)
       .subscribe( () => {
         const index = this.categories.data.findIndex(c => c.Id === Id);
         this.categories.data.splice(index, 1);
         this.categories._updateChangeSubscription();
       });
+    }
   }
 
   private getThings(Id: string): void {
@@ -82,6 +96,8 @@ export class CategoriesPageComponent implements OnInit {
 
   private onSelect(category: Category): void {
     this.selectedCategory = category;
+    this.replacement = this.categories.data.filter(c => c.Id !== this.selectedCategory.Id);
+    this.replace = this.replacement[0].Id;
     if (this.selectedTab === 2) {
       this.onTabSelect(this.selectedTab);
     }

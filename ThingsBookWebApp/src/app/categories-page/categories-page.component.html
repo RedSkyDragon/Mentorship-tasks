@@ -57,10 +57,18 @@
                 (click)="update(selectedCategory.Id, categoryNameUpd.value, categoryAboutUpd.value);">
                 Save
               </button>
-              <button mat-raised-button type="button" color="warn" class="right"
-                (click)="delete(selectedCategory.Id);">
-                Delete
-              </button>
+              <div class="vertical">
+                <mat-checkbox [formControl]="enableSelect" class="check-box">Replace category with</mat-checkbox>
+                <mat-form-field color="accent">
+                  <mat-select placeholder="Choose a category" [disabled]="!enableSelect.value" [(value)]="replace">
+                    <mat-option *ngFor="let cat of replacement" [value]="cat.Id">{{cat.Name}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <button mat-raised-button type="button" color="warn" class="delete right"
+                  (click)="delete(selectedCategory.Id, enableSelect.value);">
+                  Delete
+                </button>
+              </div>
           </div>
         </mat-tab>
         <mat-tab label="Things">
