@@ -28,6 +28,6 @@ export class AppComponent {
         });
       }});
     });
-    this.oauthService.setupAutomaticSilentRefresh();
+    // this.oauthService.setupAutomaticSilentRefresh();
   }
 }

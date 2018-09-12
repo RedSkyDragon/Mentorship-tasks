@@ -14,8 +14,8 @@ const appRoutes: Routes = [
     { path: 'friends', component: FriendsPageComponent, canActivate: [AuthGuard] },
     { path: 'categories', component: CategoriesPageComponent, canActivate: [AuthGuard] },
     { path: 'history', component: HistoryPageComponent, canActivate: [AuthGuard] },
-    { path: 'silent-refresh', component: SilentRefreshComponent }
-    // { path: '**', redirectTo: ''}
+    // { path: 'silent-refresh', component: SilentRefreshComponent }
+    { path: '**', redirectTo: ''}
   ];
 
 export const routing = RouterModule.forRoot(appRoutes);
