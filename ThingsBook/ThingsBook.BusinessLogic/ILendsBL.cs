@@ -53,6 +53,12 @@ namespace ThingsBook.BusinessLogic
         Task<IEnumerable<HistLend>> GetHistoricalLends(Guid userId);
 
         /// <summary>
+        /// Gets the active lends.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        Task<IEnumerable<ActiveLend>> GetActiveLends(Guid userId);
+
+        /// <summary>
         /// Deletes the historical lend.
         /// </summary>
         /// <param name="userId">The user identifier.</param>

@@ -5,6 +5,7 @@ import { Lend } from '../../models/lend';
 import { Observable, of } from 'rxjs';
 import { ThingWithLend } from '../../models/thing-with-lend';
 import { catchError } from 'rxjs/operators';
+import { ActiveLend } from '../../models/active-lend';
 
 @Injectable({
   providedIn: 'root'
@@ -24,25 +25,33 @@ export class LendsApiService {
   public addLend(thingId: string, lend: Lend): Observable<ThingWithLend> {
     const url = this.baseUrl + 'lend/' + thingId;
     return this.http.post<ThingWithLend>(url, lend, { headers: this.headers })
-    .pipe(
-      catchError(this.handleError<ThingWithLend>('addLend'))
-    );
+      .pipe(
+        catchError(this.handleError<ThingWithLend>('addLend'))
+      );
   }
 
   public updateLend(thingId: string, lend: Lend): Observable<ThingWithLend> {
     const url = this.baseUrl + 'lend/' + thingId;
     return this.http.put<ThingWithLend>(url, lend, { headers: this.headers })
-    .pipe(
-      catchError(this.handleError<ThingWithLend>('updateLend'))
-    );
+      .pipe(
+        catchError(this.handleError<ThingWithLend>('updateLend'))
+      );
   }
 
   public deleteLend(Id: string, returnDate: Date): Observable<any> {
     const url = this.baseUrl + 'lend/' + Id + '?returnDate=' + returnDate.toLocaleDateString();
     return this.http.delete(url, { headers: this.headers })
-    .pipe(
-      catchError(this.handleError<any>('deleteLend'))
-    );
+      .pipe(
+        catchError(this.handleError<any>('deleteLend'))
+      );
+  }
+
+  public getLends(): Observable<ActiveLend[]> {
+    const url = this.baseUrl + 'lends';
+    return this.http.get<ActiveLend[]>(url, { headers: this.headers })
+      .pipe(
+        catchError(this.handleError<ActiveLend[]>('getLends', []))
+      );
   }
 
   private handleError<T> (operation = 'operation', result?: T) {

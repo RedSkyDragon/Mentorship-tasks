@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ThingsBook.Data.Interface
@@ -37,5 +38,11 @@ namespace ThingsBook.Data.Interface
         /// <param name="thingId">The thing identifier.</param>
         /// <param name="lend">The lend.</param>
         Task CreateLend(Guid userId, Guid thingId, Lend lend);
+
+        /// <summary>
+        /// Gets the active lends.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        Task<IEnumerable<Thing>> GetActiveLends(Guid userId);
     }
 }

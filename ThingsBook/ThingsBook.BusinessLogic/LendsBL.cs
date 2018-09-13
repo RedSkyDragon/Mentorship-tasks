@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ThingsBook.BusinessLogic.Models;
 using ThingsBook.Data.Interface;
+using Lend = ThingsBook.Data.Interface.Lend;
 
 namespace ThingsBook.BusinessLogic
 {
@@ -53,6 +54,26 @@ namespace ThingsBook.BusinessLogic
             var historyLend = ReturnThing(thing, returnDate);
             await Storage.History.CreateHistLend(userId, historyLend);
             await Storage.Lends.DeleteLend(userId, thingId);
+        }
+
+        /// <summary>
+        /// Gets the active lends.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        public async Task<IEnumerable<ActiveLend>> GetActiveLends(Guid userId)
+        {
+            var things = await Storage.Lends.GetActiveLends(userId);
+            var lendMapper = new MapperConfiguration(cfg => cfg.CreateMap<Lend, ActiveLend>()).CreateMapper();
+            var thingMapper = new MapperConfiguration(cfg => cfg.CreateMap<Data.Interface.Thing, Models.Thing>()).CreateMapper();
+            var activeLends = new List<ActiveLend>();
+            foreach (var thing in things)
+            {
+                var lend = lendMapper.Map<ActiveLend>(thing.Lend);
+                lend.Thing = thingMapper.Map<Models.Thing>(thing);
+                lend.Friend = ModelsConverter.ToBLModel(await Storage.Friends.GetFriend(userId, thing.Lend.FriendId));
+                activeLends.Add(lend);
+            }
+            return activeLends;
         }
 
         /// <summary>

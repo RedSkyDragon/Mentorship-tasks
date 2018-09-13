@@ -1,3 +1,62 @@
-<p>
-  home-page works!
-</p>
+<div class="main" *ngIf="authService.isAuthorized; else notAuthorized">
+  <div class="header">
+    Active lends
+  </div>
+  <div class="block width-65">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="activeLends" matSort>
+        <ng-container matColumnDef="Thing"> 
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Thing</th>
+          <td mat-cell *matCellDef="let element" class="width-30"> {{element.Thing.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Friend">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Friend </th>
+          <td mat-cell *matCellDef="let element" class="width-15"> {{element.Friend.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="LendDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Lended </th>
+          <td mat-cell *matCellDef="let element" class="width-15"> {{element.LendDate | date:'MM/dd/yyyy'}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Comment">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Comment </th>
+          <td mat-cell *matCellDef="let element" class="width-40"> {{element.Comment}} </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"(click)="onSelect(row);" [class.selected]="row === selectedLend"></tr>
+      </table> 
+      <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+  <div class="block width-35">
+    <mat-card *ngIf="selectedLend; else noSelection" class="card">
+      <mat-card-content>
+        <p class="center"><b>Lend information:</b></p>
+        <p><b>Friend:</b> {{selectedLend.Friend.Name}}</p>        
+        <p><b>Thing:</b> {{selectedLend.Thing.Name}}</p>
+        <p><b>Land date:</b> {{selectedLend.LendDate | date:'MM/dd/yyyy'}}</p>
+        <p><b>Comment:</b> {{selectedLend.Comment}}</p>
+      </mat-card-content>
+      <mat-card-footer>
+        <div class="padding-25">
+          <mat-form-field>
+            <input class="width-65" color="accent" matInput [matDatepicker]="returnPicker" [(ngModel)]="this.returnDate" [ngModelOptions]="{standalone: true}" placeholder="Choose a return date">
+            <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
+            <mat-datepicker #returnPicker></mat-datepicker>
+          </mat-form-field> 
+          <button mat-raised-button type="button" color="warn" class="delete right"
+            (click)="returnLend();">
+            Return
+          </button>
+        </div>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+</div>
+
+<ng-template #noSelection>
+  <p class="center">Select some lend to view details</p>
+</ng-template>
+  
+<ng-template #notAuthorized>
+  <p class="center">Please, authorize</p>
+</ng-template>

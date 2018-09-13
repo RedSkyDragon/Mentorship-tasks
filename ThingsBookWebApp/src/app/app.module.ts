@@ -10,7 +10,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule,
   MatTableModule, MatGridListModule, MatFormFieldModule, MatPaginatorModule, MatTabsModule,
   MatSortModule, MatInputModule, MatCheckboxModule, MatSelectModule, MatDatepickerModule,
-  MatNativeDateModule } from '@angular/material';
+  MatNativeDateModule, MatCardModule} from '@angular/material';
 import { HistoryPageComponent } from './history-page/history-page.component';
 import { CategoriesPageComponent } from './categories-page/categories-page.component';
 import { FriendsPageComponent } from './friends-page/friends-page.component';
@@ -57,7 +57,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatCheckboxModule,
     MatSelectModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatCardModule
   ],
   providers: [ OAuthService ],
   bootstrap: [ AppComponent ]

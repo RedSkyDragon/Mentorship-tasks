@@ -12,8 +12,8 @@ import { ActiveLend } from '../models/active-lend';
 })
 export class FriendsPageComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'Contacts'];
-  historyDisplayedColumns: string[] = ['Friend', 'LendDate', 'ReturnDate', 'Comment'];
-  lendsDisplayedColumns: string[] = ['Friend', 'LendDate', 'Comment'];
+  historyDisplayedColumns: string[] = ['Thing', 'LendDate', 'ReturnDate', 'Comment'];
+  lendsDisplayedColumns: string[] = ['Thing', 'LendDate', 'Comment'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) historyPaginator: MatPaginator;

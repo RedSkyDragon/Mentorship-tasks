@@ -6,16 +6,14 @@ import { FriendsPageComponent } from './friends-page/friends-page.component';
 import { ThingsPageComponent } from './things-page/things-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { AuthGuard } from './guards';
-import { SilentRefreshComponent } from './silent-refresh/silent-refresh.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomePageComponent },
     { path: 'things', component: ThingsPageComponent, canActivate: [AuthGuard] },
     { path: 'friends', component: FriendsPageComponent, canActivate: [AuthGuard] },
     { path: 'categories', component: CategoriesPageComponent, canActivate: [AuthGuard] },
-    { path: 'history', component: HistoryPageComponent, canActivate: [AuthGuard] },
-    // { path: 'silent-refresh', component: SilentRefreshComponent }
-    { path: '**', redirectTo: ''}
+    { path: 'history', component: HistoryPageComponent, canActivate: [AuthGuard] }
+    // { path: '**', redirectTo: ''}
   ];
 
 export const routing = RouterModule.forRoot(appRoutes);

@@ -12,9 +12,6 @@ export class AuthenticationService {
   }
 
   public get accessToken() {
-    if (Date.now() >= this.oauthService.getAccessTokenExpiration()) {
-      return this.login();
-    }
     return this.oauthService.getAccessToken();
   }
 
