@@ -25,7 +25,7 @@ export class ThingsApiService {
   public getThings(): Observable<ThingWithLend[]> {
     const url = this.baseUrl + 'things';
     return this.http.get<ThingWithLend[]>(url, { headers: this.headers })
-      .pipe(
+    .pipe(
         catchError(this.handleError('getThings', []))
       );
   }

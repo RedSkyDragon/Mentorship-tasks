@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { FriendsApiService } from '../service/friends-apiservice/friends-api.service';
 import { Friend } from '../models/friend';
+import { History } from '../models/history';
+import { ActiveLend } from '../models/active-lend';
 
 @Component({
   selector: 'app-friends-page',
@@ -10,12 +12,19 @@ import { Friend } from '../models/friend';
 })
 export class FriendsPageComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'Contacts'];
+  historyDisplayedColumns: string[] = ['Friend', 'LendDate', 'ReturnDate', 'Comment'];
+  lendsDisplayedColumns: string[] = ['Friend', 'LendDate', 'Comment'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) historyPaginator: MatPaginator;
+  @ViewChild(MatSort) historySort: MatSort;
+  @ViewChild(MatPaginator) lendsPaginator: MatPaginator;
+  @ViewChild(MatSort) lendsSort: MatSort;
   constructor(private api: FriendsApiService) { }
 
   private friends: MatTableDataSource<Friend>;
-  // private lends: MatTableDataSource<ThingWithLend>;
+  private history: MatTableDataSource<History>;
+  private lends: MatTableDataSource<ActiveLend>;
   private lendsFriendId: string;
   private selectedTab: number;
   public selectedFriend: Friend;
@@ -31,6 +40,18 @@ export class FriendsPageComponent implements OnInit {
         this.friends = new MatTableDataSource(fr);
         this.friends.paginator = this.paginator;
         this.friends.sort = this.sort;
+      });
+  }
+
+  private getLends(): void {
+    this.api.getLends(this.selectedFriend.Id)
+      .subscribe( lends => {
+        this.history = new MatTableDataSource(lends.History);
+        this.history.paginator = this.historyPaginator;
+        this.history.sort = this.historySort;
+        this.lends = new MatTableDataSource(lends.ActiveLends);
+        this.lends.paginator = this.lendsPaginator;
+        this.lends.sort = this.lendsSort;
       });
   }
 
@@ -81,7 +102,8 @@ export class FriendsPageComponent implements OnInit {
   private onTabSelect(index: number): void {
     this.selectedTab = index;
     if (index === 2 && this.selectedFriend && this.lendsFriendId !== this.selectedFriend.Id) {
-      //
+      this.getLends();
+      this.lendsFriendId = this.selectedFriend.Id;
     }
   }
 }

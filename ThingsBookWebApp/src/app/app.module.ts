@@ -9,7 +9,7 @@ import { MainNavComponent } from './main-nav/main-nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule,
   MatTableModule, MatGridListModule, MatFormFieldModule, MatPaginatorModule, MatTabsModule,
-  MatSortModule, MatInputModule, MatCheckboxModule, MatSelectModule, MatDatepickerModule, 
+  MatSortModule, MatInputModule, MatCheckboxModule, MatSelectModule, MatDatepickerModule,
   MatNativeDateModule } from '@angular/material';
 import { HistoryPageComponent } from './history-page/history-page.component';
 import { CategoriesPageComponent } from './categories-page/categories-page.component';

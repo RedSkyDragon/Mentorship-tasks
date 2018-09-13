@@ -9,3 +9,14 @@ td {
 th.mat-sort-header-sorted {
     color: black;
 }
+
+.width-30{
+    width: 30%;
+}
+
+.width-40{
+    width: 30%;
+}
+.width-20{
+    width: 20%;
+}

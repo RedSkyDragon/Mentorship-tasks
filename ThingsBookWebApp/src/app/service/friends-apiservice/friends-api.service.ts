@@ -54,7 +54,7 @@ export class FriendsApiService {
   }
 
   public getLends(Id: string): Observable<FilteredLends> {
-    const url = this.baseUrl + 'friend/' + Id + '/things';
+    const url = this.baseUrl + 'friend/' + Id + '/lends';
     return this.http.get<FilteredLends>(url, { headers: this.headers })
       .pipe(
         catchError(this.handleError<any>('getThingsForFriend', []))

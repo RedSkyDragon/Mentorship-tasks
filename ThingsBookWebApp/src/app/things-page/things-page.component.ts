@@ -10,6 +10,7 @@ import { Category } from '../models/category';
 import { Thing } from '../models/thing';
 import { LendsApiService } from '../service/lends-apiservice/lends-api.service';
 import { Lend } from '../models/lend';
+import { History } from '../models/history';
 
 @Component({
   selector: 'app-things-page',
@@ -18,8 +19,12 @@ import { Lend } from '../models/lend';
 })
 export class ThingsPageComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'About', 'Lended'];
+  historyDisplayedColumns: string[] = ['Friend', 'LendDate', 'ReturnDate', 'Comment'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) historyPaginator: MatPaginator;
+  @ViewChild(MatSort) historySort: MatSort;
+
   constructor(
     private api: ThingsApiService,
     private catApi: CategoriesApiService,
@@ -31,7 +36,10 @@ export class ThingsPageComponent implements OnInit {
   public categories: Category[];
   private selectedTab: number;
   public selectedThing: ThingWithLend;
+  public selectedLendDate: Date;
+  public returnDate: Date;
   private thingsLendId: string;
+  private history: MatTableDataSource<History>;
 
   public firstCategory: string;
   public firstFriend: string;
@@ -39,6 +47,7 @@ export class ThingsPageComponent implements OnInit {
   public date = new FormControl(new Date());
 
   ngOnInit() {
+    this.returnDate = new Date();
     this.getThings();
     this.getCategories();
     this.getFriends();
@@ -67,6 +76,13 @@ export class ThingsPageComponent implements OnInit {
         this.friends = fr;
         this.firstFriend = this.friends[0].Id;
       });
+  }
+
+  private getHistory(Id: string): void {
+    this.api.getThingLends(Id)
+    .subscribe(hist => {
+      this.history = new MatTableDataSource<History>(hist.History);
+    });
   }
 
   private add(Name: string, About: string, CategoryId: string): void {
@@ -104,20 +120,25 @@ export class ThingsPageComponent implements OnInit {
       this.things.data.splice(index, 1);
       this.things._updateChangeSubscription();
       this.selectedThing = null;
+      this.selectedLendDate = null;
     });
   }
 
   private onSelect(thing: ThingWithLend): void {
     this.selectedThing = thing;
-    if (this.selectedTab === 2) {
+    if (thing.Lend) {
+      this.selectedLendDate = thing.Lend.LendDate;
+    }
+    if (this.selectedTab === 3) {
       this.onTabSelect(this.selectedTab);
     }
   }
 
   private onTabSelect(index: number): void {
     this.selectedTab = index;
-    if (index === 2 && this.selectedThing && this.thingsLendId !== this.selectedThing.Id) {
-      //
+    if (index === 3 && this.selectedThing && this.thingsLendId !== this.selectedThing.Id) {
+      this.getHistory(this.selectedThing.Id);
+      this.thingsLendId = this.selectedThing.Id;
     }
   }
 
@@ -128,6 +149,7 @@ export class ThingsPageComponent implements OnInit {
         this.things.data.splice(index, 1, data);
         this.things._updateChangeSubscription();
         this.selectedThing = data;
+        this.selectedLendDate = data.Lend.LendDate;
       });
   }
 
@@ -139,5 +161,20 @@ export class ThingsPageComponent implements OnInit {
         this.things._updateChangeSubscription();
         this.selectedThing = data;
       });
+  }
+
+  private deleteLend(): void {
+    this.lendsApi.deleteLend(this.selectedThing.Id, this.returnDate)
+      .subscribe(() => {
+        this.selectedThing.Lend = null;
+        this.selectedLendDate = null;
+        const index = this.things.data.findIndex(c => c.Id === this.selectedThing.Id);
+        this.things.data.splice(index, 1, this.selectedThing);
+        this.things._updateChangeSubscription();
+      });
+  }
+
+  private clearDateChanges(): void {
+    this.selectedLendDate = this.selectedThing.Lend.LendDate;
   }
 }

@@ -50,8 +50,16 @@ mat-icon
     float: right;
 }
 
-
+.center{
+    text-align: center;
+}
 
 .material-icons {
     color: #512da8;
+}
+
+@media (max-width: 900px) {
+    .block {
+        width: 100%;
+    }
 }

@@ -64,32 +64,66 @@
           </div>
         </mat-tab>
         <mat-tab label="Lends">
-          <!-- <div class="tab" *ngIf="selectedFriend; else noSelection">
-            <div class="mat-elevation-z8" *ngIf="this.lends && this.lends.data.length; else emptyLends">
-                <table mat-table [dataSource]="lends">
-                  <ng-container matColumnDef="Name">
-                    <th mat-header-cell *matHeaderCellDef>Name</th>
-                    <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+            <div class="tab" *ngIf="selectedFriend; else noSelection">
+              <p>Active lends</p>
+              <div class="mat-elevation-z8" *ngIf="this.lends && this.lends.data.length; else emptyLends">
+                  <table mat-table [dataSource]="lends" matSort>
+                    <ng-container matColumnDef="Friend">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Friend</th>
+                      <td mat-cell *matCellDef="let element" class="width-30"> {{element.Friend.Name}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="LendDate">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Lended </th>
+                      <td mat-cell *matCellDef="let element" class="width-30"> {{element.LendDate | date: 'MM/dd/yyyy'}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="Comment">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Comment </th>
+                      <td mat-cell *matCellDef="let element" class="width-40"> {{element.Comment}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="lendsDisplayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: lendsDisplayedColumns;"></tr>
+                  </table> 
+                  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                </div>
+              <p>History</p>
+              <div class="mat-elevation-z8" *ngIf="this.history && this.history.data.length; else emptyHistory">
+                <table mat-table [dataSource]="history" matSort>
+                  <ng-container matColumnDef="Friend">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Friend</th>
+                    <td mat-cell *matCellDef="let element" class="width-20"> {{element.Friend.Name}} </td>
                   </ng-container>
-                  <ng-container matColumnDef="About">
-                    <th mat-header-cell *matHeaderCellDef> About </th>
-                    <td mat-cell *matCellDef="let element"> {{element.About}} </td>
+                  <ng-container matColumnDef="LendDate">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Lended </th>
+                    <td mat-cell *matCellDef="let element" class="width-20"> {{element.LendDate | date: 'MM/dd/yyyy'}} </td>
                   </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                </table>
+                  <ng-container matColumnDef="ReturnDate">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Returned </th>
+                    <td mat-cell *matCellDef="let element" class="width-20"> {{element.ReturnDate | date: 'MM/dd/yyyy'}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="Comment">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Comment </th>
+                    <td mat-cell *matCellDef="let element" class="width-40"> {{element.Comment}} </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="historyDisplayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: historyDisplayedColumns;"></tr>
+                </table> 
+                <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
               </div>
-            </div> -->
-        </mat-tab>
+            </div>
+          </mat-tab>
       </mat-tab-group>
   </div>
   <div class="clear"></div>
 </div>
 
 <ng-template #noSelection>
-  <div class="tab"><p>Please select some friend</p></div>
+  <div class="tab"><p class="center">Please select some friend</p></div>
 </ng-template>
 
 <ng-template #emptyLends>
-  <div><p>This friend did not borrow any thing</p></div>
+  <div><p class="center">This friend did not borrow anything</p></div>
+</ng-template>
+
+<ng-template #emptyHistory>
+  <div><p class="center">This friend did not have lends history</p></div>
 </ng-template>
