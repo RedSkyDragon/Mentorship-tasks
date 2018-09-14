@@ -20,7 +20,7 @@ export class AuthenticationService {
   }
 
   public get isAuthorized(): boolean {
-    return localStorage.getItem('name') !== null;
+    return (localStorage.getItem('name') !== null) && (Date.now() <= this.oauthService.getAccessTokenExpiration());
   }
 
   login() {
