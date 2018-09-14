@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, QueryList, OnChanges } from '@angular/core';
 import { ThingsApiService } from '../service/things-apiservice/things-api.service';
 import { CategoriesApiService } from '../service/categories-apiservice/categories-api.service';
 import { FriendsApiService } from '../service/friends-apiservice/friends-api.service';
 import { ThingWithLend } from '../models/thing-with-lend';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl} from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Friend } from '../models/friend';
 import { Category } from '../models/category';
@@ -11,6 +11,7 @@ import { Thing } from '../models/thing';
 import { LendsApiService } from '../service/lends-apiservice/lends-api.service';
 import { Lend } from '../models/lend';
 import { History } from '../models/history';
+import { SortingDataAccessor } from '../models/sortingDataAccessor';
 
 @Component({
   selector: 'app-things-page',
@@ -19,11 +20,9 @@ import { History } from '../models/history';
 })
 export class ThingsPageComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'About', 'Lended'];
-  historyDisplayedColumns: string[] = ['Friend', 'LendDate', 'ReturnDate', 'Comment'];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) historyPaginator: MatPaginator;
-  @ViewChild(MatSort) historySort: MatSort;
+  historyDisplayedColumns: string[] = ['Friend.Name', 'LendDate', 'ReturnDate', 'Comment'];
+  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
+  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
 
   constructor(
     private api: ThingsApiService,
@@ -57,8 +56,9 @@ export class ThingsPageComponent implements OnInit {
     this.api.getThings()
       .subscribe(th => {
         this.things = new MatTableDataSource<ThingWithLend>(th);
-        this.things.paginator = this.paginator;
-        this.things.sort = this.sort;
+        this.things.paginator = this.paginators.toArray()[0];
+        this.things.sort = this.sorts.toArray()[0];
+        this.things.sortingDataAccessor = SortingDataAccessor;
       });
   }
 
@@ -82,6 +82,9 @@ export class ThingsPageComponent implements OnInit {
     this.api.getThingLends(Id)
     .subscribe(hist => {
       this.history = new MatTableDataSource<History>(hist.History);
+      this.history.paginator = this.paginators.toArray()[1];
+      this.history.sort = this.sorts.toArray()[1];
+      this.history.sortingDataAccessor = SortingDataAccessor;
     });
   }
 

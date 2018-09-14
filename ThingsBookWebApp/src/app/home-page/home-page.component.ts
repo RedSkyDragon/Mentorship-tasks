@@ -3,6 +3,7 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { ActiveLend } from '../models/active-lend';
 import { LendsApiService } from '../service/lends-apiservice/lends-api.service';
 import { AuthenticationService } from '../service/authentication/authentication.service';
+import { SortingDataAccessor } from '../models/sortingDataAccessor';
 
 @Component({
   selector: 'app-home-page',
@@ -13,15 +14,17 @@ export class HomePageComponent implements OnInit {
 
   constructor(private lendsApi: LendsApiService, private authService: AuthenticationService) { }
 
-  displayedColumns: string[] = ['Thing', 'Friend', 'LendDate', 'Comment'];
+  displayedColumns: string[] = ['Thing.Name', 'Friend.Name', 'LendDate', 'Comment'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   private activeLends: MatTableDataSource<ActiveLend>;
   public selectedLend: ActiveLend;
+  public returnDate: Date;
 
   ngOnInit() {
     if (this.authService.isAuthorized) {
       this.getLends();
+      this.returnDate = new Date();
     }
   }
 
@@ -31,6 +34,17 @@ export class HomePageComponent implements OnInit {
         this.activeLends = new MatTableDataSource(data);
         this.activeLends.paginator = this.paginator;
         this.activeLends.sort = this.sort;
+        this.activeLends.sortingDataAccessor = SortingDataAccessor;
+      });
+  }
+
+  private returnLend(): void {
+    this.lendsApi.deleteLend(this.selectedLend.Thing.Id, this.returnDate)
+      .subscribe(() => {
+        const index = this.activeLends.data.findIndex(c => c.Thing.Id === this.selectedLend.Thing.Id);
+        this.activeLends.data.splice(index, 1);
+        this.activeLends._updateChangeSubscription();
+        this.selectedLend = null;
       });
   }
 

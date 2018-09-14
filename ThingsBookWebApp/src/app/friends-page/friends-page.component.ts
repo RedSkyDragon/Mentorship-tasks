@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { FriendsApiService } from '../service/friends-apiservice/friends-api.service';
 import { Friend } from '../models/friend';
 import { History } from '../models/history';
 import { ActiveLend } from '../models/active-lend';
+import { SortingDataAccessor } from '../models/sortingDataAccessor';
 
 @Component({
   selector: 'app-friends-page',
@@ -12,14 +13,10 @@ import { ActiveLend } from '../models/active-lend';
 })
 export class FriendsPageComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'Contacts'];
-  historyDisplayedColumns: string[] = ['Thing', 'LendDate', 'ReturnDate', 'Comment'];
-  lendsDisplayedColumns: string[] = ['Thing', 'LendDate', 'Comment'];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) historyPaginator: MatPaginator;
-  @ViewChild(MatSort) historySort: MatSort;
-  @ViewChild(MatPaginator) lendsPaginator: MatPaginator;
-  @ViewChild(MatSort) lendsSort: MatSort;
+  historyDisplayedColumns: string[] = ['Thing.Name', 'LendDate', 'ReturnDate', 'Comment'];
+  lendsDisplayedColumns: string[] = ['Thing.Name', 'LendDate', 'Comment'];
+  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
+  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
   constructor(private api: FriendsApiService) { }
 
   private friends: MatTableDataSource<Friend>;
@@ -28,7 +25,6 @@ export class FriendsPageComponent implements OnInit {
   private lendsFriendId: string;
   private selectedTab: number;
   public selectedFriend: Friend;
-  // public enableSelect = new FormControl(true);
 
   ngOnInit() {
     this.getFriends();
@@ -38,20 +34,23 @@ export class FriendsPageComponent implements OnInit {
     this.api.getFriends()
       .subscribe(fr => {
         this.friends = new MatTableDataSource(fr);
-        this.friends.paginator = this.paginator;
-        this.friends.sort = this.sort;
+        this.friends.paginator = this.paginators.toArray()[0];
+        this.friends.sort = this.sorts.toArray()[0];
+        this.friends.sortingDataAccessor = SortingDataAccessor;
       });
   }
 
   private getLends(): void {
     this.api.getLends(this.selectedFriend.Id)
       .subscribe( lends => {
-        this.history = new MatTableDataSource(lends.History);
-        this.history.paginator = this.historyPaginator;
-        this.history.sort = this.historySort;
         this.lends = new MatTableDataSource(lends.ActiveLends);
-        this.lends.paginator = this.lendsPaginator;
-        this.lends.sort = this.lendsSort;
+        this.lends.paginator = this.paginators.toArray()[1];
+        this.lends.sort = this.sorts.toArray()[1];
+        this.history = new MatTableDataSource(lends.History);
+        this.history.paginator = this.paginators.toArray()[2];
+        this.history.sort = this.sorts.toArray()[2];
+        this.lends.sortingDataAccessor = SortingDataAccessor;
+        this.history.sortingDataAccessor = SortingDataAccessor;
       });
   }
 

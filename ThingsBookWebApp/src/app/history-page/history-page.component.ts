@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { HistoryApiService } from '../service/history-apiservice/history-api.service';
 import { History } from '../models/history';
+import { SortingDataAccessor } from '../models/sortingDataAccessor';
 
 @Component({
   selector: 'app-history-page',
@@ -10,7 +11,7 @@ import { History } from '../models/history';
 })
 export class HistoryPageComponent implements OnInit {
 
-  displayedColumns: string[] = ['Thing', 'Friend', 'LendDate', 'ReturnDate', 'Comment', 'DeleteRecord'];
+  displayedColumns: string[] = ['Thing.Name', 'Friend.Name', 'LendDate', 'ReturnDate', 'Comment', 'DeleteRecord'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   public deleteIcon = '<i class="material-icons">delete</i>';
@@ -28,6 +29,7 @@ export class HistoryPageComponent implements OnInit {
         this.history = new MatTableDataSource<History>(hist);
         this.history.paginator = this.paginator;
         this.history.sort = this.sort;
+        this.history.sortingDataAccessor = SortingDataAccessor;
       });
   }
 

@@ -5,11 +5,11 @@
   <div class="block width-65">
     <div class="mat-elevation-z8">
       <table mat-table [dataSource]="activeLends" matSort>
-        <ng-container matColumnDef="Thing"> 
+        <ng-container matColumnDef="Thing.Name"> 
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Thing</th>
           <td mat-cell *matCellDef="let element" class="width-30"> {{element.Thing.Name}} </td>
         </ng-container>
-        <ng-container matColumnDef="Friend">
+        <ng-container matColumnDef="Friend.Name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Friend </th>
           <td mat-cell *matCellDef="let element" class="width-15"> {{element.Friend.Name}} </td>
         </ng-container>

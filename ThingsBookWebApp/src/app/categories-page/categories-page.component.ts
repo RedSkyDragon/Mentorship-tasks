@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild, OnChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, OnChanges, ViewChildren, QueryList } from '@angular/core';
 import { Category } from '../models/category';
 import { CategoriesApiService } from '../service/categories-apiservice/categories-api.service';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { ThingWithLend } from '../models/thing-with-lend';
 import { FormControl } from '@angular/forms';
+import { SortingDataAccessor } from '../models/sortingDataAccessor';
 
 @Component({
   selector: 'app-categories-page',
@@ -12,8 +13,8 @@ import { FormControl } from '@angular/forms';
 })
 export class CategoriesPageComponent implements OnInit {
   displayedColumns: string[] = ['Name', 'About'];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
+  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
 
   constructor(private api: CategoriesApiService) { }
 
@@ -34,8 +35,9 @@ export class CategoriesPageComponent implements OnInit {
     this.api.getCategories()
       .subscribe(cats => {
         this.categories = new MatTableDataSource<Category>(cats);
-        this.categories.paginator = this.paginator;
-        this.categories.sort = this.sort;
+        this.categories.paginator = this.paginators.toArray()[0];
+        this.categories.sort = this.sorts.toArray()[0];
+        this.categories.sortingDataAccessor = SortingDataAccessor;
       });
   }
 
@@ -90,6 +92,9 @@ export class CategoriesPageComponent implements OnInit {
     this.api.getThings(Id)
       .subscribe(th => {
         this.things = new MatTableDataSource<ThingWithLend>(th);
+        this.things.paginator = this.paginators.toArray()[1];
+        this.things.sort = this.sorts.toArray()[1];
+        this.things.sortingDataAccessor = SortingDataAccessor;
         this.thingsCatId = Id;
       });
   }
