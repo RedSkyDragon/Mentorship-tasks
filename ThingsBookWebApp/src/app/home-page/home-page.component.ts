@@ -20,11 +20,9 @@ export class HomePageComponent implements OnInit {
   public selectedLend: ActiveLend;
 
   ngOnInit() {
-    this.lendsApi.updateHeader();
     if (this.authService.isAuthorized) {
       this.getLends();
     }
-    console.log('home oninit', this.authService.isAuthorized);
   }
 
   private getLends(): void {

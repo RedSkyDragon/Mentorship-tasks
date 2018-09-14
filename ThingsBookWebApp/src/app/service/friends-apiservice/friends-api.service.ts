@@ -10,20 +10,13 @@ import { Friend } from '../../models/friend';
   providedIn: 'root'
 })
 export class FriendsApiService {
-  constructor(private authService: AuthenticationService, private http: HttpClient) {
-    this.headers = new HttpHeaders({
-      'Authorization': 'Bearer ' + this.authService.accessToken,
-      'ContentType': 'application/json'
-    });
-  }
+  constructor(private authService: AuthenticationService, private http: HttpClient) { }
 
   private readonly baseUrl = 'http://localhost/ThingsBook.WebApi/';
 
-  private headers: HttpHeaders;
-
   public getFriends(): Observable<Friend[]> {
     const url = this.baseUrl + 'friends';
-    return this.http.get<Friend[]>(url, { headers: this.headers })
+    return this.http.get<Friend[]>(url, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError('getFriends', []))
       );
@@ -31,7 +24,7 @@ export class FriendsApiService {
 
   public addFriend(friend: Friend): Observable<Friend> {
     const url = this.baseUrl + 'friend';
-    return this.http.post<Friend>(url, friend, { headers: this.headers })
+    return this.http.post<Friend>(url, friend, { headers: this.createHeaders() })
     .pipe(
       catchError(this.handleError<Friend>('addFriend'))
     );
@@ -39,7 +32,7 @@ export class FriendsApiService {
 
   public updateFriend(Id: string, friend: Friend): Observable<Friend> {
     const url = this.baseUrl + 'friend/' + Id;
-    return this.http.put<Friend>(url, friend, { headers: this.headers })
+    return this.http.put<Friend>(url, friend, { headers: this.createHeaders() })
     .pipe(
       catchError(this.handleError<Friend>('updateFriend'))
     );
@@ -47,7 +40,7 @@ export class FriendsApiService {
 
   public deleteFriend(Id: string): Observable<any> {
     const url = this.baseUrl + 'friend/' + Id;
-    return this.http.delete(url, { headers: this.headers })
+    return this.http.delete(url, { headers: this.createHeaders() })
     .pipe(
       catchError(this.handleError<any>('deleteFriend'))
     );
@@ -55,7 +48,7 @@ export class FriendsApiService {
 
   public getLends(Id: string): Observable<FilteredLends> {
     const url = this.baseUrl + 'friend/' + Id + '/lends';
-    return this.http.get<FilteredLends>(url, { headers: this.headers })
+    return this.http.get<FilteredLends>(url, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError<any>('getThingsForFriend', []))
       );
@@ -66,5 +59,12 @@ export class FriendsApiService {
       console.error(error);
       return of(result as T);
     };
+  }
+
+  private createHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authService.accessToken,
+      'ContentType': 'application/json'
+    });
   }
 }

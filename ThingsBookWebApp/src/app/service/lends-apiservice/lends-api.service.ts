@@ -11,24 +11,13 @@ import { ActiveLend } from '../../models/active-lend';
   providedIn: 'root'
 })
 export class LendsApiService {
-  constructor(private authService: AuthenticationService, private http: HttpClient) {
-    this.updateHeader();
-  }
+  constructor(private authService: AuthenticationService, private http: HttpClient) { }
 
   private readonly baseUrl = 'http://localhost/ThingsBook.WebApi/';
 
-  private headers: HttpHeaders;
-
-  public updateHeader(): void {
-    this.headers = new HttpHeaders({
-      'Authorization': 'Bearer ' + this.authService.accessToken,
-      'ContentType': 'application/json'
-    });
-  }
-
   public addLend(thingId: string, lend: Lend): Observable<ThingWithLend> {
     const url = this.baseUrl + 'lend/' + thingId;
-    return this.http.post<ThingWithLend>(url, lend, { headers: this.headers })
+    return this.http.post<ThingWithLend>(url, lend, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError<ThingWithLend>('addLend'))
       );
@@ -36,7 +25,7 @@ export class LendsApiService {
 
   public updateLend(thingId: string, lend: Lend): Observable<ThingWithLend> {
     const url = this.baseUrl + 'lend/' + thingId;
-    return this.http.put<ThingWithLend>(url, lend, { headers: this.headers })
+    return this.http.put<ThingWithLend>(url, lend, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError<ThingWithLend>('updateLend'))
       );
@@ -44,7 +33,7 @@ export class LendsApiService {
 
   public deleteLend(Id: string, returnDate: Date): Observable<any> {
     const url = this.baseUrl + 'lend/' + Id + '?returnDate=' + returnDate.toLocaleDateString();
-    return this.http.delete(url, { headers: this.headers })
+    return this.http.delete(url, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError<any>('deleteLend'))
       );
@@ -52,9 +41,9 @@ export class LendsApiService {
 
   public getLends(): Observable<ActiveLend[]> {
     const url = this.baseUrl + 'lends';
-    return this.http.get<ActiveLend[]>(url, { headers: this.headers })
+    return this.http.get<ActiveLend[]>(url, { headers: this.createHeaders() })
       .pipe(
-        catchError(this.handleError<ActiveLend[]>('getLends', []))
+        catchError(this.handleError<any>('getLends', []))
       );
   }
 
@@ -63,5 +52,12 @@ export class LendsApiService {
       console.error(error);
       return of(result as T);
     };
+  }
+
+  private createHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authService.accessToken,
+      'ContentType': 'application/json'
+    });
   }
 }

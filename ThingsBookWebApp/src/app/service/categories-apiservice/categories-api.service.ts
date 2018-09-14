@@ -10,20 +10,13 @@ import { ThingWithLend } from '../../models/thing-with-lend';
   providedIn: 'root'
 })
 export class CategoriesApiService {
-  constructor(private authService: AuthenticationService, private http: HttpClient) {
-    this.headers = new HttpHeaders({
-      'Authorization': 'Bearer ' + this.authService.accessToken,
-      'ContentType': 'application/json'
-    });
-  }
+  constructor(private authService: AuthenticationService, private http: HttpClient) { }
 
   private readonly baseUrl = 'http://localhost/ThingsBook.WebApi/';
 
-  private headers: HttpHeaders;
-
   public getCategories(): Observable<Category[]> {
     const url = this.baseUrl + 'categories';
-    return this.http.get<Category[]>(url, { headers: this.headers })
+    return this.http.get<Category[]>(url, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError('getCategories', []))
       );
@@ -31,7 +24,7 @@ export class CategoriesApiService {
 
   public addCategory(category: Category): Observable<Category> {
     const url = this.baseUrl + 'category';
-    return this.http.post<Category>(url, category, { headers: this.headers })
+    return this.http.post<Category>(url, category, { headers: this.createHeaders() })
     .pipe(
       catchError(this.handleError<Category>('addCategory'))
     );
@@ -39,7 +32,7 @@ export class CategoriesApiService {
 
   public updateCategory(Id: string, category: Category): Observable<Category> {
     const url = this.baseUrl + 'category/' + Id;
-    return this.http.put<Category>(url, category, { headers: this.headers })
+    return this.http.put<Category>(url, category, { headers: this.createHeaders() })
     .pipe(
       catchError(this.handleError<Category>('updateCategory'))
     );
@@ -47,7 +40,7 @@ export class CategoriesApiService {
 
   public deleteCategory(Id: string): Observable<any> {
     const url = this.baseUrl + 'category/' + Id;
-    return this.http.delete(url, { headers: this.headers })
+    return this.http.delete(url, { headers: this.createHeaders() })
     .pipe(
       catchError(this.handleError<any>('deleteCategory'))
     );
@@ -55,7 +48,7 @@ export class CategoriesApiService {
 
   public deleteAndReplaceCategory(Id: string, replace: string): Observable<any> {
     const url = this.baseUrl + 'category/' + Id + '/replace?replacementId=' + replace;
-    return this.http.delete(url, { headers: this.headers })
+    return this.http.delete(url, { headers: this.createHeaders() })
     .pipe(
       catchError(this.handleError<any>('deleteAndReplaceCategory'))
     );
@@ -63,7 +56,7 @@ export class CategoriesApiService {
 
   public getThings(Id: string): Observable<ThingWithLend[]> {
     const url = this.baseUrl + 'category/' + Id + '/things';
-    return this.http.get<ThingWithLend[]>(url, { headers: this.headers })
+    return this.http.get<ThingWithLend[]>(url, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError<ThingWithLend[]>('getThingsForCategory', []))
       );
@@ -74,5 +67,12 @@ export class CategoriesApiService {
       console.error(error);
       return of(result as T);
     };
+  }
+
+  private createHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authService.accessToken,
+      'ContentType': 'application/json'
+    });
   }
 }

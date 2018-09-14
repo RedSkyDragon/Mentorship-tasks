@@ -9,20 +9,13 @@ import { History } from '../../models/history';
   providedIn: 'root'
 })
 export class HistoryApiService {
-  constructor(private authService: AuthenticationService, private http: HttpClient) {
-    this.headers = new HttpHeaders({
-      'Authorization': 'Bearer ' + this.authService.accessToken,
-      'ContentType': 'application/json'
-    });
-  }
+  constructor(private authService: AuthenticationService, private http: HttpClient) { }
 
   private readonly baseUrl = 'http://localhost/ThingsBook.WebApi/';
 
-  private headers: HttpHeaders;
-
   public getHistory(): Observable<History[]> {
     const url = this.baseUrl + 'history';
-    return this.http.get<History[]>(url, { headers: this.headers })
+    return this.http.get<History[]>(url, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError('getHistory', []))
       );
@@ -30,7 +23,7 @@ export class HistoryApiService {
 
   public deleteHistory(Id: string): Observable<any> {
     const url = this.baseUrl + 'history/' + Id;
-    return this.http.delete(url, { headers: this.headers })
+    return this.http.delete(url, { headers: this.createHeaders() })
       .pipe(
         catchError(this.handleError<any>('deleteHistory', []))
       );
@@ -41,5 +34,12 @@ export class HistoryApiService {
       console.error(error);
       return of(result as T);
     };
+  }
+
+  private createHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authService.accessToken,
+      'ContentType': 'application/json'
+    });
   }
 }
