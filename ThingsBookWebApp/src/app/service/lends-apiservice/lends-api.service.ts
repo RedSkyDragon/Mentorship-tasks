@@ -12,15 +12,19 @@ import { ActiveLend } from '../../models/active-lend';
 })
 export class LendsApiService {
   constructor(private authService: AuthenticationService, private http: HttpClient) {
-    this.headers = new HttpHeaders({
-      'Authorization': 'Bearer ' + this.authService.accessToken,
-      'ContentType': 'application/json'
-    });
+    this.updateHeader();
   }
 
   private readonly baseUrl = 'http://localhost/ThingsBook.WebApi/';
 
   private headers: HttpHeaders;
+
+  public updateHeader(): void {
+    this.headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authService.accessToken,
+      'ContentType': 'application/json'
+    });
+  }
 
   public addLend(thingId: string, lend: Lend): Observable<ThingWithLend> {
     const url = this.baseUrl + 'lend/' + thingId;

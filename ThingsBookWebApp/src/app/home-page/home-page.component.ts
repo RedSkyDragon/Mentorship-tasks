@@ -13,7 +13,6 @@ export class HomePageComponent implements OnInit {
 
   constructor(private lendsApi: LendsApiService, private authService: AuthenticationService) { }
 
-  private isAuthorized;
   displayedColumns: string[] = ['Thing', 'Friend', 'LendDate', 'Comment'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -21,9 +20,11 @@ export class HomePageComponent implements OnInit {
   public selectedLend: ActiveLend;
 
   ngOnInit() {
+    this.lendsApi.updateHeader();
     if (this.authService.isAuthorized) {
       this.getLends();
     }
+    console.log('home oninit', this.authService.isAuthorized);
   }
 
   private getLends(): void {

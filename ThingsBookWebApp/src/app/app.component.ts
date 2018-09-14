@@ -8,7 +8,6 @@ import { AuthConfiguration } from './service/authentication/AuthConfiguration';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'ThingsBookWebApp';
   constructor(private oauthService: OAuthService) {
     this.ConfigureAuthentication();
   }
