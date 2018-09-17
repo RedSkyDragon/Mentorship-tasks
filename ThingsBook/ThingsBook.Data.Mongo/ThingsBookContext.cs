@@ -76,9 +76,9 @@ namespace ThingsBook.Data.Mongo
             {
                 cm.AutoMap();
                 cm.MapMember(c => c.LendDate).SetSerializer(new DateTimeSerializer(dateOnly: true));
-                cm.MapMember(c => c.LendDate).SetSerializer(new DateTimeSerializer(kind: DateTimeKind.Local));
+                cm.MapMember(c => c.LendDate).SetSerializer(new DateTimeSerializer(kind: DateTimeKind.Utc));
                 cm.MapMember(c => c.ReturnDate).SetSerializer(new DateTimeSerializer(dateOnly: true));
-                cm.MapMember(c => c.ReturnDate).SetSerializer(new DateTimeSerializer(kind: DateTimeKind.Local));
+                cm.MapMember(c => c.ReturnDate).SetSerializer(new DateTimeSerializer(kind: DateTimeKind.Utc));
             });
             BsonClassMap.RegisterClassMap<Friend>(cm =>
             {
@@ -94,7 +94,7 @@ namespace ThingsBook.Data.Mongo
             {
                 cm.AutoMap();
                 cm.GetMemberMap(c => c.LendDate).SetSerializer(new DateTimeSerializer(dateOnly: true));
-                cm.GetMemberMap(c => c.LendDate).SetSerializer(new DateTimeSerializer(kind: DateTimeKind.Local));
+                cm.GetMemberMap(c => c.LendDate).SetSerializer(new DateTimeSerializer(kind: DateTimeKind.Utc));
             });
             BsonClassMap.RegisterClassMap<Thing>(cm =>
             {

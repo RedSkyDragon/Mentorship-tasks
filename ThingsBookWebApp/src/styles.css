@@ -29,6 +29,7 @@ mat-icon
     padding: 0 15px;
     min-width: 400px;
     margin-bottom: 20px;
+    position: relative;
 }
 
 .clear {

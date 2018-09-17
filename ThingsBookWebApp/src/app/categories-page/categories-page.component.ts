@@ -26,6 +26,7 @@ export class CategoriesPageComponent implements OnInit {
   public enableSelect = new FormControl(true);
   public replacement: Category[];
   public replace: string;
+  private isLoading = true;
 
   ngOnInit() {
     this.getCategories();
@@ -38,6 +39,7 @@ export class CategoriesPageComponent implements OnInit {
         this.categories.paginator = this.paginators.toArray()[0];
         this.categories.sort = this.sorts.toArray()[0];
         this.categories.sortingDataAccessor = SortingDataAccessor;
+        this.isLoading = false;
       });
   }
 

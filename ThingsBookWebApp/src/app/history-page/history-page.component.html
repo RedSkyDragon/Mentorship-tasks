@@ -3,7 +3,7 @@
     <span>History</span>
   </div>
   <div>
-    <div class="mat-elevation-z8">
+    <div class="mat-elevation-z8" *ngIf="!isLoading && history.data.length; else Loading;">
       <table mat-table [dataSource]="history" matSort>
         <ng-container matColumnDef="Thing.Name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Thing</th>
@@ -36,3 +36,13 @@
     </div>
   </div>
 </div>
+
+<ng-template #Loading>
+  <div class="loader" *ngIf="isLoading; else noLends">
+      <mat-spinner></mat-spinner>
+  </div>    
+</ng-template>
+
+<ng-template #noLends>
+  <p class="center">There are not active lends</p>
+</ng-template>

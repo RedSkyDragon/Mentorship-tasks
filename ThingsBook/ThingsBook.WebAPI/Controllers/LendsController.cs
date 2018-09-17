@@ -76,7 +76,11 @@ namespace ThingsBook.WebAPI.Controllers
         {
             if (!returnDate.HasValue)
             {
-                returnDate = DateTime.Now;
+                returnDate = DateTime.Now.ToUniversalTime();
+            }
+            else if (returnDate.Value.Kind != DateTimeKind.Utc)
+            {
+                returnDate = returnDate.Value.ToUniversalTime();
             }
             return _lends.Delete(ApiUser.Id, thingId, returnDate.Value);
         }

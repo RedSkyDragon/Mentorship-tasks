@@ -4,7 +4,7 @@
   </div>
 
   <div class="block">
-    <div class="mat-elevation-z8">
+    <div class="mat-elevation-z8" *ngIf="!isLoading && categories.data.length; else Loading;">
       <table mat-table [dataSource]="categories" matSort>
         <ng-container matColumnDef="Name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
@@ -103,4 +103,14 @@
 
 <ng-template #emptyThings>
   <div><p class="center">This category does not contain any thing</p></div>
+</ng-template>
+
+<ng-template #Loading>
+  <div class="loader" *ngIf="isLoading; else noCategories">
+      <mat-spinner></mat-spinner>
+  </div>    
+</ng-template>
+
+<ng-template #noCategories>
+  <p class="center">There are not categories</p>
 </ng-template>

@@ -20,10 +20,12 @@ export class HomePageComponent implements OnInit {
   private activeLends: MatTableDataSource<ActiveLend>;
   public selectedLend: ActiveLend;
   public returnDate: Date;
+  private isLoading = true;
 
   ngOnInit() {
     if (this.authService.isAuthorized) {
       this.getLends();
+      console.log(this.activeLends);
       this.returnDate = new Date();
     }
   }
@@ -35,6 +37,7 @@ export class HomePageComponent implements OnInit {
         this.activeLends.paginator = this.paginator;
         this.activeLends.sort = this.sort;
         this.activeLends.sortingDataAccessor = SortingDataAccessor;
+        this.isLoading = false;
       });
   }
 

@@ -4,7 +4,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Lend } from '../../models/lend';
 import { Observable, of } from 'rxjs';
 import { ThingWithLend } from '../../models/thing-with-lend';
-import { catchError } from 'rxjs/operators';
 import { ActiveLend } from '../../models/active-lend';
 
 @Injectable({
@@ -17,41 +16,22 @@ export class LendsApiService {
 
   public addLend(thingId: string, lend: Lend): Observable<ThingWithLend> {
     const url = this.baseUrl + 'lend/' + thingId;
-    return this.http.post<ThingWithLend>(url, lend, { headers: this.createHeaders() })
-      .pipe(
-        catchError(this.handleError<ThingWithLend>('addLend'))
-      );
+    return this.http.post<ThingWithLend>(url, lend, { headers: this.createHeaders() });
   }
 
   public updateLend(thingId: string, lend: Lend): Observable<ThingWithLend> {
     const url = this.baseUrl + 'lend/' + thingId;
-    return this.http.put<ThingWithLend>(url, lend, { headers: this.createHeaders() })
-      .pipe(
-        catchError(this.handleError<ThingWithLend>('updateLend'))
-      );
+    return this.http.put<ThingWithLend>(url, lend, { headers: this.createHeaders() });
   }
 
   public deleteLend(Id: string, returnDate: Date): Observable<any> {
-    const url = this.baseUrl + 'lend/' + Id + '?returnDate=' + returnDate.toLocaleDateString();
-    return this.http.delete(url, { headers: this.createHeaders() })
-      .pipe(
-        catchError(this.handleError<any>('deleteLend'))
-      );
+    const url = this.baseUrl + 'lend/' + Id + '?returnDate=' + returnDate.toUTCString();
+    return this.http.delete(url, { headers: this.createHeaders() });
   }
 
   public getLends(): Observable<ActiveLend[]> {
     const url = this.baseUrl + 'lends';
-    return this.http.get<ActiveLend[]>(url, { headers: this.createHeaders() })
-      .pipe(
-        catchError(this.handleError<any>('getLends', []))
-      );
-  }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      return of(result as T);
-    };
+    return this.http.get<ActiveLend[]>(url, { headers: this.createHeaders() });
   }
 
   private createHeaders(): HttpHeaders {

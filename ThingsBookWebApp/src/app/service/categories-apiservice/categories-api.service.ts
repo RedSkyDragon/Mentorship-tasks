@@ -3,7 +3,6 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { Observable,  of } from 'rxjs';
 import { Category } from '../../models/category';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
 import { ThingWithLend } from '../../models/thing-with-lend';
 
 @Injectable({
@@ -16,57 +15,32 @@ export class CategoriesApiService {
 
   public getCategories(): Observable<Category[]> {
     const url = this.baseUrl + 'categories';
-    return this.http.get<Category[]>(url, { headers: this.createHeaders() })
-      .pipe(
-        catchError(this.handleError('getCategories', []))
-      );
+    return this.http.get<Category[]>(url, { headers: this.createHeaders() });
   }
 
   public addCategory(category: Category): Observable<Category> {
     const url = this.baseUrl + 'category';
-    return this.http.post<Category>(url, category, { headers: this.createHeaders() })
-    .pipe(
-      catchError(this.handleError<Category>('addCategory'))
-    );
+    return this.http.post<Category>(url, category, { headers: this.createHeaders() });
   }
 
   public updateCategory(Id: string, category: Category): Observable<Category> {
     const url = this.baseUrl + 'category/' + Id;
-    return this.http.put<Category>(url, category, { headers: this.createHeaders() })
-    .pipe(
-      catchError(this.handleError<Category>('updateCategory'))
-    );
+    return this.http.put<Category>(url, category, { headers: this.createHeaders() });
   }
 
   public deleteCategory(Id: string): Observable<any> {
     const url = this.baseUrl + 'category/' + Id;
-    return this.http.delete(url, { headers: this.createHeaders() })
-    .pipe(
-      catchError(this.handleError<any>('deleteCategory'))
-    );
+    return this.http.delete(url, { headers: this.createHeaders() });
   }
 
   public deleteAndReplaceCategory(Id: string, replace: string): Observable<any> {
     const url = this.baseUrl + 'category/' + Id + '/replace?replacementId=' + replace;
-    return this.http.delete(url, { headers: this.createHeaders() })
-    .pipe(
-      catchError(this.handleError<any>('deleteAndReplaceCategory'))
-    );
+    return this.http.delete(url, { headers: this.createHeaders() });
   }
 
   public getThings(Id: string): Observable<ThingWithLend[]> {
     const url = this.baseUrl + 'category/' + Id + '/things';
-    return this.http.get<ThingWithLend[]>(url, { headers: this.createHeaders() })
-      .pipe(
-        catchError(this.handleError<ThingWithLend[]>('getThingsForCategory', []))
-      );
-  }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      return of(result as T);
-    };
+    return this.http.get<ThingWithLend[]>(url, { headers: this.createHeaders() });
   }
 
   private createHeaders(): HttpHeaders {

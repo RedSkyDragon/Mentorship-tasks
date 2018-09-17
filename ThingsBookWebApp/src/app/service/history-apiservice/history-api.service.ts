@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { History } from '../../models/history';
 
 @Injectable({
@@ -15,25 +14,12 @@ export class HistoryApiService {
 
   public getHistory(): Observable<History[]> {
     const url = this.baseUrl + 'history';
-    return this.http.get<History[]>(url, { headers: this.createHeaders() })
-      .pipe(
-        catchError(this.handleError('getHistory', []))
-      );
+    return this.http.get<History[]>(url, { headers: this.createHeaders() });
   }
 
   public deleteHistory(Id: string): Observable<any> {
     const url = this.baseUrl + 'history/' + Id;
-    return this.http.delete(url, { headers: this.createHeaders() })
-      .pipe(
-        catchError(this.handleError<any>('deleteHistory', []))
-      );
-  }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      return of(result as T);
-    };
+    return this.http.delete(url, { headers: this.createHeaders() });
   }
 
   private createHeaders(): HttpHeaders {

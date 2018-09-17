@@ -44,6 +44,7 @@ export class ThingsPageComponent implements OnInit {
   public firstFriend: string;
   public lendIcon = '<i class="material-icons"> check_circle</i>';
   public date = new FormControl(new Date());
+  private isLoading = true;
 
   ngOnInit() {
     this.returnDate = new Date();
@@ -59,6 +60,7 @@ export class ThingsPageComponent implements OnInit {
         this.things.paginator = this.paginators.toArray()[0];
         this.things.sort = this.sorts.toArray()[0];
         this.things.sortingDataAccessor = SortingDataAccessor;
+        this.isLoading = false;
       });
   }
 

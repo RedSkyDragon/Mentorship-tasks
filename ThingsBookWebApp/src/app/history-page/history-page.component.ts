@@ -16,6 +16,7 @@ export class HistoryPageComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   public deleteIcon = '<i class="material-icons">delete</i>';
   private history: MatTableDataSource<History>;
+  private isLoading = true;
 
   constructor(private api: HistoryApiService) { }
 
@@ -30,6 +31,7 @@ export class HistoryPageComponent implements OnInit {
         this.history.paginator = this.paginator;
         this.history.sort = this.sort;
         this.history.sortingDataAccessor = SortingDataAccessor;
+        this.isLoading = false;
       });
   }
 

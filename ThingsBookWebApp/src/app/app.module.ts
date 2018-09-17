@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-import { OAuthModule, OAuthService } from 'angular-oauth2-oidc';
+import { NgModule, ErrorHandler } from '@angular/core';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,6 +20,9 @@ import { routing } from './app.routing';
 import { AuthComponent } from './auth/auth.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
+import { ErrorsHandler } from './error-handling/errors-handler';
+import { ServerErrorsInterceptor } from './interceptors/server-errors.interceptor';
+import { ErrorComponent } from './error/error.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,8 @@ import { LoginComponent } from './login/login.component';
     ThingsPageComponent,
     HomePageComponent,
     AuthComponent,
-    LoginComponent
+    LoginComponent,
+    ErrorComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +65,17 @@ import { LoginComponent } from './login/login.component';
     MatCardModule,
     MatProgressSpinnerModule
   ],
-  providers: [ OAuthService ],
+  providers: [
+    {
+      provide: ErrorHandler,
+      useClass: ErrorsHandler
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ServerErrorsInterceptor,
+      multi: true,
+    }
+  ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

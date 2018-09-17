@@ -25,6 +25,7 @@ export class FriendsPageComponent implements OnInit {
   private lendsFriendId: string;
   private selectedTab: number;
   public selectedFriend: Friend;
+  private isLoading = true;
 
   ngOnInit() {
     this.getFriends();
@@ -37,6 +38,7 @@ export class FriendsPageComponent implements OnInit {
         this.friends.paginator = this.paginators.toArray()[0];
         this.friends.sort = this.sorts.toArray()[0];
         this.friends.sortingDataAccessor = SortingDataAccessor;
+        this.isLoading = false;
       });
   }
 

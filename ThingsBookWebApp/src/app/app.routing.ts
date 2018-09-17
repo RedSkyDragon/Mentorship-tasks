@@ -7,6 +7,7 @@ import { ThingsPageComponent } from './things-page/things-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { AuthGuard } from './guards';
 import { LoginComponent } from './login/login.component';
+import { ErrorComponent } from './error/error.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomePageComponent },
@@ -15,6 +16,7 @@ const appRoutes: Routes = [
     { path: 'categories', component: CategoriesPageComponent, canActivate: [AuthGuard] },
     { path: 'history', component: HistoryPageComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
+    { path: 'error', component: ErrorComponent },
     { path: '**', redirectTo: ''}
   ];
 
