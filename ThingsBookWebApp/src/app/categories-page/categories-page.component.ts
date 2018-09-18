@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewChild, OnChanges, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { Category } from '../models/category';
 import { CategoriesApiService } from '../service/categories-apiservice/categories-api.service';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { ThingWithLend } from '../models/thing-with-lend';
 import { FormControl } from '@angular/forms';
 import { SortingDataAccessor } from '../models/sortingDataAccessor';
+import { AuthenticationService } from '../service/authentication/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-categories-page',
@@ -16,7 +18,7 @@ export class CategoriesPageComponent implements OnInit {
   @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
   @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
 
-  constructor(private api: CategoriesApiService) { }
+  constructor(private api: CategoriesApiService, private authService: AuthenticationService, private router: Router) { }
 
   private categories: MatTableDataSource<Category>;
   private things: MatTableDataSource<ThingWithLend>;
@@ -33,6 +35,9 @@ export class CategoriesPageComponent implements OnInit {
   }
 
   private getCategories(): void {
+    if (this.checkExpiration()) {
+      return;
+    }
     this.api.getCategories()
       .subscribe(cats => {
         this.categories = new MatTableDataSource<Category>(cats);
@@ -49,6 +54,9 @@ export class CategoriesPageComponent implements OnInit {
     if (!Name && !About) {
       return;
     }
+    if (this.checkExpiration()) {
+      return;
+    }
     this.api.addCategory({ Name, About } as Category)
       .subscribe(cat => {
         this.categories.data.push(cat);
@@ -62,6 +70,9 @@ export class CategoriesPageComponent implements OnInit {
     if (!Name && !About) {
       return;
     }
+    if (this.checkExpiration()) {
+      return;
+    }
     this.api.updateCategory(Id, { Name, About } as Category)
       .subscribe( () => {
         const cat = this.categories.data.find(c => c.Id === Id);
@@ -72,6 +83,9 @@ export class CategoriesPageComponent implements OnInit {
   }
 
   private delete(Id: string, replace: boolean): void {
+    if (this.checkExpiration()) {
+      return;
+    }
     if (replace) {
       this.api.deleteAndReplaceCategory(Id, this.replace)
       .subscribe( () => {
@@ -91,6 +105,9 @@ export class CategoriesPageComponent implements OnInit {
   }
 
   private getThings(Id: string): void {
+    if (this.checkExpiration()) {
+      return;
+    }
     this.api.getThings(Id)
       .subscribe(th => {
         this.things = new MatTableDataSource<ThingWithLend>(th);
@@ -115,5 +132,13 @@ export class CategoriesPageComponent implements OnInit {
     if (index === 2 && this.selectedCategory && this.thingsCatId !== this.selectedCategory.Id) {
       this.getThings(this.selectedCategory.Id);
     }
+  }
+
+  private checkExpiration(): boolean {
+    if (this.authService.hasExpired) {
+      this.authService.login(this.router.url);
+      return true;
+    }
+    return false;
   }
 }

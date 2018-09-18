@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Router } from '@angular/router';
 
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   constructor(private oauthService: OAuthService, private router: Router) {
     this.oauthService.loadDiscoveryDocument().then(() => {
@@ -18,13 +18,15 @@ export class LoginComponent implements OnInit {
           } else {
             localStorage.setItem('name', profile['name']);
           }
-          router.navigate(['/']);
+          const returnUrl = localStorage.getItem('returnUrl');
+          if (returnUrl) {
+            localStorage.removeItem('returnUrl');
+            router.navigate([returnUrl]);
+          } else {
+            router.navigate(['/']);
+          }
         });
       }});
     });
   }
-
-  ngOnInit() {
-  }
-
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../authentication/authentication.service';
-import { Observable,  of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Category } from '../../models/category';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ThingWithLend } from '../../models/thing-with-lend';

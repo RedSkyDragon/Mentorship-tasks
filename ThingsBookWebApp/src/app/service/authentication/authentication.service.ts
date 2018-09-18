@@ -12,18 +12,23 @@ export class AuthenticationService {
     return this.oauthService.getIdentityClaims();
   }
 
+  public get hasExpired(): boolean {
+    return Date.now() > this.oauthService.getAccessTokenExpiration();
+  }
+
   public get accessToken() {
-    if (Date.now() > this.oauthService.getAccessTokenExpiration()) {
-      this.login();
-    }
+    // console.log(this.oauthService.getAccessTokenExpiration());
     return this.oauthService.getAccessToken();
   }
 
   public get isAuthorized(): boolean {
-    return (localStorage.getItem('name') !== null) && (Date.now() <= this.oauthService.getAccessTokenExpiration());
+    return (localStorage.getItem('name') !== null);
   }
 
-  login() {
+  login(returnUrl?: string) {
+    if (returnUrl) {
+      localStorage.setItem('returnUrl', returnUrl);
+    }
     this.oauthService.initImplicitFlow();
   }
 
