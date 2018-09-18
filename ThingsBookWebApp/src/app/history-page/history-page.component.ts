@@ -11,14 +11,14 @@ import { SortingDataAccessor } from '../models/sortingDataAccessor';
 })
 export class HistoryPageComponent implements OnInit {
 
-  displayedColumns: string[] = ['Thing.Name', 'Friend.Name', 'LendDate', 'ReturnDate', 'Comment', 'DeleteRecord'];
+  constructor(private api: HistoryApiService) { }
+
+  private displayedColumns: string[] = ['Thing.Name', 'Friend.Name', 'LendDate', 'ReturnDate', 'Comment', 'DeleteRecord'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  public deleteIcon = '<i class="material-icons">delete</i>';
-  private history: MatTableDataSource<History>;
+  private deleteIcon = '<i class="material-icons">delete</i>';
+  private history = new MatTableDataSource<History>();
   private isLoading = true;
-
-  constructor(private api: HistoryApiService) { }
 
   ngOnInit() {
     this.getHistory();

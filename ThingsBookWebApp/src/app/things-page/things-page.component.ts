@@ -19,10 +19,6 @@ import { SortingDataAccessor } from '../models/sortingDataAccessor';
   styleUrls: ['./things-page.component.css']
 })
 export class ThingsPageComponent implements OnInit {
-  displayedColumns: string[] = ['Name', 'About', 'Lended'];
-  historyDisplayedColumns: string[] = ['Friend.Name', 'LendDate', 'ReturnDate', 'Comment'];
-  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
-  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
 
   constructor(
     private api: ThingsApiService,
@@ -30,20 +26,24 @@ export class ThingsPageComponent implements OnInit {
     private friendsApi: FriendsApiService,
     private lendsApi: LendsApiService) { }
 
-  private things: MatTableDataSource<ThingWithLend>;
-  public friends: Friend[];
-  public categories: Category[];
+  private displayedColumns: string[] = ['Name', 'About', 'Lended'];
+  private historyDisplayedColumns: string[] = ['Friend.Name', 'LendDate', 'ReturnDate', 'Comment'];
+  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
+  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
+  private things = new MatTableDataSource<ThingWithLend>();
+  private friends: Friend[];
+  private categories: Category[];
   private selectedTab: number;
-  public selectedThing: ThingWithLend;
-  public selectedLendDate: Date;
-  public returnDate: Date;
+  private selectedThing: ThingWithLend;
+  private selectedLendDate: Date;
+  private returnDate: Date;
   private thingsLendId: string;
-  private history: MatTableDataSource<History>;
+  private history = new MatTableDataSource<History>();
 
-  public firstCategory: string;
-  public firstFriend: string;
-  public lendIcon = '<i class="material-icons"> check_circle</i>';
-  public date = new FormControl(new Date());
+  private firstCategory: string;
+  private firstFriend: string;
+  private lendIcon = '<i class="material-icons"> check_circle</i>';
+  private date = new FormControl(new Date());
   private isLoading = true;
 
   ngOnInit() {
@@ -141,7 +141,7 @@ export class ThingsPageComponent implements OnInit {
 
   private onTabSelect(index: number): void {
     this.selectedTab = index;
-    if (index === 3 && this.selectedThing && this.thingsLendId !== this.selectedThing.Id) {
+    if (index === 3 && this.selectedThing) {
       this.getHistory(this.selectedThing.Id);
       this.thingsLendId = this.selectedThing.Id;
     }

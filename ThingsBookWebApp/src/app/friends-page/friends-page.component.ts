@@ -12,19 +12,20 @@ import { SortingDataAccessor } from '../models/sortingDataAccessor';
   styleUrls: ['./friends-page.component.css']
 })
 export class FriendsPageComponent implements OnInit {
-  displayedColumns: string[] = ['Name', 'Contacts'];
-  historyDisplayedColumns: string[] = ['Thing.Name', 'LendDate', 'ReturnDate', 'Comment'];
-  lendsDisplayedColumns: string[] = ['Thing.Name', 'LendDate', 'Comment'];
-  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
-  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
+
   constructor(private api: FriendsApiService) { }
 
-  private friends: MatTableDataSource<Friend>;
-  private history: MatTableDataSource<History>;
-  private lends: MatTableDataSource<ActiveLend>;
+  private displayedColumns: string[] = ['Name', 'Contacts'];
+  private historyDisplayedColumns: string[] = ['Thing.Name', 'LendDate', 'ReturnDate', 'Comment'];
+  private lendsDisplayedColumns: string[] = ['Thing.Name', 'LendDate', 'Comment'];
+  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
+  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
+  private friends = new MatTableDataSource<Friend>();
+  private history = new MatTableDataSource<History>();
+  private lends = new MatTableDataSource<ActiveLend>();
   private lendsFriendId: string;
   private selectedTab: number;
-  public selectedFriend: Friend;
+  private selectedFriend: Friend;
   private isLoading = true;
 
   ngOnInit() {

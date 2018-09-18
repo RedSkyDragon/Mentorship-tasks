@@ -14,20 +14,20 @@ import { Router } from '@angular/router';
   styleUrls: ['./categories-page.component.css']
 })
 export class CategoriesPageComponent implements OnInit {
-  displayedColumns: string[] = ['Name', 'About'];
-  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
-  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
 
   constructor(private api: CategoriesApiService, private authService: AuthenticationService, private router: Router) { }
 
-  private categories: MatTableDataSource<Category>;
-  private things: MatTableDataSource<ThingWithLend>;
+  private displayedColumns: string[] = ['Name', 'About'];
+  @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
+  @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
+  private categories = new MatTableDataSource<Category>();
+  private things = new MatTableDataSource<ThingWithLend>();
   private thingsCatId: string;
   private selectedTab: number;
-  public selectedCategory: Category;
-  public enableSelect = new FormControl(true);
-  public replacement: Category[];
-  public replace: string;
+  private selectedCategory: Category;
+  private enableSelect = new FormControl(true);
+  private replacement: Category[];
+  private replace: string;
   private isLoading = true;
 
   ngOnInit() {

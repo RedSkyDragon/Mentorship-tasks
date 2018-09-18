@@ -14,12 +14,12 @@ export class HomePageComponent implements OnInit {
 
   constructor(private lendsApi: LendsApiService, private authService: AuthenticationService) { }
 
-  displayedColumns: string[] = ['Thing.Name', 'Friend.Name', 'LendDate', 'Comment'];
+  private displayedColumns: string[] = ['Thing.Name', 'Friend.Name', 'LendDate', 'Comment'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  private activeLends: MatTableDataSource<ActiveLend>;
-  public selectedLend: ActiveLend;
-  public returnDate: Date;
+  private activeLends = new MatTableDataSource<ActiveLend>();
+  private selectedLend: ActiveLend;
+  private returnDate: Date;
   private isLoading = true;
 
   ngOnInit() {
