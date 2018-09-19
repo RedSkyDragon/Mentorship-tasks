@@ -5519,13 +5519,6 @@ button.list-group-item-danger.active:focus {
   font-size: 16px;
   color: inherit;
 }
-.panel-title > a,
-.panel-title > small,
-.panel-title > .small,
-.panel-title > small > a,
-.panel-title > .small > a {
-  color: inherit;
-}
 .panel-footer {
   padding: 10px 15px;
   background-color: #f5f5f5;

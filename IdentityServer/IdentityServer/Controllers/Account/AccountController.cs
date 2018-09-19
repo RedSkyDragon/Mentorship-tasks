@@ -1,11 +1,15 @@
-﻿using IdentityServer4.Services;
+﻿using System.Linq;
+using System.Security.Claims;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using IdentityModel;
 using IdentityServer4.Events;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;
 using IdentityServer4.Extensions;
 using IdentityServer.Models;
+using IdentityServer.Utils;
 
 namespace IdentityServer.Controllers
 {
@@ -36,6 +40,13 @@ namespace IdentityServer.Controllers
             return View(vm);
         }
 
+        [HttpGet]
+        public IActionResult Register(string returnUrl)
+        {
+            var vm = BuildRegisterViewModel(returnUrl);
+            return View(vm);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string button)
@@ -48,10 +59,7 @@ namespace IdentityServer.Controllers
                     await _interaction.GrantConsentAsync(context, ConsentResponse.Denied);
                     return Redirect(model.ReturnUrl);
                 }
-                else
-                {
-                    return Redirect("~/");
-                }
+                return Redirect("~/");
             }
             if (ModelState.IsValid)
             {
@@ -70,6 +78,72 @@ namespace IdentityServer.Controllers
                 ModelState.AddModelError("", AccountOptions.InvalidCredentialsErrorMessage);
             }
             var vm = await BuildLoginViewModelAsync(model);
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model, string button)
+        {
+            if (button != "register")
+            {
+                var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+                if (context != null)
+                {
+                    await _interaction.GrantConsentAsync(context, ConsentResponse.Denied);
+                    return Redirect(model.ReturnUrl);
+                }
+                return Redirect("~/");
+            }
+            if (model.Password != model.RepeatPassword)
+            {
+                ModelState.AddModelError("RepeatPassword", "Wrong password repeat");
+            }
+            if (ModelState.IsValid)
+            {
+                if (string.IsNullOrEmpty(model.Name))
+                {
+                    model.Name = model.Username;
+                }
+                var user = _userManager.FindByNameAsync(model.Username).Result;
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        UserName = model.Username
+                    };
+                    var result = _userManager.CreateAsync(user, model.Password).Result;
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError("Data", result.Errors.First().Description);
+                    }
+                    else
+                    {
+                        result = _userManager.AddClaimsAsync(user, new[]
+                        {
+                            new Claim(JwtClaimTypes.Id, SequentialGuidUtils.CreateGuid().ToString()),
+                            new Claim(JwtClaimTypes.Name, model.Name)
+                        }).Result;
+                        if (!result.Succeeded)
+                        {
+                            ModelState.AddModelError("Data", result.Errors.First().Description);
+                        }
+                        return RedirectToAction("Registered", new { returnUrl = model.ReturnUrl });
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("Username", "This username is already exists");
+                }
+            }
+            var vm = BuildRegisterViewModel(model);
+            return View(vm);
+        }
+
+        [HttpGet]
+        public IActionResult Registered(string returnUrl)
+        {
+            var vm = new RegisteredViewModel { ReturnUrl = returnUrl };
             return View(vm);
         }
 
@@ -113,6 +187,24 @@ namespace IdentityServer.Controllers
             vm.Username = model.Username;
             vm.RememberLogin = model.RememberLogin;
             return vm;
+        }
+
+        private RegisterViewModel BuildRegisterViewModel(string returnUrl)
+        {
+            return new RegisterViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+        }
+
+        private RegisterViewModel BuildRegisterViewModel(RegisterViewModel model)
+        {
+            return new RegisterViewModel
+            {
+                ReturnUrl = model.ReturnUrl,
+                Name = model.Name,
+                Username = model.Username
+            };
         }
 
         private async Task<LogoutViewModel> BuildLogoutViewModelAsync(string logoutId)

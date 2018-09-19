@@ -1,0 +1,17 @@
+﻿@model IdentityServer.Models.RegisteredViewModel
+
+<div class="register-page">
+    <div class="page-header">
+        <h1>Thank you for register!</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>Now please log in</p>
+                    <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

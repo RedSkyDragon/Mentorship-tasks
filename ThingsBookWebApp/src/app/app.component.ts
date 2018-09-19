@@ -17,5 +17,6 @@ export class AppComponent {
     this.oauthService.setStorage(localStorage);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     this.oauthService.loadDiscoveryDocument();
+    this.oauthService.setupAutomaticSilentRefresh();
   }
 }

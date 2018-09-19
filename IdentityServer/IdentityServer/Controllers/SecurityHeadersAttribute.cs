@@ -29,7 +29,7 @@ namespace IdentityServer.Controllers
                     context.HttpContext.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 }
                 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-                var csp = "default-src 'self'; object-src 'none'; frame-ancestors 'http://localhost:4200'; sandbox allow-forms allow-same-origin allow-scripts; base-uri 'self';";
+                var csp = "default-src 'self'; object-src 'none'; frame-ancestors 'none'; sandbox allow-forms allow-same-origin allow-scripts; base-uri 'self';";
                 if (!context.HttpContext.Response.Headers.ContainsKey("Content-Security-Policy"))
                 {
                     context.HttpContext.Response.Headers.Add("Content-Security-Policy", csp);

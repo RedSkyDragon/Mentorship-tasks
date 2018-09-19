@@ -17,12 +17,14 @@ export class AuthenticationService {
   }
 
   public get accessToken() {
-    // console.log(this.oauthService.getAccessTokenExpiration());
+    if (this.hasExpired) {
+      localStorage.removeItem('name');
+    }
     return this.oauthService.getAccessToken();
   }
 
   public get isAuthorized(): boolean {
-    return (localStorage.getItem('name') !== null);
+    return (localStorage.getItem('name') !== null && !this.hasExpired) ;
   }
 
   login(returnUrl?: string) {

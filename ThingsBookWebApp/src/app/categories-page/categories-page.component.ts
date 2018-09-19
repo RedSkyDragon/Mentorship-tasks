@@ -35,9 +35,6 @@ export class CategoriesPageComponent implements OnInit {
   }
 
   private getCategories(): void {
-    if (this.checkExpiration()) {
-      return;
-    }
     this.api.getCategories()
       .subscribe(cats => {
         this.categories = new MatTableDataSource<Category>(cats);
@@ -54,9 +51,6 @@ export class CategoriesPageComponent implements OnInit {
     if (!Name && !About) {
       return;
     }
-    if (this.checkExpiration()) {
-      return;
-    }
     this.api.addCategory({ Name, About } as Category)
       .subscribe(cat => {
         this.categories.data.push(cat);
@@ -70,9 +64,6 @@ export class CategoriesPageComponent implements OnInit {
     if (!Name && !About) {
       return;
     }
-    if (this.checkExpiration()) {
-      return;
-    }
     this.api.updateCategory(Id, { Name, About } as Category)
       .subscribe( () => {
         const cat = this.categories.data.find(c => c.Id === Id);
@@ -83,9 +74,6 @@ export class CategoriesPageComponent implements OnInit {
   }
 
   private delete(Id: string, replace: boolean): void {
-    if (this.checkExpiration()) {
-      return;
-    }
     if (replace) {
       this.api.deleteAndReplaceCategory(Id, this.replace)
       .subscribe( () => {
@@ -105,9 +93,6 @@ export class CategoriesPageComponent implements OnInit {
   }
 
   private getThings(Id: string): void {
-    if (this.checkExpiration()) {
-      return;
-    }
     this.api.getThings(Id)
       .subscribe(th => {
         this.things = new MatTableDataSource<ThingWithLend>(th);
@@ -132,13 +117,5 @@ export class CategoriesPageComponent implements OnInit {
     if (index === 2 && this.selectedCategory && this.thingsCatId !== this.selectedCategory.Id) {
       this.getThings(this.selectedCategory.Id);
     }
-  }
-
-  private checkExpiration(): boolean {
-    if (this.authService.hasExpired) {
-      this.authService.login(this.router.url);
-      return true;
-    }
-    return false;
   }
 }
