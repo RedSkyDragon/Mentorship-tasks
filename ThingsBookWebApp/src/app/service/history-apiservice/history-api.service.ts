@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { History } from '../../models/history';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { History } from '../../models/history';
 export class HistoryApiService {
   constructor(private authService: AuthenticationService, private http: HttpClient) { }
 
-  private readonly baseUrl = 'http://localhost/ThingsBook.WebApi/';
+  public readonly baseUrl = 'http://localhost/ThingsBook.WebApi/';
 
   public getHistory(): Observable<History[]> {
     const url = this.baseUrl + 'history';

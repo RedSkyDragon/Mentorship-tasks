@@ -19,7 +19,7 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { routing } from './app.routing';
 import { AuthComponent } from './auth/auth.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './login-page/login.component';
 import { ErrorsHandler } from './error-handling/errors-handler';
 import { ServerErrorsInterceptor } from './interceptors/server-errors.interceptor';
 import { ErrorComponent } from './error/error.component';
