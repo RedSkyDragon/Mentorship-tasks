@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class ErrorsHandler implements ErrorHandler {
+
     constructor(private injector: Injector) { }
 
     handleError(error: Error | HttpErrorResponse) {

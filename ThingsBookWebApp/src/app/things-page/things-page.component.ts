@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewChildren, QueryList, OnChanges } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, OnChanges } from '@angular/core';
 import { ThingsApiService } from '../service/things-apiservice/things-api.service';
 import { CategoriesApiService } from '../service/categories-apiservice/categories-api.service';
 import { FriendsApiService } from '../service/friends-apiservice/friends-api.service';
@@ -31,6 +31,7 @@ export class ThingsPageComponent implements OnInit {
   @ViewChildren(MatPaginator) paginators = new QueryList<MatPaginator>();
   @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
   private things = new MatTableDataSource<ThingWithLend>();
+  private history = new MatTableDataSource<History>();
   private friends: Friend[];
   private categories: Category[];
   private selectedTab: number;
@@ -38,8 +39,6 @@ export class ThingsPageComponent implements OnInit {
   private selectedLendDate: Date;
   private returnDate: Date;
   private thingsLendId: string;
-  private history = new MatTableDataSource<History>();
-
   private firstCategory: string;
   private firstFriend: string;
   private lendIcon = '<i class="material-icons"> check_circle</i>';

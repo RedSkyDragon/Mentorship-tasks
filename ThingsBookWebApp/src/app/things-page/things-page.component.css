@@ -9,18 +9,23 @@ td {
 th.mat-sort-header-sorted {
     color: black;
 }
+
 .vertical {
     padding-top: 20px;
 }
+
 .delete {
     margin: 20px 0px;
 }
+
 .width-40{
     width: 30%;
 }
+
 .width-20{
     width: 20%;
 }
+
 .card {
     padding: 20px;
 }
