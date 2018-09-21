@@ -1,6 +1,116 @@
-<h3>Categories</h3>
-<ul class="heroes">
-  <li *ngFor="let category of categories">
-      id = {{category.Id}} / name = {{category.Name}} / about = {{category.About}}
-  </li>
-</ul>
+<div class="main">
+  <div class="header">
+    <span>Categories</span>
+  </div>
+
+  <div class="block">
+    <div class="mat-elevation-z8" *ngIf="!isLoading && categories.data.length; else Loading;">
+      <table mat-table [dataSource]="categories" matSort>
+        <ng-container matColumnDef="Name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="About">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> About </th>
+          <td mat-cell *matCellDef="let element"> {{element.About}} </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onSelect(row);" [class.selected]="row === selectedCategory"></tr>
+      </table> 
+      <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+
+  <div class="block">
+    <mat-tab-group mat-stretch-tabs color="accent" (selectedTabChange)="onTabSelect($event.index)">
+      <mat-tab label="Add category"> 
+        <div class="tab">
+            <form class="form">
+                <mat-form-field class="full-width" color="accent">
+                  <input matInput placeholder="Name" #categoryNameAdd>
+                </mat-form-field>               
+                <mat-form-field class="full-width" color="accent">
+                  <textarea matInput placeholder="About" #categoryAboutAdd></textarea>
+                </mat-form-field>
+              </form>
+            <button mat-raised-button type="button" color="accent" 
+              (click)="add(categoryNameAdd.value, categoryAboutAdd.value); categoryNameAdd.value=''; categoryAboutAdd.value=''">
+              Add
+            </button>
+        </div>
+      </mat-tab>
+      <mat-tab label="View category"> 
+        <div class="tab" *ngIf="selectedCategory; else noSelection">
+            <form class="form">
+                <mat-form-field class="full-width" color="accent">
+                  <input matInput placeholder="Name" #categoryNameUpd value="{{selectedCategory.Name}}">
+                </mat-form-field>               
+                <mat-form-field class="full-width" color="accent">
+                  <textarea matInput placeholder="About" #categoryAboutUpd value="{{selectedCategory.About}}"></textarea>
+                </mat-form-field>
+              </form>
+            <button mat-button type="button" color="accent" 
+              (click)="categoryNameUpd.value=selectedCategory.Name; categoryAboutUpd.value=selectedCategory.About;">
+              Clear changes
+            </button>
+            <button mat-raised-button type="button" color="accent" 
+              (click)="update(selectedCategory.Id, categoryNameUpd.value, categoryAboutUpd.value);">
+              Save
+            </button>
+            <div class="vertical">
+              <mat-checkbox [formControl]="enableSelect" class="check-box">Replace category with</mat-checkbox>
+              <mat-form-field color="accent">
+                <mat-select placeholder="Choose a category" [disabled]="!enableSelect.value" [(value)]="replace">
+                  <mat-option *ngFor="let cat of replacement" [value]="cat.Id">{{cat.Name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button mat-raised-button type="button" color="warn" class="delete right"
+                (click)="delete(selectedCategory.Id, enableSelect.value);">
+                Delete
+              </button>
+            </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Things">
+        <div class="tab" [hidden]="!selectedCategory">
+          <div class="mat-elevation-z8" [hidden]="!this.things || !this.things.data.length">
+            <table mat-table [dataSource]="things" matSort>
+              <ng-container matColumnDef="Name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+              </ng-container>
+              <ng-container matColumnDef="About">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> About </th>
+                <td mat-cell *matCellDef="let element"> {{element.About}} </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+          </div>
+          <div [hidden]="!selectedCategory || this.things && this.things.data.length"><p class="center">This category does not contain any thing</p></div>
+        </div>
+        <div class="tab" [hidden]="selectedCategory"><p class="center">Please select some category</p></div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div class="clear"></div>
+</div>
+
+<ng-template #noSelection>
+  <div class="tab"><p class="center">Please select some category</p></div>
+</ng-template>
+
+<ng-template #emptyThings>
+  <div><p class="center">This category does not contain any thing</p></div>
+</ng-template>
+
+<ng-template #Loading>
+  <div class="loader" *ngIf="isLoading; else noCategories">
+      <mat-spinner></mat-spinner>
+  </div>    
+</ng-template>
+
+<ng-template #noCategories>
+  <p class="center">There are not categories</p>
+</ng-template>

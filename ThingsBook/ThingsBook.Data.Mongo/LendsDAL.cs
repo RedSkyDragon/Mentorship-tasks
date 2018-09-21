@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ThingsBook.Data.Interface;
 
@@ -36,6 +37,12 @@ namespace ThingsBook.Data.Mongo
             }
             var update = Builders<Thing>.Update.Set(t => t.Lend, lend);
             return _db.Things.UpdateOneAsync(t => t.UserId == userId && t.Id == thingId, update);
+        }
+
+        public async Task<IEnumerable<Thing>> GetActiveLends(Guid userId)
+        {
+            var result = await _db.Things.FindAsync(th => th.Lend != null);
+            return await result.ToListAsync();
         }
 
         /// <summary>

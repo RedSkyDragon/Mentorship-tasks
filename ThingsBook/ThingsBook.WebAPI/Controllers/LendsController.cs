@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ThingsBook.BusinessLogic;
@@ -23,6 +25,17 @@ namespace ThingsBook.WebAPI.Controllers
         public LendsController(ILendsBL lends)
         {
             _lends = lends;
+        }
+
+        /// <summary>
+        /// Gets all active lends.
+        /// </summary>
+        /// <returns>Active lends</returns>
+        [HttpGet]
+        [Route("~/lends")]
+        public Task<IEnumerable<ActiveLend>> Get()
+        {
+            return _lends.GetActiveLends(ApiUser.Id);
         }
 
         /// <summary>
@@ -63,7 +76,11 @@ namespace ThingsBook.WebAPI.Controllers
         {
             if (!returnDate.HasValue)
             {
-                returnDate = DateTime.Now;
+                returnDate = DateTime.Now.ToUniversalTime();
+            }
+            else if (returnDate.Value.Kind != DateTimeKind.Utc)
+            {
+                returnDate = returnDate.Value.ToUniversalTime();
             }
             return _lends.Delete(ApiUser.Id, thingId, returnDate.Value);
         }

@@ -7,6 +7,7 @@ import { AuthenticationService } from '../service/authentication/authentication.
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
+
   constructor(private authService: AuthenticationService) { }
 
   public get isAuth() {

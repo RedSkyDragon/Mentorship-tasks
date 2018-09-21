@@ -1,0 +1,36 @@
+table {
+    width: 100%;
+}
+td {
+    width: 50%;
+}
+th.mat-sort-header-sorted {
+    color: black;
+}
+.vertical {
+    padding-top: 20px;
+}
+.delete {
+    margin: 20px 0px;
+}
+.width-30{
+    width: 30%;
+}
+.width-40{
+    width: 30%;
+}
+.width-15{
+    width: 15%;
+}
+.width-10{
+    width: 10%;
+}
+.width-65 {
+    width: 65%;
+}
+.width-35 {
+    width: 35%;
+}
+.padding-25{
+    padding: 0px 25px;
+}

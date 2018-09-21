@@ -62,8 +62,8 @@ namespace IdentityServer
                     ClientName = "ThingsBook Angular client",
                     AccessTokenType = AccessTokenType.Jwt,
                     AllowedGrantTypes = GrantTypes.Implicit,
-                    RedirectUris = { "http://localhost:4200" },
-                    PostLogoutRedirectUris = { "http://localhost:4200/Unauthorized" },
+                    RedirectUris = { "http://localhost:4200/login", "http://localhost:4200/silent-refresh.html" },
+                    PostLogoutRedirectUris = { "http://localhost:4200" },
                     AllowedCorsOrigins = new List<string>
                     {
                         "https://localhost:4200",
@@ -75,7 +75,8 @@ namespace IdentityServer
                         IdentityServerConstants.StandardScopes.Profile,
                         "things-book"
                     },
-                    AllowAccessTokensViaBrowser = true
+                    AllowAccessTokensViaBrowser = true,
+                    AccessTokenLifetime = 21600
                 }
             };
         }
