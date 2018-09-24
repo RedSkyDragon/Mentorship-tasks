@@ -3,6 +3,7 @@ import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { HistoryApiService } from '../service/history-apiservice/history-api.service';
 import { History } from '../models/history';
 import { SortingDataAccessor } from '../models/sortingDataAccessor';
+import { HistoryFilter } from '../models/filters';
 
 @Component({
   selector: 'app-history-page',
@@ -31,6 +32,7 @@ export class HistoryPageComponent implements OnInit {
         this.history.paginator = this.paginator;
         this.history.sort = this.sort;
         this.history.sortingDataAccessor = SortingDataAccessor;
+        this.history.filterPredicate = HistoryFilter;
         this.isLoading = false;
       });
   }
@@ -44,4 +46,10 @@ export class HistoryPageComponent implements OnInit {
       });
   }
 
+  private applyFilter(filterValue: string) {
+    this.history.filter = filterValue.trim().toLowerCase();
+    if (this.history.paginator) {
+      this.history.paginator.firstPage();
+    }
+  }
 }

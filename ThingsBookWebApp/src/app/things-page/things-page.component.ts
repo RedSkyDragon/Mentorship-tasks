@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList, OnChanges } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { ThingsApiService } from '../service/things-apiservice/things-api.service';
 import { CategoriesApiService } from '../service/categories-apiservice/categories-api.service';
 import { FriendsApiService } from '../service/friends-apiservice/friends-api.service';
@@ -12,6 +12,7 @@ import { LendsApiService } from '../service/lends-apiservice/lends-api.service';
 import { Lend } from '../models/lend';
 import { History } from '../models/history';
 import { SortingDataAccessor } from '../models/sortingDataAccessor';
+import { ThingsFilter } from '../models/filters';
 
 @Component({
   selector: 'app-things-page',
@@ -34,6 +35,7 @@ export class ThingsPageComponent implements OnInit {
   private history = new MatTableDataSource<History>();
   private friends: Friend[];
   private categories: Category[];
+  private categoryControl = new FormControl('0');
   private selectedTab: number;
   private selectedThing: ThingWithLend;
   private selectedLendDate: Date;
@@ -59,6 +61,21 @@ export class ThingsPageComponent implements OnInit {
         this.things.paginator = this.paginators.toArray()[0];
         this.things.sort = this.sorts.toArray()[0];
         this.things.sortingDataAccessor = SortingDataAccessor;
+        this.things.filterPredicate = ThingsFilter;
+        this.isLoading = false;
+      });
+  }
+
+  private getThingsForCategory(Id: string): void {
+    this.isLoading = true;
+    this.catApi.getThings(Id)
+      .subscribe(th => {
+        this.things = new MatTableDataSource<ThingWithLend>(th);
+        this.things.paginator = this.paginators.toArray()[0];
+        this.things.sort = this.sorts.toArray()[0];
+        this.things.sortingDataAccessor = SortingDataAccessor;
+        this.things.filterPredicate = ThingsFilter;
+        this.selectedThing = null;
         this.isLoading = false;
       });
   }
@@ -97,8 +114,10 @@ export class ThingsPageComponent implements OnInit {
     }
     this.api.addThing({ Name, About, CategoryId } as Thing)
       .subscribe(th => {
-        this.things.data.push(th);
-        this.things._updateChangeSubscription();
+        if (CategoryId === this.categoryControl.value) {
+          this.things.data.push(th);
+          this.things._updateChangeSubscription();
+        }
       });
   }
 
@@ -180,5 +199,20 @@ export class ThingsPageComponent implements OnInit {
 
   private clearDateChanges(): void {
     this.selectedLendDate = this.selectedThing.Lend.LendDate;
+  }
+
+  private applyFilter(filterValue: string) {
+    this.things.filter = filterValue.trim().toLowerCase();
+    if (this.things.paginator) {
+      this.things.paginator.firstPage();
+    }
+  }
+
+  private onCategorySelect(value: string) {
+    if (value === '0') {
+      this.getThings();
+    } else {
+      this.getThingsForCategory(value);
+    }
   }
 }

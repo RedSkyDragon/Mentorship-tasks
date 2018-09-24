@@ -2,47 +2,47 @@
   <div class="header">
     <span>History</span>
   </div>
-  <div>
-    <div class="mat-elevation-z8" *ngIf="!isLoading && history.data.length; else Loading;">
-      <table mat-table [dataSource]="history" matSort>
-        <ng-container matColumnDef="Thing.Name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Thing</th>
-          <td mat-cell *matCellDef="let element" class="width-20"> {{element.Thing.Name}} </td>
-        </ng-container>
-        <ng-container matColumnDef="Friend.Name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Friend </th>
-          <td mat-cell *matCellDef="let element" class="width-20"> {{element.Friend.Name}} </td>
-        </ng-container>
-        <ng-container matColumnDef="LendDate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Lended </th>
-          <td mat-cell *matCellDef="let element" class="width-10"> {{element.LendDate | date:'MM/dd/yyyy'}} </td>
-        </ng-container>
-        <ng-container matColumnDef="ReturnDate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Returned </th>
-          <td mat-cell *matCellDef="let element" class="width-10"> {{element.ReturnDate | date:'MM/dd/yyyy'}} </td>
-        </ng-container>
-        <ng-container matColumnDef="Comment">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Comment </th>
-          <td mat-cell *matCellDef="let element" class="width-40"> {{element.Comment}} </td>
-        </ng-container>
-        <ng-container matColumnDef="DeleteRecord">
-          <th mat-header-cell *matHeaderCellDef> Delete record </th>
-          <td mat-cell *matCellDef="let element" [innerHTML]="deleteIcon" (click)="delete(element.Id)" class="delete"></td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table> 
-      <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons></mat-paginator>
+  <div class="history">
+    <div [hidden]="isLoading || !history.data.length">
+      <mat-form-field  class="full-width" color="accent">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+      </mat-form-field>
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="history" matSort>
+          <ng-container matColumnDef="Thing.Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Thing</th>
+            <td mat-cell *matCellDef="let element" class="width-20"> {{element.Thing.Name}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Friend.Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Friend </th>
+            <td mat-cell *matCellDef="let element" class="width-20"> {{element.Friend.Name}} </td>
+          </ng-container>
+          <ng-container matColumnDef="LendDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Lended </th>
+            <td mat-cell *matCellDef="let element" class="width-10"> {{element.LendDate | date:'MM/dd/yyyy'}} </td>
+          </ng-container>
+          <ng-container matColumnDef="ReturnDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Returned </th>
+            <td mat-cell *matCellDef="let element" class="width-10"> {{element.ReturnDate | date:'MM/dd/yyyy'}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Comment">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Comment </th>
+            <td mat-cell *matCellDef="let element" class="width-40"> {{element.Comment}} </td>
+          </ng-container>
+          <ng-container matColumnDef="DeleteRecord">
+            <th mat-header-cell *matHeaderCellDef> Delete record </th>
+            <td mat-cell *matCellDef="let element" [innerHTML]="deleteIcon" (click)="delete(element.Id)" class="delete"></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table> 
+        <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons></mat-paginator>
+      </div>
     </div>
+    <div class="loader" [hidden]="!isLoading">
+        <mat-spinner></mat-spinner>
+    </div>
+    <p class="center" [hidden]="isLoading || history.data.length">There are not history lends</p>
   </div>
 </div>
 
-<ng-template #Loading>
-  <div class="loader" *ngIf="isLoading; else noLends">
-      <mat-spinner></mat-spinner>
-  </div>    
-</ng-template>
-
-<ng-template #noLends>
-  <p class="center">There are not active lends</p>
-</ng-template>

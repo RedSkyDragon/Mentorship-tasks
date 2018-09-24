@@ -7,6 +7,7 @@ import { FormControl } from '@angular/forms';
 import { SortingDataAccessor } from '../models/sortingDataAccessor';
 import { AuthenticationService } from '../service/authentication/authentication.service';
 import { Router } from '@angular/router';
+import { CategoriesFilter } from '../models/filters';
 
 @Component({
   selector: 'app-categories-page',
@@ -41,6 +42,7 @@ export class CategoriesPageComponent implements OnInit {
         this.categories.paginator = this.paginators.toArray()[0];
         this.categories.sort = this.sorts.toArray()[0];
         this.categories.sortingDataAccessor = SortingDataAccessor;
+        this.categories.filterPredicate = CategoriesFilter;
         this.isLoading = false;
       });
   }
@@ -116,6 +118,13 @@ export class CategoriesPageComponent implements OnInit {
     this.selectedTab = index;
     if (index === 2 && this.selectedCategory && this.thingsCatId !== this.selectedCategory.Id) {
       this.getThings(this.selectedCategory.Id);
+    }
+  }
+
+  private applyFilter(filterValue: string) {
+    this.categories.filter = filterValue.trim().toLowerCase();
+    if (this.categories.paginator) {
+      this.categories.paginator.firstPage();
     }
   }
 }
