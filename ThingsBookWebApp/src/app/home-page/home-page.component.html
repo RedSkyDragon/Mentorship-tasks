@@ -4,7 +4,7 @@
   </div>
   <div class="block width-35">
     <mat-card class="card">
-      <mat-card-content>
+      <mat-card-content *ngIf="things.length && friends.length; else noFriendsOrThings;">
         <p class="center"><b>Lend thing:</b></p>
         <form class="form">
           <mat-form-field class="full-width" color="accent">
@@ -26,7 +26,7 @@
             <textarea matInput placeholder="Comment" #lendCommentAdd></textarea>
           </mat-form-field>
         </form>
-        <button mat-raised-button type="button" color="accent" (click)="addLend(lendFriendAdd.value, lendThingAdd.value, lendDateAdd.value, lendCommentAdd.value)">Lend</button>
+        <button mat-raised-button type="button" color="accent" (click)="addLend(lendFriendAdd.value, lendThingAdd.value, lendDateAdd.value, lendCommentAdd.value); lendCommentAdd.value=''">Lend</button>
       </mat-card-content>
     </mat-card>
     <br>
@@ -58,11 +58,11 @@
       <table mat-table [dataSource]="activeLends" matSort>
         <ng-container matColumnDef="Thing.Name"> 
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Thing</th>
-          <td mat-cell *matCellDef="let element" class="width-30"> {{element.Thing.Name}} </td>
+          <td mat-cell *matCellDef="let element" class="width-30" > {{element.Thing?.Name}} </td>
         </ng-container>
         <ng-container matColumnDef="Friend.Name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Friend </th>
-          <td mat-cell *matCellDef="let element" class="width-15"> {{element.Friend.Name}} </td>
+          <td mat-cell *matCellDef="let element" class="width-15"> {{element.Friend?.Name}} </td>
         </ng-container>
         <ng-container matColumnDef="LendDate">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Lended </th>
@@ -98,3 +98,9 @@
   </div>
 </ng-template>
 
+<ng-template #noFriendsOrThings>  
+  <mat-card-content>
+    <p *ngIf="!things.length">There are not things to lend. Please, <a href="/things" class="link">add thing.</a></p>        
+    <p *ngIf="!friends.length">There are not friends. Please, <a href="/friends" class="link">add friend.</a></p>
+  </mat-card-content>
+</ng-template>

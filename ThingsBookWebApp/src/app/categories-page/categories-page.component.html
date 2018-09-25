@@ -97,7 +97,7 @@
             </table>
             <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
           </div>
-          <div [hidden]="!selectedCategory || this.things && this.things.data.length"><p class="center">This category does not contain any thing</p></div>
+          <div [hidden]="!selectedCategory || this.things && this.things.data.length"><p class="center">This category does not contain any thing. <a href="/things" class="link">Add them.</a></p></div>
         </div>
         <div class="tab" [hidden]="selectedCategory"><p class="center">Please select some category</p></div>
       </mat-tab>
@@ -108,9 +108,5 @@
 
 <ng-template #noSelection>
   <div class="tab"><p class="center">Please select some category</p></div>
-</ng-template>
-
-<ng-template #emptyThings>
-  <div><p class="center">This category does not contain any thing</p></div>
 </ng-template>
 

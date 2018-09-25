@@ -33,8 +33,8 @@ export class ThingsPageComponent implements OnInit {
   @ViewChildren(MatSort) sorts = new QueryList<MatSort>();
   private things = new MatTableDataSource<ThingWithLend>();
   private history = new MatTableDataSource<History>();
-  private friends: Friend[];
-  private categories: Category[];
+  private friends: Friend[] = [];
+  private categories: Category[] = [];
   private categoryControl = new FormControl('0');
   private selectedTab: number;
   private selectedThing: ThingWithLend;
@@ -84,7 +84,9 @@ export class ThingsPageComponent implements OnInit {
     this.catApi.getCategories()
       .subscribe(cats => {
         this.categories = cats;
-        this.firstCategory = this.categories[0].Id;
+        if (this.categories.length) {
+          this.firstCategory = this.categories[0].Id;
+        }
       });
   }
 
@@ -92,7 +94,9 @@ export class ThingsPageComponent implements OnInit {
     this.friendsApi.getFriends()
       .subscribe(fr => {
         this.friends = fr;
-        this.firstFriend = this.friends[0].Id;
+        if (this.friends.length) {
+          this.firstFriend = this.friends[0].Id;
+        }
       });
   }
 
@@ -114,7 +118,7 @@ export class ThingsPageComponent implements OnInit {
     }
     this.api.addThing({ Name, About, CategoryId } as Thing)
       .subscribe(th => {
-        if (CategoryId === this.categoryControl.value) {
+        if (CategoryId === this.categoryControl.value || this.categoryControl.value === '0') {
           this.things.data.push(th);
           this.things._updateChangeSubscription();
         }

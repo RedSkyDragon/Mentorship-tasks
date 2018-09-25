@@ -32,9 +32,9 @@ export class HomePageComponent implements OnInit {
   private returnDate: Date;
   private isLoading = true;
   private date = new FormControl(new Date());
-  private friends: Friend[];
+  private friends: Friend[] = [];
   private firstFriend: string;
-  private things: Thing[];
+  private things: Thing[] = [];
   private firstThing: string;
 
   ngOnInit() {
@@ -53,7 +53,6 @@ export class HomePageComponent implements OnInit {
         this.activeLends.sortingDataAccessor = SortingDataAccessor;
         this.getFriends();
         this.getThings();
-        this.isLoading = false;
       });
   }
 
@@ -61,7 +60,10 @@ export class HomePageComponent implements OnInit {
     this.friendsApi.getFriends()
       .subscribe(data => {
         this.friends = data;
-        this.firstFriend = this.friends[0].Id;
+        if (this.friends.length) {
+          this.firstFriend = this.friends[0].Id;
+        }
+        this.isLoading = false;
       });
   }
 
@@ -69,7 +71,10 @@ export class HomePageComponent implements OnInit {
     this.thingsApi.getThings()
       .subscribe(data => {
         this.things = data.filter(th => !this.activeLends.data.find(l => l.Thing.Id === th.Id));
-        this.firstThing = this.things[0].Id;
+        if (this.things.length) {
+          this.firstThing = this.things[0].Id;
+        }
+        this.isLoading = false;
       });
   }
 

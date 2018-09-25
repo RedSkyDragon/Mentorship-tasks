@@ -27,7 +27,7 @@ export class CategoriesPageComponent implements OnInit {
   private selectedTab: number;
   private selectedCategory: Category;
   private enableSelect = new FormControl(true);
-  private replacement: Category[];
+  private replacement: Category[] = [];
   private replace: string;
   private isLoading = true;
 
@@ -57,6 +57,7 @@ export class CategoriesPageComponent implements OnInit {
       .subscribe(cat => {
         this.categories.data.push(cat);
         this.categories._updateChangeSubscription();
+        this.replacement.push(cat);
       });
   }
 
@@ -92,6 +93,7 @@ export class CategoriesPageComponent implements OnInit {
         this.categories._updateChangeSubscription();
       });
     }
+    this.selectedCategory = null;
   }
 
   private getThings(Id: string): void {
@@ -107,17 +109,27 @@ export class CategoriesPageComponent implements OnInit {
 
   private onSelect(category: Category): void {
     this.selectedCategory = category;
-    this.replacement = this.categories.data.filter(c => c.Id !== this.selectedCategory.Id);
-    this.replace = this.replacement[0].Id;
-    if (this.selectedTab === 2) {
-      this.onTabSelect(this.selectedTab);
-    }
+    this.onTabSelect(this.selectedTab);
   }
 
   private onTabSelect(index: number): void {
     this.selectedTab = index;
     if (index === 2 && this.selectedCategory && this.thingsCatId !== this.selectedCategory.Id) {
       this.getThings(this.selectedCategory.Id);
+    }
+    if (index === 1 && this.selectedCategory) {
+      this.replacement = this.categories.data.filter(c => c.Id !== this.selectedCategory.Id);
+      if (this.replacement.length) {
+        this.replace = this.replacement[0].Id;
+        if (!this.enableSelect.value) {
+          this.enableSelect.setValue(true);
+          this.enableSelect.enable();
+        }
+      }
+      if (!this.replacement.length && this.enableSelect.value) {
+        this.enableSelect.setValue(false);
+        this.enableSelect.disable();
+      }
     }
   }
 
