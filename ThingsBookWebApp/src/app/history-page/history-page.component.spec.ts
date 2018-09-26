@@ -1,10 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HistoryPageComponent } from './history-page.component';
-import { MatTableModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule } from '@angular/material';
+import { MatTableModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule,
+  MatFormFieldModule, MatInputModule } from '@angular/material';
 import { HistoryApiService } from '../service/history-apiservice/history-api.service';
 import { of, Observable } from 'rxjs';
 import { History } from '../models/history';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('HistoryPageComponent', () => {
   let component: HistoryPageComponent;
@@ -17,7 +20,16 @@ describe('HistoryPageComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ HistoryPageComponent ],
-      imports: [ MatTableModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule ],
+      imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatProgressSpinnerModule,
+        MatFormFieldModule,
+        MatInputModule
+      ],
       providers: [
         { provide: HistoryApiService, useValue: historyApiServiceStub }
       ]

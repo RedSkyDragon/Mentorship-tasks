@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Router } from '@angular/router';
 import { UserApiService } from '../service/user-apiservice/user-apiservice';
@@ -8,16 +8,18 @@ import { UserApiService } from '../service/user-apiservice/user-apiservice';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
-  constructor(private oauthService: OAuthService, private router: Router, private userService: UserApiService) {
+  constructor(private oauthService: OAuthService, private router: Router, private userService: UserApiService) { }
+
+  ngOnInit(): void {
     this.oauthService.loadDiscoveryDocument().then(() => {
       this.oauthService.tryLogin({ onTokenReceived: context => {
         this.oauthService.loadUserProfile().then((profile) => {
-          userService.getUser()
+          this.userService.getUser()
             .subscribe((data) => {
               if (!data) {
-                userService.createUser()
+                this.userService.createUser()
                   .subscribe(() => {
                     this.login(profile);
                   });
@@ -25,8 +27,16 @@ export class LoginComponent {
               this.login(profile);
             });
         });
+      },
+      onLoginError: context => {
+        this.clear();
       }});
     });
+  }
+
+  private clear() {
+    localStorage.removeItem('name');
+    this.router.navigate(['/']);
   }
 
   private login(profile) {

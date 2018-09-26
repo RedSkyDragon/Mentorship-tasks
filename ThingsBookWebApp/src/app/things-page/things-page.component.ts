@@ -133,10 +133,18 @@ export class ThingsPageComponent implements OnInit {
     }
     this.api.updateThing(Id, { Name, About, CategoryId } as Thing)
       .subscribe( () => {
-        const cat = this.things.data.find(c => c.Id === Id);
-        cat.Name = Name;
-        cat.About = About;
-        this.things._updateChangeSubscription();
+        if (CategoryId === this.categoryControl.value || this.categoryControl.value === '0') {
+          const cat = this.things.data.find(c => c.Id === Id);
+          cat.Name = Name;
+          cat.About = About;
+          cat.CategoryId = CategoryId;
+          this.things._updateChangeSubscription();
+        } else {
+          const index = this.things.data.findIndex(c => c.Id === Id);
+          this.things.data.splice(index, 1);
+          this.things._updateChangeSubscription();
+          this.selectedThing = null;
+        }
       });
   }
 
@@ -210,6 +218,7 @@ export class ThingsPageComponent implements OnInit {
     if (this.things.paginator) {
       this.things.paginator.firstPage();
     }
+    this.selectedThing = null;
   }
 
   private onCategorySelect(value: string) {
