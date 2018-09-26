@@ -5,6 +5,7 @@ import { Friend } from '../models/friend';
 import { History } from '../models/history';
 import { ActiveLend } from '../models/active-lend';
 import { SortingDataAccessor } from '../models/sortingDataAccessor';
+import { FriendsFilter } from '../models/filters';
 
 @Component({
   selector: 'app-friends-page',
@@ -35,10 +36,11 @@ export class FriendsPageComponent implements OnInit {
   private getFriends(): void {
     this.api.getFriends()
       .subscribe(fr => {
-        this.friends = new MatTableDataSource(fr);
+        this.friends = new MatTableDataSource<Friend>(fr);
         this.friends.paginator = this.paginators.toArray()[0];
         this.friends.sort = this.sorts.toArray()[0];
         this.friends.sortingDataAccessor = SortingDataAccessor;
+        this.friends.filterPredicate = FriendsFilter;
         this.isLoading = false;
       });
   }
@@ -106,6 +108,13 @@ export class FriendsPageComponent implements OnInit {
     if (index === 2 && this.selectedFriend && this.lendsFriendId !== this.selectedFriend.Id) {
       this.getLends();
       this.lendsFriendId = this.selectedFriend.Id;
+    }
+  }
+
+  private applyFilter(filterValue: string) {
+    this.friends.filter = filterValue.trim().toLowerCase();
+    if (this.friends.paginator) {
+      this.friends.paginator.firstPage();
     }
   }
 }

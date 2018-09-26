@@ -58,11 +58,6 @@ namespace IdentityServer
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             //InitializeDB.InitializeDatabase(app);
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            app.UseStaticFiles();
             app.UseCors(options =>
             {
                 options
@@ -70,6 +65,11 @@ namespace IdentityServer
                     .AllowAnyMethod()
                     .WithOrigins("http://localhost:4200");
             });
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseStaticFiles();
             app.UseIdentityServer();
             app.UseMvcWithDefaultRoute();
         }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Lend } from '../../models/lend';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ThingWithLend } from '../../models/thing-with-lend';
 import { ActiveLend } from '../../models/active-lend';
 

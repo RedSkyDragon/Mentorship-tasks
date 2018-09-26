@@ -3,32 +3,48 @@
     <span>Things</span>
   </div>
 
-  <div class="block">
-    <div class="mat-elevation-z8" *ngIf="!isLoading && things.data.length; else Loading;">
-      <table mat-table [dataSource]="things" matSort>
-        <ng-container matColumnDef="Name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-          <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
-        </ng-container>
-        <ng-container matColumnDef="About">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> About </th>
-          <td mat-cell *matCellDef="let element"> {{element.About}} </td>
-        </ng-container>
-        <ng-container matColumnDef="Lended">
-          <th mat-header-cell *matHeaderCellDef> Lended </th>
-          <td mat-cell *matCellDef="let element" [innerHTML] = "element.Lend !== null ? lendIcon : null "></td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onSelect(row);" [class.selected]="row === selectedThing"></tr>
-      </table> 
-      <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+  <div class="block">    
+    <mat-form-field class="width-50" color="accent">
+        <mat-select placeholder="Category" [formControl]="categoryControl" (selectionChange)="onCategorySelect($event.value)">
+          <mat-option value="0" selected>All</mat-option>
+          <mat-option *ngFor="let cat of categories" [value]="cat.Id">{{cat.Name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    &nbsp;
+    <mat-form-field  class="width-50" color="accent">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+    <div [hidden]="isLoading || !things.data.length">
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="things" matSort>
+          <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+            <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+          </ng-container>
+          <ng-container matColumnDef="About">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> About </th>
+            <td mat-cell *matCellDef="let element"> {{element.About}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Lended">
+            <th mat-header-cell *matHeaderCellDef> Lended </th>
+            <td mat-cell *matCellDef="let element" [innerHTML] = "element.Lend !== null ? lendIcon : null "></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onSelect(row);" [class.selected]="row === selectedThing"></tr>
+        </table> 
+        <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+      </div>
     </div>
+    <div class="loader" [hidden]="!isLoading">
+        <mat-spinner></mat-spinner>
+    </div>    
+    <p class="center" [hidden]="isLoading || things.data.length">There are not things</p>
   </div>
 
   <div class="block">
     <mat-tab-group mat-stretch-tabs color="accent" (selectedTabChange)="onTabSelect($event.index)">
         <mat-tab label="Add thing"> 
-          <div class="tab">
+          <div class="tab" *ngIf="categories.length; else noCategories">
               <form class="form">
                   <mat-form-field class="full-width" color="accent">
                     <input matInput placeholder="Name" #thingNameAdd>
@@ -156,7 +172,7 @@
 </ng-template>
 
 <ng-template #noLend>
-  <div class="lend-info">
+  <div class="lend-info" *ngIf="friends.length; else noFriends">
     <p class="center">This thing is not lended now. Lend it!</p>
     <form class="form">
       <mat-form-field class="full-width" color="accent">
@@ -177,12 +193,10 @@
   </div>
 </ng-template>
 
-<ng-template #Loading>
-    <div class="loader" *ngIf="isLoading; else noLends">
-        <mat-spinner></mat-spinner>
-    </div>    
-  </ng-template>
-  
-  <ng-template #noThings>
-    <p class="center">There are not things</p>
-  </ng-template>
+<ng-template #noCategories>
+  <p>There are not any category. Please, <a href="/categories" class="link">add one</a>.</p>
+</ng-template>
+
+<ng-template #noFriends>
+  <p>There are not any friend. Please, <a href="/friends" class="link">add one</a>.</p>
+</ng-template>

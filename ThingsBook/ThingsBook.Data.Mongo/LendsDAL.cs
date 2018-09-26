@@ -41,7 +41,7 @@ namespace ThingsBook.Data.Mongo
 
         public async Task<IEnumerable<Thing>> GetActiveLends(Guid userId)
         {
-            var result = await _db.Things.FindAsync(th => th.Lend != null);
+            var result = await _db.Things.FindAsync(th => th.UserId == userId && th.Lend != null);
             return await result.ToListAsync();
         }
 

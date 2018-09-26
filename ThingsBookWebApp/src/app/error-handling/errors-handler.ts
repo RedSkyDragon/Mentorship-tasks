@@ -1,4 +1,4 @@
-import { Injectable, ErrorHandler, Injector, NgZone } from '@angular/core';
+import { Injectable, ErrorHandler, Injector } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 

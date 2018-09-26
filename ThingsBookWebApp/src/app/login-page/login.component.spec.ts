@@ -1,9 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LoginComponent } from './login.component';
 import { MatProgressSpinnerModule } from '@angular/material';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Router } from '@angular/router';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -16,7 +16,7 @@ describe('LoginComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ LoginComponent ],
-      imports: [ MatProgressSpinnerModule ],
+      imports: [ MatProgressSpinnerModule, HttpClientTestingModule ],
       providers: [
         { provide: OAuthService, useValue: oAuthServiceStub },
         { provide: Router, useValue: routerStub }

@@ -4,6 +4,12 @@ import { ActiveLend } from '../models/active-lend';
 import { LendsApiService } from '../service/lends-apiservice/lends-api.service';
 import { AuthenticationService } from '../service/authentication/authentication.service';
 import { SortingDataAccessor } from '../models/sortingDataAccessor';
+import { FormControl } from '@angular/forms';
+import { Friend } from '../models/friend';
+import { Thing } from '../models/thing';
+import { ThingsApiService } from '../service/things-apiservice/things-api.service';
+import { FriendsApiService } from '../service/friends-apiservice/friends-api.service';
+import { Lend } from '../models/lend';
 
 @Component({
   selector: 'app-home-page',
@@ -12,7 +18,11 @@ import { SortingDataAccessor } from '../models/sortingDataAccessor';
 })
 export class HomePageComponent implements OnInit {
 
-  constructor(private lendsApi: LendsApiService, private authService: AuthenticationService) { }
+  constructor(
+    private lendsApi: LendsApiService,
+    private thingsApi: ThingsApiService,
+    private friendsApi: FriendsApiService,
+    private authService: AuthenticationService) { }
 
   private displayedColumns: string[] = ['Thing.Name', 'Friend.Name', 'LendDate', 'Comment'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -21,11 +31,15 @@ export class HomePageComponent implements OnInit {
   private selectedLend: ActiveLend;
   private returnDate: Date;
   private isLoading = true;
+  private date = new FormControl(new Date());
+  private friends: Friend[] = [];
+  private firstFriend: string;
+  private things: Thing[] = [];
+  private firstThing: string;
 
   ngOnInit() {
     if (this.authService.isAuthorized) {
       this.getLends();
-      console.log(this.activeLends);
       this.returnDate = new Date();
     }
   }
@@ -37,6 +51,29 @@ export class HomePageComponent implements OnInit {
         this.activeLends.paginator = this.paginator;
         this.activeLends.sort = this.sort;
         this.activeLends.sortingDataAccessor = SortingDataAccessor;
+        this.getFriends();
+        this.getThings();
+      });
+  }
+
+  private getFriends(): void {
+    this.friendsApi.getFriends()
+      .subscribe(data => {
+        this.friends = data;
+        if (this.friends.length) {
+          this.firstFriend = this.friends[0].Id;
+        }
+        this.isLoading = false;
+      });
+  }
+
+  private getThings(): void {
+    this.thingsApi.getThings()
+      .subscribe(data => {
+        this.things = data.filter(th => !this.activeLends.data.find(l => l.Thing.Id === th.Id));
+        if (this.things.length) {
+          this.firstThing = this.things[0].Id;
+        }
         this.isLoading = false;
       });
   }
@@ -47,7 +84,16 @@ export class HomePageComponent implements OnInit {
         const index = this.activeLends.data.findIndex(c => c.Thing.Id === this.selectedLend.Thing.Id);
         this.activeLends.data.splice(index, 1);
         this.activeLends._updateChangeSubscription();
+        this.getThings();
         this.selectedLend = null;
+      });
+  }
+
+  private addLend(FriendId: string, ThingId: string, LendDate: Date, Comment: string): void {
+    this.lendsApi.addLend(ThingId, {FriendId, LendDate, Comment} as Lend)
+      .subscribe(() => {
+        this.isLoading = true;
+        this.getLends();
       });
   }
 

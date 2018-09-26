@@ -68,6 +68,11 @@ mat-icon
     width: fit-content;
 }
 
+.link {
+    color: #512da8;
+    text-decoration: none;
+}
+
 @media (max-width: 900px) {
     .block {
         width: 100%;
