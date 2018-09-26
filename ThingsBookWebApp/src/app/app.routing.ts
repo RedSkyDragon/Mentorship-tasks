@@ -1,5 +1,4 @@
 import { RouterModule, Routes } from '@angular/router';
-
 import { HistoryPageComponent } from './history-page/history-page.component';
 import { CategoriesPageComponent } from './categories-page/categories-page.component';
 import { FriendsPageComponent } from './friends-page/friends-page.component';

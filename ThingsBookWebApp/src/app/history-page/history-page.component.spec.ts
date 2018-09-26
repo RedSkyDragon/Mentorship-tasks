@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { HistoryPageComponent } from './history-page.component';
 import { MatTableModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule,
   MatFormFieldModule, MatInputModule } from '@angular/material';
