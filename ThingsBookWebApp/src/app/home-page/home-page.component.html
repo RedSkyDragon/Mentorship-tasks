@@ -4,7 +4,7 @@
   </div>
   <div class="block width-35">
     <mat-card class="card">
-      <mat-card-content *ngIf="things.length && friends.length; else noFriendsOrThings;">
+      <mat-card-content *ngIf="!isLoading && things.length && friends.length; else noFriendsOrThings;">
         <p class="center"><b>Lend thing:</b></p>
         <form class="form">
           <mat-form-field class="full-width" color="accent">
@@ -80,7 +80,7 @@
     <div class="loader" [hidden]="!isLoading">
         <mat-spinner></mat-spinner>
     </div>     
-    <p class="center" [hidden]="isLoading || activeLends.data.length">There are not active lends</p>
+    <p class="center" [hidden]="isLoading || activeLends.data.length">There are not any active lends</p>
   </div>
 </div>
 
@@ -100,7 +100,8 @@
 
 <ng-template #noFriendsOrThings>  
   <mat-card-content>
-    <p *ngIf="!things.length">There are not things to lend. Please, <a href="/things" class="link">add thing.</a></p>        
-    <p *ngIf="!friends.length">There are not friends. Please, <a href="/friends" class="link">add friend.</a></p>
+    <p *ngIf="isLoading">Loading...</p>     
+    <p *ngIf="!things.length">There are not any things to lend. Please, <a href="/things" class="link">add thing.</a></p>        
+    <p *ngIf="!friends.length">There are not any friends. Please, <a href="/friends" class="link">add friend.</a></p>
   </mat-card-content>
 </ng-template>

@@ -93,6 +93,7 @@ export class FriendsPageComponent implements OnInit {
       const index = this.friends.data.findIndex(c => c.Id === Id);
       this.friends.data.splice(index, 1);
       this.friends._updateChangeSubscription();
+      this.selectedFriend = null;
     });
   }
 

@@ -46,6 +46,7 @@ export class ThingsPageComponent implements OnInit {
   private lendIcon = '<i class="material-icons"> check_circle</i>';
   private date = new FormControl(new Date());
   private isLoading = true;
+  private filter = '';
 
   ngOnInit() {
     this.returnDate = new Date();
@@ -57,12 +58,7 @@ export class ThingsPageComponent implements OnInit {
   private getThings(): void {
     this.api.getThings()
       .subscribe(th => {
-        this.things = new MatTableDataSource<ThingWithLend>(th);
-        this.things.paginator = this.paginators.toArray()[0];
-        this.things.sort = this.sorts.toArray()[0];
-        this.things.sortingDataAccessor = SortingDataAccessor;
-        this.things.filterPredicate = ThingsFilter;
-        this.isLoading = false;
+        this.handleThings(th);
       });
   }
 
@@ -70,14 +66,21 @@ export class ThingsPageComponent implements OnInit {
     this.isLoading = true;
     this.catApi.getThings(Id)
       .subscribe(th => {
-        this.things = new MatTableDataSource<ThingWithLend>(th);
-        this.things.paginator = this.paginators.toArray()[0];
-        this.things.sort = this.sorts.toArray()[0];
-        this.things.sortingDataAccessor = SortingDataAccessor;
-        this.things.filterPredicate = ThingsFilter;
-        this.selectedThing = null;
-        this.isLoading = false;
+        this.handleThings(th);
       });
+  }
+
+  private handleThings(things: ThingWithLend[]): void {
+    this.things = new MatTableDataSource<ThingWithLend>(things);
+    this.things.paginator = this.paginators.toArray()[0];
+    this.things.sort = this.sorts.toArray()[0];
+    this.things.sortingDataAccessor = SortingDataAccessor;
+    this.things.filterPredicate = ThingsFilter;
+    this.selectedThing = null;
+    if (this.filter) {
+      this.applyFilter(this.filter);
+    }
+    this.isLoading = false;
   }
 
   private getCategories(): void {
