@@ -80,7 +80,7 @@
     <div class="loader" [hidden]="!isLoading">
         <mat-spinner></mat-spinner>
     </div>     
-    <p class="center" [hidden]="isLoading || activeLends.data.length">There are not active lends</p>
+    <p class="center" [hidden]="isLoading || activeLends.data.length">There are not any active lends</p>
   </div>
 </div>
 
@@ -100,7 +100,7 @@
 
 <ng-template #noFriendsOrThings>  
   <mat-card-content>
-    <p *ngIf="!things.length">There are not things to lend. Please, <a href="/things" class="link">add thing.</a></p>        
-    <p *ngIf="!friends.length">There are not friends. Please, <a href="/friends" class="link">add friend.</a></p>
+    <p *ngIf="!things.length">There are not any things to lend. Please, <a href="/things" class="link">add thing.</a></p>        
+    <p *ngIf="!friends.length">There are not any friends. Please, <a href="/friends" class="link">add friend.</a></p>
   </mat-card-content>
 </ng-template>

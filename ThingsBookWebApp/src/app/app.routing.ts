@@ -6,7 +6,7 @@ import { ThingsPageComponent } from './things-page/things-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { AuthGuard } from './guards';
 import { LoginComponent } from './login-page/login.component';
-import { ErrorComponent } from './error/error.component';
+import { ErrorComponent } from './error-page/error.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomePageComponent },

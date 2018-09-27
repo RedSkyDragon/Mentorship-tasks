@@ -21,7 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login-page/login.component';
 import { ErrorsHandler } from './error-handling/errors-handler';
 import { ServerErrorsInterceptor } from './interceptors/server-errors.interceptor';
-import { ErrorComponent } from './error/error.component';
+import { ErrorComponent } from './error-page/error.component';
 
 @NgModule({
   declarations: [

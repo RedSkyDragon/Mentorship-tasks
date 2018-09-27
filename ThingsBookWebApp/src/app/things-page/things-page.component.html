@@ -12,7 +12,7 @@
     </mat-form-field>
     &nbsp;
     <mat-form-field  class="width-50" color="accent">
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter" [(ngModel)]="this.filter">
     </mat-form-field>
     <div [hidden]="isLoading || !things.data.length">
       <div class="mat-elevation-z8">
@@ -38,7 +38,7 @@
     <div class="loader" [hidden]="!isLoading">
         <mat-spinner></mat-spinner>
     </div>    
-    <p class="center" [hidden]="isLoading || things.data.length">There are not things</p>
+    <p class="center" [hidden]="isLoading || things.data.length">There are not any things</p>
   </div>
 
   <div class="block">
@@ -160,7 +160,7 @@
             </div>
           </div>
           <div class="tab" [hidden]="selectedThing"><p class="center">Please select some thing</p></div>
-          <div [hidden] = "!selectedThing || this.history && this.history.data.length"><p class="center">This thing did not have any lend information</p></div>
+          <div [hidden] = "!selectedThing || this.history && this.history.data.length"><p class="center">This thing did not have any lend history</p></div>
         </mat-tab>
       </mat-tab-group>
   </div>
@@ -194,9 +194,9 @@
 </ng-template>
 
 <ng-template #noCategories>
-  <p>There are not any category. Please, <a href="/categories" class="link">add one</a>.</p>
+  <p>There are not any categories. Please, <a href="/categories" class="link">add one</a>.</p>
 </ng-template>
 
 <ng-template #noFriends>
-  <p>There are not any friend. Please, <a href="/friends" class="link">add one</a>.</p>
+  <p>There are not any friends. Please, <a href="/friends" class="link">add one</a>.</p>
 </ng-template>
